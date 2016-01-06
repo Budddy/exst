@@ -24,16 +24,18 @@
 #pragma warning (disable : 4786)
 #pragma warning (disable : 4503)
 #endif
+
 #include "typed_value.h"
 #include "value_store.h"
 #include <string>
 #include <cstddef>
 #include <map>
+
 #if defined(_MSC_VER) && _MSC_VER <= 1200
 namespace std { using ::size_t; }
 #endif
 
-namespace ProgramOptions { 
+namespace ProgramOptions {
 ///////////////////////////////////////////////////////////////////////////////
 // ValueMap
 ///////////////////////////////////////////////////////////////////////////////
@@ -41,52 +43,51 @@ namespace ProgramOptions {
 /*!
  * Maps option names to their values
  */
-class ValueMap {
-public:
-	ValueMap() {}
-	~ValueMap(){}
-	bool               empty() const { return map_.empty(); }
-	size_t             size()  const { return map_.size(); }
-	size_t             count(const std::string& name) const { return map_.count(name); }
-	void               clear()       { map_.clear(); }
-	const ValueStore& operator[](const std::string& name) const {
-		MapType::const_iterator it = map_.find(name);
-		if (it == map_.end()) {
-			throw UnknownOption("ValueMap", name);
-		}
-		return it->second;
-	}
-	template <class T>
-	static bool add(ValueMap* this_, const std::string& name, const T* value) {
-		MapType::iterator it = this_->map_.find(name);
-		if (it == this_->map_.end()) {
-			it = this_->map_.insert(it, MapType::value_type(name, ValueStore()));
-		}
-		if (it->second.extract_raw() != value) {
-			it->second.assimilate(const_cast<T*>(value));
-		}
-		return true;
-	}
-private:
-	ValueMap(const ValueMap&);
-	ValueMap& operator=(const ValueMap&);
-	typedef std::map<std::string, ValueStore> MapType;
-	MapType map_;
-};
+    class ValueMap {
+    public:
+        ValueMap() { }
+        ~ValueMap() { }
+        bool empty() const { return map_.empty(); }
+        size_t size() const { return map_.size(); }
+        size_t count(const std::string &name) const { return map_.count(name); }
+        void clear() { map_.clear(); }
+        const ValueStore &operator[](const std::string &name) const {
+            MapType::const_iterator it = map_.find(name);
+            if (it == map_.end()) {
+                throw UnknownOption("ValueMap", name);
+            }
+            return it->second;
+        }
+        template<class T>
+        static bool add(ValueMap *this_, const std::string &name, const T *value) {
+            MapType::iterator it = this_->map_.find(name);
+            if (it == this_->map_.end()) {
+                it = this_->map_.insert(it, MapType::value_type(name, ValueStore()));
+            }
+            if (it->second.extract_raw() != value) {
+                it->second.assimilate(const_cast<T *>(value));
+            }
+            return true;
+        }
+    private:
+        ValueMap(const ValueMap &);
+        ValueMap &operator=(const ValueMap &);
+        typedef std::map<std::string, ValueStore> MapType;
+        MapType map_;
+    };
 
 /*!
  * Creates a value that is created on demand and stored in a given value map.
  *
  * \see OptionGroup::addOptions()
  */
-template <class T>
-inline NotifiedValue<T>* store(ValueMap& map, typename detail::Parser<T>::type p = &string_cast<T>) {
-	return notify<T>(&map, &ValueMap::add<T>, p);
-}
+    template<class T>
+    inline NotifiedValue<T> *store(ValueMap &map, typename detail::Parser<T>::type p = &string_cast<T>) {
+        return notify<T>(&map, &ValueMap::add<T>, p);
+    }
 
-inline NotifiedValue<bool>* flag(ValueMap& map, FlagAction a = store_true) {
-	return flag(&map, &ValueMap::add<bool>, a);
-}
-
+    inline NotifiedValue<bool> *flag(ValueMap &map, FlagAction a = store_true) {
+        return flag(&map, &ValueMap::add<bool>, a);
+    }
 }
 #endif

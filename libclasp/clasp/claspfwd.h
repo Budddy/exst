@@ -21,37 +21,61 @@
 #define CLASP_CLASP_FWD_H_INCLUDED
 
 //! Root namespace for all types and functions of libclasp.
-namespace Clasp { 
-class SharedContext;
-class MinimizeBuilder;
-class SharedMinimizeData;
-class Configuration;
-class Constraint;
-struct Problem_t {
-	enum Type   { SAT    = 0, PB  = 1, ASP    = 2 };
-	enum Format { DIMACS = 0, OPB = 1, LPARSE = 2 };
-	static Type format2Type(Format f) { return static_cast<Type>(f); }
-};
-typedef Problem_t::Type   ProblemType;
-typedef Problem_t::Format InputFormat;
-class ProgramBuilder;
-class SatBuilder;
-class PBBuilder;
-class StreamSource;
-//! Namespace for types and functions used to define ASP programs.
-namespace Asp {
-class  LogicProgram;
-class  Preprocessor;
-class  LpStats;
-class  Rule;
-class  PrgAtom;
-class  PrgBody;
-class  PrgDisj;
-class  PrgHead;
-class  PrgNode;
-struct PrgEdge;
-class  SccChecker;
-}}
+namespace Clasp {
+    class SharedContext;
 
+    class MinimizeBuilder;
+
+    class SharedMinimizeData;
+
+    class Configuration;
+
+    class Constraint;
+
+    struct Problem_t {
+        enum Type {
+            SAT = 0, PB = 1, ASP = 2
+        };
+        enum Format {
+            DIMACS = 0, OPB = 1, LPARSE = 2
+        };
+        static Type format2Type(Format f) { return static_cast<Type>(f); }
+    };
+
+    typedef Problem_t::Type ProblemType;
+    typedef Problem_t::Format InputFormat;
+
+    class ProgramBuilder;
+
+    class SatBuilder;
+
+    class PBBuilder;
+
+    class StreamSource;
+//! Namespace for types and functions used to define ASP programs.
+    namespace Asp {
+        class LogicProgram;
+
+        class Preprocessor;
+
+        class LpStats;
+
+        class Rule;
+
+        class PrgAtom;
+
+        class PrgBody;
+
+        class PrgDisj;
+
+        class PrgHead;
+
+        class PrgNode;
+
+        struct PrgEdge;
+
+        class SccChecker;
+    }
+}
 
 #endif

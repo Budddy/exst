@@ -41,44 +41,46 @@
 #undef RESTORE_TBB_IMPLEMENT_CPP0X
 #endif
 namespace Clasp { 
-	using tbb::mutex; 
-	using tbb::spin_mutex;
-	using tbb::interface5::condition_variable;
-	using tbb::interface5::lock_guard;
-	using tbb::interface5::unique_lock;
-	using tbb::interface5::swap;
-	using tbb::interface5::defer_lock_t;
+    using tbb::mutex;
+    using tbb::spin_mutex;
+    using tbb::interface5::condition_variable;
+    using tbb::interface5::lock_guard;
+    using tbb::interface5::unique_lock;
+    using tbb::interface5::swap;
+    using tbb::interface5::defer_lock_t;
 }
 #else
 namespace no_multi_threading {
-class NullMutex {   
-public:   
-	NullMutex()     {}
-	void lock()     {}
-	bool try_lock() { return true; }
-	void unlock()   {}
-private:
-	NullMutex(const NullMutex&);   
-	NullMutex& operator=(const NullMutex&);   
-};
-typedef NullMutex mutex; 
-typedef NullMutex spin_mutex;
-template<typename M>
-class lock_guard {
-public:
-	typedef M mutex_type;
-	explicit lock_guard(mutex_type& m) : pm(m) {m.lock();}
-	~lock_guard() { pm.unlock(); }
-private:
-	lock_guard(const lock_guard&);
-	lock_guard& operator=(const lock_guard&);
-	mutex_type& pm;
-};
+    class NullMutex {
+    public:
+        NullMutex() { }
+        void lock() { }
+        bool try_lock() { return true; }
+        void unlock() { }
+    private:
+        NullMutex(const NullMutex &);
+        NullMutex &operator=(const NullMutex &);
+    };
+
+    typedef NullMutex mutex;
+    typedef NullMutex spin_mutex;
+
+    template<typename M>
+    class lock_guard {
+    public:
+        typedef M mutex_type;
+        explicit lock_guard(mutex_type &m) : pm(m) { m.lock(); }
+        ~lock_guard() { pm.unlock(); }
+    private:
+        lock_guard(const lock_guard &);
+        lock_guard &operator=(const lock_guard &);
+        mutex_type &pm;
+    };
 }
 namespace Clasp {
-	using no_multi_threading::mutex;
-	using no_multi_threading::lock_guard;
-	using no_multi_threading::spin_mutex;
+    using no_multi_threading::mutex;
+    using no_multi_threading::lock_guard;
+    using no_multi_threading::spin_mutex;
 }
 #endif
 

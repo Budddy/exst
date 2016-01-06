@@ -20,76 +20,82 @@
 
 #ifndef CLASP_POD_VECTOR_H_INCLUDED
 #define CLASP_POD_VECTOR_H_INCLUDED
+
 #include <clasp/util/pod_vector.h>
 #include <vector>
 
 namespace Clasp {
 
 #ifdef _DEBUG
-	template <class Type>
-	struct PodVector {
-		typedef std::vector<Type> type;
-		static void destruct(type& t) {t.clear();}
-	};
+    template <class Type>
+    struct PodVector {
+        typedef std::vector<Type> type;
+        static void destruct(type& t) {t.clear();}
+    };
 #else
-	template <class Type>
-	struct PodVector {
-		typedef bk_lib::pod_vector<Type> type;
-		static void destruct(type& t) {
-			for (typename type::size_type i = 0, end = t.size(); i != end; ++i) {
-				t[i].~Type();
-			}
-			t.clear();
-		}
-	};
+
+    template<class Type>
+    struct PodVector {
+        typedef bk_lib::pod_vector<Type> type;
+        static void destruct(type &t) {
+            for (typename type::size_type i = 0, end = t.size(); i != end; ++i) {
+                t[i].~Type();
+            }
+            t.clear();
+        }
+    };
+
 #endif
 
-template <class T>
-inline void releaseVec(T& t) {
-	T().swap(t);
-}
+    template<class T>
+    inline void releaseVec(T &t) {
+        T().swap(t);
+    }
 
-template <class T>
-inline void shrinkVecTo(T& t, typename T::size_type j) {
-	t.erase(t.begin()+j, t.end());
-}
+    template<class T>
+    inline void shrinkVecTo(T &t, typename T::size_type j) {
+        t.erase(t.begin() + j, t.end());
+    }
 
-template <class T>
-inline void growVecTo(T& vec, typename T::size_type j, const typename T::value_type& val = typename T::value_type()) {
-	if (vec.size() < j) {
-		if (vec.capacity() < j) { vec.reserve(j + j / 2); }
-		vec.resize(j, val);
-	}
-}
+    template<class T>
+    inline void growVecTo(T &vec, typename T::size_type j,
+                          const typename T::value_type &val = typename T::value_type()) {
+        if (vec.size() < j) {
+            if (vec.capacity() < j) { vec.reserve(j + j / 2); }
+            vec.resize(j, val);
+        }
+    }
 
-template <class T>
-void moveDown(T& t, typename T::size_type from, typename T::size_type to) {
-	for (typename T::size_type end = t.size(); from != end;) {
-		t[to++] = t[from++];
-	}
-	shrinkVecTo(t, to);
-}
+    template<class T>
+    void moveDown(T &t, typename T::size_type from, typename T::size_type to) {
+        for (typename T::size_type end = t.size(); from != end;) {
+            t[to++] = t[from++];
+        }
+        shrinkVecTo(t, to);
+    }
 
-template <class T>
-struct PodQueue {
-	typedef typename PodVector<T>::type  vec_type;
-	typedef typename vec_type::size_type size_type;
-	PodQueue() : qFront(0) {}
-	bool      empty() const   { return qFront == vec.size(); }
-	size_type size()  const   { return vec.size() - qFront; }
-	const T&  front() const   { return vec[qFront]; }
-	const T&  back()  const   { return vec.back(); }
-	T&        front()         { return vec[qFront]; }
-	T&        back()          { return vec.back(); }
-	void      push(const T& x){ vec.push_back(x);  }
-	void      pop()           { ++qFront; }
-	T         pop_ret()       { return vec[qFront++]; }
-	void      clear()         { vec.clear(); qFront = 0; }
-	void      rewind()        { qFront = 0; }
-	vec_type  vec;    // the underlying vector holding the items
-	size_type qFront; // front position
-};
-
+    template<class T>
+    struct PodQueue {
+        typedef typename PodVector<T>::type vec_type;
+        typedef typename vec_type::size_type size_type;
+        PodQueue() : qFront(0) { }
+        bool empty() const { return qFront == vec.size(); }
+        size_type size() const { return vec.size() - qFront; }
+        const T &front() const { return vec[qFront]; }
+        const T &back() const { return vec.back(); }
+        T &front() { return vec[qFront]; }
+        T &back() { return vec.back(); }
+        void push(const T &x) { vec.push_back(x); }
+        void pop() { ++qFront; }
+        T pop_ret() { return vec[qFront++]; }
+        void clear() {
+            vec.clear();
+            qFront = 0;
+        }
+        void rewind() { qFront = 0; }
+        vec_type vec;    // the underlying vector holding the items
+        size_type qFront; // front position
+    };
 }
 
 #endif

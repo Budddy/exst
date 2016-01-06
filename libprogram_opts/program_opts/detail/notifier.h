@@ -21,7 +21,8 @@
 #ifndef PROGRAM_OPTIONS_NOTIFIER_H_INCLUDED
 #define PROGRAM_OPTIONS_NOTIFIER_H_INCLUDED
 
-namespace ProgramOptions { namespace detail {
+namespace ProgramOptions {
+    namespace detail {
 
 ///////////////////////////////////////////////////////////////////////////////
 // Notifier
@@ -32,27 +33,27 @@ namespace ProgramOptions { namespace detail {
 // the invocation of f via the generic func is not strictly conforming.
 // Yet, it should work on all major compilers - we do not mess with
 // the address and the alignment of void* should be compatible with that of T*.
-template <class ParamT>
-struct Notifier {
-	typedef bool (*notify_func_type)(void*, const std::string& name, ParamT);
-	Notifier() : obj(0), func(0) {}
-	template <class O>
-	Notifier(O* o, bool (*f)(O*, const std::string&, ParamT)) {
-		obj = o;
-		func= reinterpret_cast<notify_func_type>(f);
-	}
-	void*            obj;
-	notify_func_type func;
-	bool notify(const std::string& name, ParamT val) const {
-		return func(obj, name, val);
-	}
-	bool empty() const { return func == 0; }
-}; 
+        template<class ParamT>
+        struct Notifier {
+            typedef bool (*notify_func_type)(void *, const std::string &name, ParamT);
+            Notifier() : obj(0), func(0) { }
+            template<class O>
+            Notifier(O *o, bool (*f)(O *, const std::string &, ParamT)) {
+                obj = o;
+                func = reinterpret_cast<notify_func_type>(f);
+            }
+            void *obj;
+            notify_func_type func;
+            bool notify(const std::string &name, ParamT val) const {
+                return func(obj, name, val);
+            }
+            bool empty() const { return func == 0; }
+        };
 
-template <class ParamT, class ObjT>
-struct Notify {
-	typedef bool (*type)(ObjT*, const std::string& name, ParamT);
-};
-
-} }
+        template<class ParamT, class ObjT>
+        struct Notify {
+            typedef bool (*type)(ObjT *, const std::string &name, ParamT);
+        };
+    }
+}
 #endif

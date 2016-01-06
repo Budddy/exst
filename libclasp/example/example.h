@@ -18,11 +18,13 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
 #include <iostream>
-namespace Clasp { 
-	struct Model;
-	class  SymbolTable;
+
+namespace Clasp {
+    struct Model;
+
+    class SymbolTable;
 }
-void printModel(const Clasp::SymbolTable& sym, const Clasp::Model& model);
+void printModel(const Clasp::SymbolTable &sym, const Clasp::Model &model);
 
 void example1();
 void example2();

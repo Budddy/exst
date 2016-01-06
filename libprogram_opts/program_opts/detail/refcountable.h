@@ -20,53 +20,57 @@
 //
 #ifndef PROGRAM_OPTIONS_REFCOUNTABLE_H_INCLUDED
 #define PROGRAM_OPTIONS_REFCOUNTABLE_H_INCLUDED
-namespace ProgramOptions { namespace detail {
+namespace ProgramOptions {
+    namespace detail {
 
-class RefCountable {
-public:
-	RefCountable() : refCount_(1) {}
-	int  addRef()         { return ++refCount_; }
-	int  release()        { return --refCount_; }
-	int  refCount() const { return refCount_;   }
-private:
-	int refCount_;
-};
+        class RefCountable {
+        public:
+            RefCountable() : refCount_(1) { }
+            int addRef() { return ++refCount_; }
+            int release() { return --refCount_; }
+            int refCount() const { return refCount_; }
+        private:
+            int refCount_;
+        };
 
-template <class T>
-class IntrusiveSharedPtr {
-public:
-	typedef T element_type;
-	explicit IntrusiveSharedPtr(T* p = 0) throw()
-		: ptr_(p) { /* NO add ref */ }
-	IntrusiveSharedPtr(const IntrusiveSharedPtr& o) throw() 
-		: ptr_(o.ptr_) { addRef(); }
-	~IntrusiveSharedPtr() throw () { release(); }
-	IntrusiveSharedPtr& operator=(const IntrusiveSharedPtr& other) {
-		other.addRef();
-		this->release();
-		this->ptr_ = other.ptr_;
-		return *this;
-	}
-	T&     operator*() const throw()   { return *ptr_; }
-	T*     operator->() const throw()  { return ptr_;  }
-	T*     get() const throw()         { return ptr_; }
-	void   reset() throw()             { release(); ptr_ = 0; }
-	bool   unique() const throw()      { return  !ptr_ || ptr_->refCount() == 1; }
-	int    count() const  throw()      { return ptr_ ? ptr_->refCount() : 0; }
-	void   swap(IntrusiveSharedPtr& b) {
-		T* temp = ptr_;
-		ptr_    = b.ptr_;
-		b.ptr_  = temp;
-	}
-private:
-	T* ptr_;
-	void addRef()  const { if (ptr_) ptr_->addRef(); }
-	void release() const {
-		if (ptr_ && ptr_->release() == 0) {
-			delete ptr_;
-		}
-	}
-};
-
-}}
+        template<class T>
+        class IntrusiveSharedPtr {
+        public:
+            typedef T element_type;
+            explicit IntrusiveSharedPtr(T *p = 0) throw()
+                    : ptr_(p) { /* NO add ref */ }
+            IntrusiveSharedPtr(const IntrusiveSharedPtr &o) throw()
+                    : ptr_(o.ptr_) { addRef(); }
+            ~IntrusiveSharedPtr() throw() { release(); }
+            IntrusiveSharedPtr &operator=(const IntrusiveSharedPtr &other) {
+                other.addRef();
+                this->release();
+                this->ptr_ = other.ptr_;
+                return *this;
+            }
+            T &operator*() const throw() { return *ptr_; }
+            T *operator->() const throw() { return ptr_; }
+            T *get() const throw() { return ptr_; }
+            void reset() throw() {
+                release();
+                ptr_ = 0;
+            }
+            bool unique() const throw() { return !ptr_ || ptr_->refCount() == 1; }
+            int count() const throw() { return ptr_ ? ptr_->refCount() : 0; }
+            void swap(IntrusiveSharedPtr &b) {
+                T *temp = ptr_;
+                ptr_ = b.ptr_;
+                b.ptr_ = temp;
+            }
+        private:
+            T *ptr_;
+            void addRef() const { if (ptr_) ptr_->addRef(); }
+            void release() const {
+                if (ptr_ && ptr_->release() == 0) {
+                    delete ptr_;
+                }
+            }
+        };
+    }
+}
 #endif

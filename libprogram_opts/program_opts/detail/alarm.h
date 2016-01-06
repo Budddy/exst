@@ -20,6 +20,7 @@
 // Alarm handling
 /////////////////////////////////////////////////////////////////////////////////////////
 #include <signal.h>
+
 // Schedules an alarm signal
 // The function causes the system to generate a SIGALRM
 // signal for the process after the number of real-time seconds
@@ -32,7 +33,7 @@
 // 
 // setAlarm() returns a value > 0 if the alarm request was set.
 // Otherwise it returns 0.
-int  setAlarm(unsigned sec);
+int setAlarm(unsigned sec);
 
 // Sets the SIGALRM handler
 void setAlarmHandler(void(*f)(int));
@@ -51,7 +52,7 @@ void protectMainThread(bool);
 //    handling is subject to race-conditions. 
 //    USe lockAlarm(), unlockAlarm() to protect functions that
 //    are not thread-safe and are called by the handler
-#if defined(_WIN32) || defined(_WIN64) 
+#if defined(_WIN32) || defined(_WIN64)
 void lockAlarm();
 void unlockAlarm();
 #else
@@ -60,12 +61,11 @@ inline void unlockAlarm()  {}
 #endif
 
 struct ScopedAlarmLock {
-	ScopedAlarmLock()  { lockAlarm(); }
-	~ScopedAlarmLock() { unlockAlarm();  }
+    ScopedAlarmLock() { lockAlarm(); }
+    ~ScopedAlarmLock() { unlockAlarm(); }
 };
 
 #define SCOPE_ALARM_LOCK() ScopedAlarmLock __alarm_lock__
-
 
 #if !defined(SIGALRM)
 #define SIGALRM 14

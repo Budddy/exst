@@ -25,19 +25,19 @@
 #if defined (_MSC_VER) && defined(CHECK_HEAP) && _MSC_VER >= 1200
 #include <crtdbg.h>
 #endif
-int main(int argc, char** argv) {
-#if defined (_MSC_VER) && defined (CHECK_HEAP) && _MSC_VER >= 1200 
-	_CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) |
-					_CRTDBG_LEAK_CHECK_DF | _CRTDBG_ALLOC_MEM_DF |
-	_CRTDBG_CHECK_ALWAYS_DF);
+int main(int argc, char **argv) {
+#if defined (_MSC_VER) && defined (CHECK_HEAP) && _MSC_VER >= 1200
+    _CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) |
+                    _CRTDBG_LEAK_CHECK_DF | _CRTDBG_ALLOC_MEM_DF |
+    _CRTDBG_CHECK_ALWAYS_DF);
 
-	_CrtSetReportMode( _CRT_WARN, _CRTDBG_MODE_FILE );
-	_CrtSetReportFile( _CRT_WARN, _CRTDBG_FILE_STDERR );
-	_CrtSetReportMode( _CRT_ERROR, _CRTDBG_MODE_FILE );
-	_CrtSetReportFile( _CRT_ERROR, _CRTDBG_FILE_STDERR );
-	_CrtSetReportMode( _CRT_ASSERT, _CRTDBG_MODE_FILE );
-	_CrtSetReportFile( _CRT_ASSERT, _CRTDBG_FILE_STDERR );
+    _CrtSetReportMode( _CRT_WARN, _CRTDBG_MODE_FILE );
+    _CrtSetReportFile( _CRT_WARN, _CRTDBG_FILE_STDERR );
+    _CrtSetReportMode( _CRT_ERROR, _CRTDBG_MODE_FILE );
+    _CrtSetReportFile( _CRT_ERROR, _CRTDBG_FILE_STDERR );
+    _CrtSetReportMode( _CRT_ASSERT, _CRTDBG_MODE_FILE );
+    _CrtSetReportFile( _CRT_ASSERT, _CRTDBG_FILE_STDERR );
 #endif
-	Clasp::Cli::ClaspApp app;
-	return app.main(argc, argv);
+    Clasp::Cli::ClaspApp app;
+    return app.main(argc, argv);
 }

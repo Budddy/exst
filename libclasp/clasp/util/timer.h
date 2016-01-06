@@ -27,38 +27,41 @@
 
 namespace Clasp {
 
-struct ProcessTime {
-	static double getTime();
-};
+    struct ProcessTime {
+        static double getTime();
+    };
 
-struct ThreadTime {
-	static double getTime();
-};
+    struct ThreadTime {
+        static double getTime();
+    };
 
-struct RealTime {
-	static double getTime();
-};
-	
-template <class TimeType>
-class Timer {
-public:
-	Timer() : start_(0), split_(0), total_(0) {}
-	
-	void   start()   { start_ = TimeType::getTime(); }
-	void   stop()    { split(TimeType::getTime()); }
-	void   reset()   { *this  = Timer(); }
-	//! same as stop(), start();
-	void   lap()     { double t; split(t = TimeType::getTime()); start_ = t; }
-	//! elapsed time (in seconds) for last start-stop cycle
-	double elapsed() const { return split_; }
-	//! total elapsed time for all start-stop cycles 
-	double total()   const { return total_; }
-private:
-	void split(double t) { total_ += (split_ = t-start_); }
-	double start_;
-	double split_;
-	double total_;
-};
+    struct RealTime {
+        static double getTime();
+    };
 
+    template<class TimeType>
+    class Timer {
+    public:
+        Timer() : start_(0), split_(0), total_(0) { }
+
+        void start() { start_ = TimeType::getTime(); }
+        void stop() { split(TimeType::getTime()); }
+        void reset() { *this = Timer(); }
+        //! same as stop(), start();
+        void lap() {
+            double t;
+            split(t = TimeType::getTime());
+            start_ = t;
+        }
+        //! elapsed time (in seconds) for last start-stop cycle
+        double elapsed() const { return split_; }
+        //! total elapsed time for all start-stop cycles
+        double total() const { return total_; }
+    private:
+        void split(double t) { total_ += (split_ = t - start_); }
+        double start_;
+        double split_;
+        double total_;
+    };
 }
 #endif

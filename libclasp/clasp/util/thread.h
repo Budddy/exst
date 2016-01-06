@@ -28,19 +28,20 @@
 #endif
 #include <tbb/tbb_thread.h>
 namespace Clasp {
-	typedef tbb::tbb_thread thread;
-	namespace this_thread {
-		using tbb::this_tbb_thread::yield;
-	}
+    typedef tbb::tbb_thread thread;
+    namespace this_thread {
+        using tbb::this_tbb_thread::yield;
+    }
 }
 #else
 namespace no_multi_threading {
-	struct thread {};
-	inline void yield() {}
+    struct thread {
+    };
+    inline void yield() { }
 }
-namespace Clasp { 
-	typedef no_multi_threading::thread thread;
-	namespace this_thread { using no_multi_threading::yield; }
+namespace Clasp {
+    typedef no_multi_threading::thread thread;
+    namespace this_thread { using no_multi_threading::yield; }
 }
 #endif
 

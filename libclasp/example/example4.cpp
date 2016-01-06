@@ -29,36 +29,36 @@
 // Gets models from the ClaspFacade and guides enumeration by adding constraints.
 class ModelHandler : public Clasp::EventHandler {
 public:
-	ModelHandler() {}
-	bool onModel(const Clasp::Solver& s, const Clasp::Model& m) {
-		printModel(s.symbolTable(), m);
-		// exclude this model
-		Clasp::LitVec clause;
-		for (uint32 i = 1; i <= s.decisionLevel(); ++i) {
-			clause.push_back( ~s.decision(i) );
-		}
-		return m.ctx->commitClause(clause);
-	}
+    ModelHandler() { }
+    bool onModel(const Clasp::Solver &s, const Clasp::Model &m) {
+        printModel(s.symbolTable(), m);
+        // exclude this model
+        Clasp::LitVec clause;
+        for (uint32 i = 1; i <= s.decisionLevel(); ++i) {
+            clause.push_back(~s.decision(i));
+        }
+        return m.ctx->commitClause(clause);
+    }
 };
 
 void example4() {
-	Clasp::ClaspConfig config;
-	config.solve.enumMode  = Clasp::EnumOptions::enum_user;
-	config.solve.numModels = 0;
-	
-	// The "interface" to the clasp library.
-	Clasp::ClaspFacade libclasp;
+    Clasp::ClaspConfig config;
+    config.solve.enumMode = Clasp::EnumOptions::enum_user;
+    config.solve.numModels = 0;
 
-	Clasp::Asp::LogicProgram& asp = libclasp.startAsp(config);
-	asp.setAtomName(1, "a");
-	asp.setAtomName(2, "b");
-	asp.startRule(Clasp::Asp::BASICRULE).addHead(1).addToBody(2, false).endRule();
-	asp.startRule(Clasp::Asp::BASICRULE).addHead(2).addToBody(1, false).endRule();
-	
-	libclasp.prepare();
+    // The "interface" to the clasp library.
+    Clasp::ClaspFacade libclasp;
 
-	// Start the actual solving process.
-	ModelHandler handler;
-	libclasp.solve(&handler);
-	std::cout << "No more models!" << std::endl;
+    Clasp::Asp::LogicProgram &asp = libclasp.startAsp(config);
+    asp.setAtomName(1, "a");
+    asp.setAtomName(2, "b");
+    asp.startRule(Clasp::Asp::BASICRULE).addHead(1).addToBody(2, false).endRule();
+    asp.startRule(Clasp::Asp::BASICRULE).addHead(2).addToBody(1, false).endRule();
+
+    libclasp.prepare();
+
+    // Start the actual solving process.
+    ModelHandler handler;
+    libclasp.solve(&handler);
+    std::cout << "No more models!" << std::endl;
 }

@@ -29,54 +29,56 @@
 namespace Clasp { using tbb::atomic; }
 #else
 namespace no_multi_threading {
-template <class T>
-struct atomic {
-	typedef T value_type;
-	atomic() : value(value_type()) {}
-	atomic& operator=(value_type t) { value = t; return *this; }
-	operator value_type() const { return value; }
-	value_type operator+=(value_type v) { return value += v; }
-	value_type operator-=(value_type v) { return value -= v; }
-	value_type operator++()             { return ++value;    }
-	value_type operator--()             { return --value;    }
-	value_type operator->() const       { return value;    }
-	value_type fetch_and_store(value_type v) {
-		value_type last= value;
-		value          = v;
-		return last;
-	}
-	value_type compare_and_swap(value_type y, value_type z) {
-		if (value == z) {
-			value = y;
-			return z;
-		}
-		return value;
-	}
-	T value;
-};
+    template<class T>
+    struct atomic {
+        typedef T value_type;
+        atomic() : value(value_type()) { }
+        atomic &operator=(value_type t) {
+            value = t;
+            return *this;
+        }
+        operator value_type() const { return value; }
+        value_type operator+=(value_type v) { return value += v; }
+        value_type operator-=(value_type v) { return value -= v; }
+        value_type operator++() { return ++value; }
+        value_type operator--() { return --value; }
+        value_type operator->() const { return value; }
+        value_type fetch_and_store(value_type v) {
+            value_type last = value;
+            value = v;
+            return last;
+        }
+        value_type compare_and_swap(value_type y, value_type z) {
+            if (value == z) {
+                value = y;
+                return z;
+            }
+            return value;
+        }
+        T value;
+    };
 }
 namespace Clasp { using no_multi_threading::atomic; }
 #endif
 
-
 // effect: T temp; a |= mask; return temp
-template <class T>
-inline T fetch_and_or(Clasp::atomic<T>& a, T mask) {
-	T x;
-	do {
-		x = a;
-	} while (a.compare_and_swap(x|mask, x) != x);
-	return x;
+template<class T>
+inline T fetch_and_or(Clasp::atomic<T> &a, T mask) {
+    T x;
+    do {
+        x = a;
+    } while (a.compare_and_swap(x | mask, x) != x);
+    return x;
 }
 
 // effect: T temp; a &= mask; return temp
-template <class T>
-inline T fetch_and_and(Clasp::atomic<T>& a, T mask) {
-	T x;
-	do {
-		x = a;
-	} while (a.compare_and_swap(x&mask, x) != x);
-	return x;
+template<class T>
+inline T fetch_and_and(Clasp::atomic<T> &a, T mask) {
+    T x;
+    do {
+        x = a;
+    } while (a.compare_and_swap(x & mask, x) != x);
+    return x;
 }
 
 #endif

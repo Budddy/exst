@@ -32,28 +32,29 @@ namespace Clasp {
 /*!
  * \ingroup enumerator
  */
-class CBConsequences : public Enumerator {
-public:
-	enum Consequences_t { 
-		brave_consequences    = (Model::max_value << 1) | Model::model_cons,
-		cautious_consequences = (Model::max_value << 2) | Model::model_cons,
-	};
-	/*!
-	 * \param type Type of consequences to compute.
-	 */
-	explicit CBConsequences(Consequences_t type);
-	~CBConsequences();
-	int  modelType() const { return type_; }
-	bool exhaustive()const { return true; }
-private:
-	class  CBFinder;
-	class  SharedConstraint;
-	ConPtr doInit(SharedContext& ctx, SharedMinimizeData* m, int numModels);
-	void   addCurrent(Solver& s, LitVec& con, ValueVec& m);
-	LitVec            cons_;
-	SharedConstraint* shared_;
-	Consequences_t    type_;
-};
+    class CBConsequences : public Enumerator {
+    public:
+        enum Consequences_t {
+            brave_consequences = (Model::max_value << 1) | Model::model_cons,
+            cautious_consequences = (Model::max_value << 2) | Model::model_cons,
+        };
+        /*!
+         * \param type Type of consequences to compute.
+         */
+        explicit CBConsequences(Consequences_t type);
+        ~CBConsequences();
+        int modelType() const { return type_; }
+        bool exhaustive() const { return true; }
+    private:
+        class CBFinder;
 
+        class SharedConstraint;
+
+        ConPtr doInit(SharedContext &ctx, SharedMinimizeData *m, int numModels);
+        void addCurrent(Solver &s, LitVec &con, ValueVec &m);
+        LitVec cons_;
+        SharedConstraint *shared_;
+        Consequences_t type_;
+    };
 }
 #endif

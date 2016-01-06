@@ -20,62 +20,61 @@
 //
 #include <program_opts/value_store.h>
 #include <algorithm>
+
 namespace ProgramOptions {
 
-ValueStore::ValueStore()
-	: vptr_(0)
-	, value_(0) {
-}
-ValueStore::ValueStore(const ValueStore& other)
-	: vptr_(other.vptr_)
-	, value_(0) {
-	if (!other.empty()) {
-		clone(extract(const_cast<void**>(&other.value_)), &value_);
-	}
-}
-ValueStore::~ValueStore() {
-	clear();
-}
-ValueStore& ValueStore::operator=(ValueStore other) {
-	other.swap(*this);
-	return *this;
-}
-void ValueStore::swap(ValueStore& other) {
-	std::swap(vptr_ , other.vptr_);
-	std::swap(value_, other.value_);
-}
+    ValueStore::ValueStore()
+            : vptr_(0), value_(0) {
+    }
+    ValueStore::ValueStore(const ValueStore &other)
+            : vptr_(other.vptr_), value_(0) {
+        if (!other.empty()) {
+            clone(extract(const_cast<void **>(&other.value_)), &value_);
+        }
+    }
+    ValueStore::~ValueStore() {
+        clear();
+    }
+    ValueStore &ValueStore::operator=(ValueStore other) {
+        other.swap(*this);
+        return *this;
+    }
+    void ValueStore::swap(ValueStore &other) {
+        std::swap(vptr_, other.vptr_);
+        std::swap(value_, other.value_);
+    }
 
-const  std::type_info& ValueStore::type() const {
-	if (!empty()) {
-		void* x;
-		(*vptr_)[vcall_typeid](0, &x);
-		return *static_cast<const std::type_info*>( x );
-	}
-	struct internal_empty_type {};
-	return typeid(internal_empty_type);
-}
+    const std::type_info &ValueStore::type() const {
+        if (!empty()) {
+            void *x;
+            (*vptr_)[vcall_typeid](0, &x);
+            return *static_cast<const std::type_info *>( x );
+        }
+        struct internal_empty_type {
+        };
+        return typeid(internal_empty_type);
+    }
 
-void ValueStore::clear() {
-	if (!empty()) {
-		(*vptr_)[vcall_destroy](extract(&value_), &value_);
-		vptr_  = 0;
-	}
-}
+    void ValueStore::clear() {
+        if (!empty()) {
+            (*vptr_)[vcall_destroy](extract(&value_), &value_);
+            vptr_ = 0;
+        }
+    }
 
-void ValueStore::surrender() {
-	vptr_ = 0;
-}
+    void ValueStore::surrender() {
+        vptr_ = 0;
+    }
 
-void ValueStore::clone(const void* obj, void** out) const {
-	(*vptr_)[vcall_clone](obj, out);
-}
+    void ValueStore::clone(const void *obj, void **out) const {
+        (*vptr_)[vcall_clone](obj, out);
+    }
 
-void* ValueStore::extract(void** v) const {
-	if ((*vptr_)[call_extract] == 0) {
-		return *v;
-	}
-	return reinterpret_cast<void*>(v);
-}
-
+    void *ValueStore::extract(void **v) const {
+        if ((*vptr_)[call_extract] == 0) {
+            return *v;
+        }
+        return reinterpret_cast<void *>(v);
+    }
 }
 

@@ -37,44 +37,44 @@
 // event handler.
 class ModelPrinter : public Clasp::EventHandler {
 public:
-	ModelPrinter() {}
-	bool onModel(const Clasp::Solver& s, const Clasp::Model& m) {
-		printModel(s.symbolTable(), m);
-		return true;
-	}
+    ModelPrinter() { }
+    bool onModel(const Clasp::Solver &s, const Clasp::Model &m) {
+        printModel(s.symbolTable(), m);
+        return true;
+    }
 };
 
 void example2() {
-	// Aggregates configuration options.
-	// Using config, you can control many parts of the search, e.g.
-	// - the amount and kind of preprocessing
-	// - the enumerator to use and the number of models to compute
-	// - the heuristic used for decision making
-	// - the restart strategy
-	// - ...
-	Clasp::ClaspConfig config;
-	// We want to compute all models but
-	// otherwise we use the default configuration.
-	config.solve.numModels = 0;
-	
-	// The "interface" to the clasp library.
-	Clasp::ClaspFacade libclasp;
+    // Aggregates configuration options.
+    // Using config, you can control many parts of the search, e.g.
+    // - the amount and kind of preprocessing
+    // - the enumerator to use and the number of models to compute
+    // - the heuristic used for decision making
+    // - the restart strategy
+    // - ...
+    Clasp::ClaspConfig config;
+    // We want to compute all models but
+    // otherwise we use the default configuration.
+    config.solve.numModels = 0;
 
-	// LogicProgram provides the interface for defining logic programs.
-	// The returned object is already setup and ready to use.
-	// See logic_program.h for details.
-	Clasp::Asp::LogicProgram& asp = libclasp.startAsp(config);
-	asp.setAtomName(1, "a");
-	asp.setAtomName(2, "b");
-	asp.startRule(Clasp::Asp::BASICRULE).addHead(1).addToBody(2, false).endRule();
-	asp.startRule(Clasp::Asp::BASICRULE).addHead(2).addToBody(1, false).endRule();
-	
-	// We are done with problem setup. 
-	// Prepare the problem for solving.
-	libclasp.prepare();
+    // The "interface" to the clasp library.
+    Clasp::ClaspFacade libclasp;
 
-	// Start the actual solving process.
-	ModelPrinter printer;
-	libclasp.solve(&printer);
-	std::cout << "No more models!" << std::endl;
+    // LogicProgram provides the interface for defining logic programs.
+    // The returned object is already setup and ready to use.
+    // See logic_program.h for details.
+    Clasp::Asp::LogicProgram &asp = libclasp.startAsp(config);
+    asp.setAtomName(1, "a");
+    asp.setAtomName(2, "b");
+    asp.startRule(Clasp::Asp::BASICRULE).addHead(1).addToBody(2, false).endRule();
+    asp.startRule(Clasp::Asp::BASICRULE).addHead(2).addToBody(1, false).endRule();
+
+    // We are done with problem setup.
+    // Prepare the problem for solving.
+    libclasp.prepare();
+
+    // Start the actual solving process.
+    ModelPrinter printer;
+    libclasp.solve(&printer);
+    std::cout << "No more models!" << std::endl;
 }
