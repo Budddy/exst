@@ -380,17 +380,17 @@ desc "      <arg>: {auto|frumpy|jumpy|tweety|handy|crafty|trendy" MANY_ARG "|<fi
         };
 // nodes_g[-k]: entry for key k
         static const NodeKey nodes_g[] = {
-/* 0: config */ {"configuration", KEY_INIT_DESC("Initializes this configuration\n"), 0, 0},
+/* 0: config */ {"configuration", KEY_INIT_DESC("Initializes this configuration\n"), 0,                            0},
 /* 1: */
                 {"solver.", "Solver Options",                                        option_category_solver_begin, option_category_search_end},
 /* 2: */
-                {"asp.",    "Asp Options",                                           option_category_asp_begin, option_category_asp_end},
+                {"asp.",    "Asp Options",                                           option_category_asp_begin,    option_category_asp_end},
 /* 3: */
-                {"solve.",  "Solve Options",                                         option_category_solve_begin, option_category_solve_end},
+                {"solve.",  "Solve Options",                                         option_category_solve_begin,  option_category_solve_end},
 /* 4: */
-                {"tester.", "Tester Options",                                        key_solver, option_category_context_end},
+                {"tester.", "Tester Options",                                        key_solver,                   option_category_context_end},
 /* 5: */
-                {".",       "Options",                                               key_tester, option_category_context_end}
+                {".",       "Options",                                               key_tester,                   option_category_context_end}
         };
         static uint32 makeKeyHandle(int16 kId, uint32 mode, uint32 sId) {
             assert(sId <= 255 && mode <= 255);

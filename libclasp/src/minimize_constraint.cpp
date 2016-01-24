@@ -1305,7 +1305,7 @@ namespace Clasp {
             last = first + (1 + (c == comp_disj));
         }
         Literal temp[3][3] = {
-                {(~head) ^ sign, body1 ^ sign, body2 ^ sign},
+                {(~head) ^ sign, body1 ^ sign,    body2 ^ sign},
                 {head ^ sign,    (~body1) ^ sign, negLit(0)},
                 {head ^ sign,    (~body2) ^ sign, negLit(0)}
         };

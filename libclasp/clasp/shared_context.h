@@ -209,9 +209,9 @@ namespace Clasp {
             NANT = 0x4u, // var in NAnt(P)?
             PROJECT = 0x8u, // do we project on this var?
             BODY = 0x10u, // is this var representing a body?
-                    EQ = 0x20u, // is the var representing both a body and an atom?
-                    DISJ = 0x40u, // in non-hcf disjunction?
-                    FROZEN = 0x80u // is the variable frozen?
+            EQ = 0x20u, // is the var representing both a body and an atom?
+            DISJ = 0x40u, // in non-hcf disjunction?
+            FROZEN = 0x80u // is the variable frozen?
         };
         VarInfo() : rep(0) { }
 
