@@ -26,3 +26,8 @@
 *.exe
 *.out
 *.app
+
+# Preject files
+.idea
+.sconf_temp
+build/*
