@@ -173,6 +173,11 @@ extern const char *clasp_format(char *buf, unsigned size, const char *m, ...);
 
 #include <malloc.h>
 
+#if defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
+#define _aligned_malloc __mingw_aligned_malloc
+#define _aligned_free  __mingw_aligned_free
+#endif //MINGW
+
 inline void *alignedAlloc(size_t size, size_t align) { return _aligned_malloc(size, align); }
 inline void alignedFree(void *p) { _aligned_free(p); }
 #else
