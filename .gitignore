@@ -27,7 +27,9 @@
 *.out
 *.app
 
-# Preject files
+# Project files
 .idea
 .sconf_temp
 build/*
+*.zip
+TestData/*
