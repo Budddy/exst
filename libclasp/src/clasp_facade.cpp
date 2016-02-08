@@ -32,6 +32,8 @@
 
 #if WITH_THREADS
 #include <clasp/util/mutex.h>
+#include <clasp/extended_stats_calculator.h>
+
 #endif
 namespace Clasp {
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -437,6 +439,8 @@ namespace Clasp {
         EnumOptions &en = config_->solve;
         if (prepared()) { return ok(); }
         if (prg && prg->endProgram()) {
+            exst::GraphStatsCalculator *calc = new exst::GraphStatsCalculator();
+            calc->buildGraph((const Asp::LogicProgram *) prg);
             assume_.clear();
             prg->getAssumptions(assume_);
             if ((m = en.optMode != MinimizeMode_t::ignore ? prg->getMinimizeConstraint(&en.optBound) : 0) != 0) {
