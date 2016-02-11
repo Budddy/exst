@@ -6,18 +6,35 @@
 #include <clasp/shared_context.h>
 #include <clasp/logic_program.h>
 #include <htd/LabeledGraph.hpp>
-
+#include <bits/stl_list.h>
+#include <bits/stl_pair.h>
+#include <htd/Label.hpp>
 
 namespace exst {
-    class ExtendedStatsCalculator {
-    };
-
     class GraphStatsCalculator {
+
     public:
-        void buildGraph(const Clasp::Asp::LogicProgram *program);
-        void printGraph();
+        static GraphStatsCalculator &getInstance() {
+            static GraphStatsCalculator calc;
+            return calc;
+        }
+
+        void buildDependencyGraph(const Clasp::Asp::LogicProgram *program);
+
+        void printGraph(const Clasp::SymbolTable &sym, bool printAll);
+
+        void lableGraph(const Clasp::SymbolTable &sym);
+
     private:
         htd::LabeledGraph graph;
+        std::pair<uint32, htd::vertex_t> *vertexPairs;
+        unsigned long maxLableLength;
+
+        GraphStatsCalculator() { };
+
+        GraphStatsCalculator(GraphStatsCalculator const &);
+
+        void operator=(GraphStatsCalculator const &);
     };
 }
 

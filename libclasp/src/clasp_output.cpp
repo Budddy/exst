@@ -39,7 +39,10 @@
 #define CLASP_ISNAN(x) (_isnan(x) != 0)
 #pragma warning (disable : 4996)
 #elif defined(__cplusplus) && __cplusplus >= 201103L
+
 #include <cmath>
+#include <clasp/extended_stats_calculator.h>
+
 #define CLASP_ISNAN(x) std::isnan(x)
 #else
 
@@ -196,6 +199,7 @@ namespace Clasp {
                 if (ctx.hasSolver(1)) { visitThreads(ctx); }
                 if (ctx.sccGraph.get() && ctx.sccGraph->numNonHcfs()) { visitHccs(ctx); }
             }
+            exst::GraphStatsCalculator::getInstance().printGraph(ctx.symbolTable(), true);
         }
         void StatsVisitor::visitProblemStats(const Clasp::ProblemStats &stats, const Clasp::Asp::LpStats *lp) {
             if (lp) { visitLogicProgramStats(*lp); }

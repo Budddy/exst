@@ -21,8 +21,10 @@
 #include <clasp/clause.h>
 
 #if (defined(__cplusplus) && __cplusplus >= 201103L) || (defined(_MSC_VER) && _MSC_VER > 1500) || (defined(_LIBCPP_VERSION))
+
 #include <unordered_set>
-typedef std::unordered_set<Clasp::Constraint*> ConstraintSet;
+
+typedef std::unordered_set<Clasp::Constraint *> ConstraintSet;
 #else
 #if defined(_MSC_VER)
 #include <unordered_set>
