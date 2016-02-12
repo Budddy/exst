@@ -21,20 +21,20 @@ namespace exst {
 
         void buildDependencyGraph(const Clasp::Asp::LogicProgram *program);
 
-        void printGraph(const Clasp::SymbolTable &sym, bool printAll);
-
-        void lableGraph(const Clasp::SymbolTable &sym);
+        void printGraph(bool printAll);
 
     private:
         htd::LabeledGraph graph;
         std::pair<uint32, htd::vertex_t> *vertexPairs;
-        unsigned long maxLableLength;
+        ulong maxLableLength;
+        ulong maxIdLength;
 
         GraphStatsCalculator() { };
 
         GraphStatsCalculator(GraphStatsCalculator const &);
 
         void operator=(GraphStatsCalculator const &);
+
     };
 }
 
