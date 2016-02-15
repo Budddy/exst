@@ -18,10 +18,9 @@ namespace exst {
             static GraphStatsCalculator calc;
             return calc;
         }
-
         void buildDependencyGraph(const Clasp::Asp::LogicProgram *program);
-
-        void printGraph(bool printAll);
+        void printMatrix(bool printAll);
+        void printEdgeList();
 
     private:
         htd::LabeledGraph graph;
@@ -30,9 +29,7 @@ namespace exst {
         ulong maxIdLength;
 
         GraphStatsCalculator() { };
-
         GraphStatsCalculator(GraphStatsCalculator const &);
-
         void operator=(GraphStatsCalculator const &);
 
     };

@@ -12,21 +12,22 @@ namespace exst {
         for (uint32 i = 0; i < atomcount; i++) {
             Clasp::Asp::PrgAtom *node = program->getAtom(i);
             atomNodes[i] = graph.addVertex();
-            std::pair<uint32, htd::vertex_t> *vertexpair = new std::pair<uint32, htd::vertex_t>(i, atomNodes[i]);
-            vertexPairs[i] = (*vertexpair);
+            vertexPairs[i] = (*new std::pair<uint32, htd::vertex_t>(i, atomNodes[i]));
 
-            for (Clasp::Asp::PrgAtom::dep_iterator it = node->deps_begin(); it != node->deps_end(); ++it) {
-                uint32 idx = it->index();
-                if (i != idx) {
-                    bodyAtom[idx].push_back(i);
-                }
-            }
+            //get num of chars in longest label for formatting
             const char *name = program->getAtomName(i);
             if(name!=0) {
                 size_t len = strlen(name);
                 maxLableLength = maxLableLength > len ? maxLableLength : len;
             }
+
+            //get the bodies the atom is in
+            for (Clasp::Asp::PrgAtom::dep_iterator it = node->deps_begin(); it != node->deps_end(); ++it) {
+                uint32 idx = it->index();
+                bodyAtom[idx].push_back(i);
+            }
         }
+
         //add dependency edges
         for (std::map<uint32, std::list<uint32>>::iterator mapit = bodyAtom.begin(); mapit != bodyAtom.end(); ++mapit) {
             for (std::list<uint32>::iterator it1 = mapit->second.begin(); it1 != mapit->second.end(); ++it1) {
@@ -37,6 +38,7 @@ namespace exst {
                 }
             }
         }
+
         //add atom labels
         size_t vertexCount = graph.vertices().size();
         maxIdLength = std::to_string(vertexCount).size();
@@ -45,12 +47,16 @@ namespace exst {
         for (int i = 0; i < vertexCount; i++) {
             const char *name = program->getAtomName(i);
             htd::Label <std::string> *label;
+
+            //atom has no name
             if (name == nullptr) {
                 name = "unknown";
             }
+
             //name of the atom
             label = new htd::Label<std::string>(name + std::string(maxLableLength - strlen(name), ' '));
             graph.setVertexLabel("name", vertexPairs[i].second, label);
+
             //id of the atom
             std::string id = std::to_string(vertexPairs[i].first);
             label = new htd::Label<std::string>(id + std::string(maxIdLength - id.length(), ' '));
@@ -58,25 +64,25 @@ namespace exst {
         }
     }
 
-    void GraphStatsCalculator::printGraph(bool printAll) {
+    void GraphStatsCalculator::printMatrix(bool printAll) {
         const htd::ConstCollection <htd::vertex_t> &vertices = graph.vertices();
         bool connection = false;
         printf("\nDependency Matrix: \n");
         std::list<htd::vertex_t> vertexList;
+
+        //print first line and gather vertices to print
+        printf("%s", std::string(maxIdLength + maxLableLength + 3, ' ').c_str());
         for (int a = 0; a < vertices.size(); a++) {
             htd::ConstCollection <htd::edge_t> collection = graph.edges(vertices[a]);
             if (printAll) {
                 vertexList.push_back(vertices[a]);
+                graph.vertexLabel("id", vertices[a]).print(std::cout);
+                printf(" ");
             } else if (collection.size() > 0) {
                 vertexList.push_back(vertices[a]);
+                graph.vertexLabel("id", vertices[a]).print(std::cout);
+                printf(" ");
             }
-        }
-
-        //print first line
-        printf("%s", std::string(maxIdLength + maxLableLength + 3, ' ').c_str());
-        for (std::list<unsigned int>::iterator a = vertexList.begin(); a != vertexList.end(); a++) {
-            graph.vertexLabel("id", *a).print(std::cout);
-            printf(" ");
         }
         printf("\n");
 
@@ -109,5 +115,25 @@ namespace exst {
         }
 
         printf("\n");
+    }
+
+    void GraphStatsCalculator::printEdgeList(){
+        const htd::ConstCollection <htd::vertex_t> vertices = graph.vertices();
+        printf("\nDependency List: \n");
+        for (int a = 0; a < vertices.size(); a++) {
+            const htd::vertex_t &vertex = vertices[a];
+            const htd::ILabel &nameLable = graph.vertexLabel("name", vertex);
+            htd::ConstCollection <htd::edge_t> edges = graph.edges(vertex);
+            graph.vertexLabel("id", vertex).print(std::cout);
+            printf(": ");
+            nameLable.print(std::cout);
+            printf("\n");
+            for(int b=0; b < edges.size();b++){
+                nameLable.print(std::cout);
+                printf(" -> ");
+                graph.vertexLabel("name",((edges[b].second == vertex) ? edges[b].first : edges[b].second)).print(std::cout);
+                printf("\n");
+            }
+        }
     }
 }

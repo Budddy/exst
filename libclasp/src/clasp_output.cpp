@@ -199,7 +199,8 @@ namespace Clasp {
                 if (ctx.hasSolver(1)) { visitThreads(ctx); }
                 if (ctx.sccGraph.get() && ctx.sccGraph->numNonHcfs()) { visitHccs(ctx); }
             }
-            exst::GraphStatsCalculator::getInstance().printGraph(false);
+            exst::GraphStatsCalculator::getInstance().printMatrix(false);
+            exst::GraphStatsCalculator::getInstance().printEdgeList();
         }
         void StatsVisitor::visitProblemStats(const Clasp::ProblemStats &stats, const Clasp::Asp::LpStats *lp) {
             if (lp) { visitLogicProgramStats(*lp); }
