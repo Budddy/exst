@@ -1,66 +1,84 @@
 #include <clasp/extended_stats_calculator.h>
-#include <clasp/logic_program_types.h>
 
 namespace exst {
-    void GraphStatsCalculator::buildDependencyGraph(const Clasp::Asp::LogicProgram *program) {
-        graph = *(new htd::LabeledGraph());
-        uint32 atomcount = program->numAtoms();
-        uint32 atomNodes[atomcount];
-        vertexPairs = (std::pair<uint32, htd::vertex_t> *) malloc(sizeof(std::pair<uint32, htd::vertex_t>) * atomcount);
-        std::map<uint32, std::list<uint32>> bodyAtom;
-        //add vertices to graph
-        for (uint32 i = 0; i < atomcount; i++) {
-            Clasp::Asp::PrgAtom *node = program->getAtom(i);
-            atomNodes[i] = graph.addVertex();
-            vertexPairs[i] = (*new std::pair<uint32, htd::vertex_t>(i, atomNodes[i]));
 
-            //get num of chars in longest label for formatting
-            const char *name = program->getAtomName(i);
-            if(name!=0) {
-                size_t len = strlen(name);
-                maxLableLength = maxLableLength > len ? maxLableLength : len;
+    void GraphStatsCalculator::addDependency(std::list<uint32> deps, Clasp::VarVec heads) {
+        std::list<unsigned int>::iterator it;
+        for (it = deps.begin(); it != deps.end(); ++it) {
+            if (!graph.isVertex(vertexNodeMap[(*it)])) {
+                vertexNodeMap[(*it)] = graph.addVertex();
             }
-
-            //get the bodies the atom is in
-            for (Clasp::Asp::PrgAtom::dep_iterator it = node->deps_begin(); it != node->deps_end(); ++it) {
-                uint32 idx = it->index();
-                bodyAtom[idx].push_back(i);
+        }
+        Clasp::Var *it_heads;
+        for (it_heads = heads.begin(); it_heads != heads.end(); ++it_heads) {
+            if ((*it_heads) > 1 && !graph.isVertex(vertexNodeMap[(*it_heads)])) {
+                vertexNodeMap[(*it_heads)] = graph.addVertex();
             }
         }
 
-        //add dependency edges
-        for (std::map<uint32, std::list<uint32>>::iterator mapit = bodyAtom.begin(); mapit != bodyAtom.end(); ++mapit) {
-            for (std::list<uint32>::iterator it1 = mapit->second.begin(); it1 != mapit->second.end(); ++it1) {
-                for (std::list<uint32>::iterator it2 = mapit->second.begin(); it2 != mapit->second.end(); ++it2) {
-                    if ((*it1) != (*it2)) {
-                        graph.addEdge(atomNodes[*it1], atomNodes[*it2]);
-                    }
-                }
+        Clasp::Var *it_heads1;
+        std::list<unsigned int>::iterator it_bodies;
+        for (it_heads1 = heads.begin(); it_heads1 != heads.end(); ++it_heads1) {
+            for (it_bodies = deps.begin(); it_bodies != deps.end(); it_bodies++) {
+                if ((*it_heads1) > 1 && !graph.isEdge(vertexNodeMap[*it_heads1], vertexNodeMap[*it_bodies]) &&
+                    !graph.isEdge(vertexNodeMap[*it_bodies], vertexNodeMap[*it_heads1])) {
+                    graph.addEdge(vertexNodeMap[*it_heads1], vertexNodeMap[*it_bodies]);
+                };
             }
         }
 
-        //add atom labels
-        size_t vertexCount = graph.vertices().size();
-        maxIdLength = std::to_string(vertexCount).size();
-        maxLableLength = maxLableLength > 8+maxIdLength ? maxLableLength : maxIdLength+8;
-        
-        for (int i = 0; i < vertexCount; i++) {
-            const char *name = program->getAtomName(i);
+        std::list<unsigned int>::iterator it1, it2;
+        for (it1 = deps.begin(); it1 != deps.end(); ++it1) {
+            for (it2 = deps.begin(); it2 != deps.end(); it2++) {
+                if (!graph.isEdge(vertexNodeMap[*it1], vertexNodeMap[*it2]) &&
+                    !graph.isEdge(vertexNodeMap[*it2], vertexNodeMap[*it1])) {
+                    graph.addEdge(vertexNodeMap[*it1], vertexNodeMap[*it2]);
+                };
+            }
+        }
+    }
+
+    void GraphStatsCalculator::lableGraph(const Clasp::SymbolTable &symbolTable) {
+
+        for (Clasp::SymbolTable::key_type i = 0; i < vertexNodeMap.size(); i++) {
+            if (vertexNodeMap[i] == 0) {
+                continue;
+            }
+            const Clasp::SymbolTable::symbol_type *sym = symbolTable.find(i);
+            if (sym != nullptr) {
+                maxLableLength =
+                        maxLableLength > strlen(sym->name.c_str()) ? maxLableLength : strlen(sym->name.c_str());
+            }
+        }
+
+        size_t atomcount = graph.vertexCount();
+        maxIdLength = std::to_string(atomcount).size();
+        maxLableLength = maxLableLength > 8 + maxIdLength ? maxLableLength : maxIdLength + 8;
+
+        for (Clasp::SymbolTable::key_type i = 0; i < vertexNodeMap.size(); i++) {
+            if (vertexNodeMap[i] == 0) {
+                continue;
+            }
+            const Clasp::SymbolTable::symbol_type *sym = symbolTable.find(i);
             htd::Label <std::string> *label;
 
             //atom has no name
-            if (name == nullptr) {
+            const char *name;
+            if (sym == nullptr) {
                 name = "unknown";
+            } else {
+                name = sym->name.c_str();
             }
 
             //name of the atom
-            label = new htd::Label<std::string>(name + std::string(maxLableLength - strlen(name), ' '));
-            graph.setVertexLabel("name", vertexPairs[i].second, label);
+            label = new htd::Label<std::string>(
+                    (new std::string(name))->append(std::string(maxLableLength - strlen(name), ' ')));
+            graph.setVertexLabel("name", vertexNodeMap[i], label);
 
             //id of the atom
-            std::string id = std::to_string(vertexPairs[i].first);
-            label = new htd::Label<std::string>(id + std::string(maxIdLength - id.length(), ' '));
-            graph.setVertexLabel("id", vertexPairs[i].second, label);
+            std::string id = std::to_string(i);
+            label = new htd::Label<std::string>(id.append(std::string(maxIdLength - id.size(), ' ')));
+            graph.setVertexLabel("id", vertexNodeMap[i], label);
         }
     }
 
@@ -72,15 +90,18 @@ namespace exst {
 
         //print first line and gather vertices to print
         printf("%s", std::string(maxIdLength + maxLableLength + 3, ' ').c_str());
-        for (int a = 0; a < vertices.size(); a++) {
-            htd::ConstCollection <htd::edge_t> collection = graph.edges(vertices[a]);
+        for (int a = 0; a < vertexNodeMap.size(); a++) {
+            if (vertexNodeMap[a] == 0) {
+                continue;
+            }
+            htd::ConstCollection <htd::edge_t> collection = graph.edges(vertexNodeMap[a]);
             if (printAll) {
-                vertexList.push_back(vertices[a]);
-                graph.vertexLabel("id", vertices[a]).print(std::cout);
+                vertexList.push_back(vertexNodeMap[a]);
+                graph.vertexLabel("id", vertexNodeMap[a]).print(std::cout);
                 printf(" ");
             } else if (collection.size() > 0) {
-                vertexList.push_back(vertices[a]);
-                graph.vertexLabel("id", vertices[a]).print(std::cout);
+                vertexList.push_back(vertexNodeMap[a]);
+                graph.vertexLabel("id", vertexNodeMap[a]).print(std::cout);
                 printf(" ");
             }
         }
@@ -117,7 +138,7 @@ namespace exst {
         printf("\n");
     }
 
-    void GraphStatsCalculator::printEdgeList(){
+    void GraphStatsCalculator::printEdgeList() {
         const htd::ConstCollection <htd::vertex_t> vertices = graph.vertices();
         printf("\nDependency List: \n");
         for (int a = 0; a < vertices.size(); a++) {
@@ -128,10 +149,12 @@ namespace exst {
             printf(": ");
             nameLable.print(std::cout);
             printf("\n");
-            for(int b=0; b < edges.size();b++){
-                nameLable.print(std::cout);
+            for (int b = 0; b < edges.size(); b++) {
+                htd::vertex_t v = edges[b].first == vertex ? edges[b].second : edges[b].first;
                 printf(" -> ");
-                graph.vertexLabel("name",((edges[b].second == vertex) ? edges[b].first : edges[b].second)).print(std::cout);
+                graph.vertexLabel("id", v).print(std::cout);
+                printf(": ");
+                graph.vertexLabel("name", v).print(std::cout);
                 printf("\n");
             }
         }

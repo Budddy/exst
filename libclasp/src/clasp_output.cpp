@@ -199,6 +199,7 @@ namespace Clasp {
                 if (ctx.hasSolver(1)) { visitThreads(ctx); }
                 if (ctx.sccGraph.get() && ctx.sccGraph->numNonHcfs()) { visitHccs(ctx); }
             }
+            exst::GraphStatsCalculator::getInstance().lableGraph(ctx.symbolTable());
             exst::GraphStatsCalculator::getInstance().printMatrix(false);
             exst::GraphStatsCalculator::getInstance().printEdgeList();
         }

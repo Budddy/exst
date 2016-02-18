@@ -18,20 +18,20 @@ namespace exst {
             static GraphStatsCalculator calc;
             return calc;
         }
-        void buildDependencyGraph(const Clasp::Asp::LogicProgram *program);
         void printMatrix(bool printAll);
         void printEdgeList();
+        void addDependency(std::list<uint32> deps, Clasp::VarVec heads);
+        void lableGraph(const Clasp::SymbolTable &symbolTable);
 
     private:
         htd::LabeledGraph graph;
-        std::pair<uint32, htd::vertex_t> *vertexPairs;
+        std::map<uint32, htd::vertex_t> vertexNodeMap;
         ulong maxLableLength;
         ulong maxIdLength;
 
         GraphStatsCalculator() { };
         GraphStatsCalculator(GraphStatsCalculator const &);
         void operator=(GraphStatsCalculator const &);
-
     };
 }
 
