@@ -256,13 +256,13 @@ namespace Clasp {
         }
     }
     bool LparseParser::parseBody(uint32 lits, uint32 neg, bool readWeights) {
-        std::list<uint32> dep_list;
+        std::vector<uint32> dep_list;
         for (uint32 i = 0; i != lits; ++i) {
             Var atom = parseAtom();
             dep_list.push_back(atom);
             active_->addToBody(atom, i >= neg, 1);
         }
-        exst::GraphStatsCalculator::getInstance().addDependency(dep_list, active()->heads);
+        exst::GraphStatsCalculator::getInstance().addDep(dep_list, active()->heads, neg);
         if (readWeights) {
             for (uint32 i = 0; i < lits; ++i) {
                 active_->body[i].second = input()->parseInt(0, INT_MAX, "Weight Rule: bad or missing weight!");

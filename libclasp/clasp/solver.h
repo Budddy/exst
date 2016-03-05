@@ -27,6 +27,7 @@
 #include <clasp/solver_types.h>
 #include <clasp/solver_strategies.h>
 #include <clasp/shared_context.h>
+#include <clasp/extended_stats_calculator.h>
 
 namespace Clasp {
 
@@ -1162,13 +1163,16 @@ namespace Clasp {
         }
         static Literal selectLiteral(Solver &s, Var v, int signScore) {
             ValueSet prefs = s.pref(v);
+            Literal selected;
             if (signScore != 0 && !prefs.has(ValueSet::user_value | ValueSet::saved_value | ValueSet::pref_value)) {
-                return Literal(v, signScore < 0);
+                selected = Literal(v, signScore < 0);
             }
             else if (!prefs.empty()) {
-                return Literal(v, prefs.sign());
+                selected = Literal(v, prefs.sign());
             }
-            return s.defaultLit(v);
+            selected = s.defaultLit(v);
+            exst::GraphStatsCalculator::getInstance().addLiteral(selected);
+            return selected;
         }
     private:
         DecisionHeuristic(const DecisionHeuristic &);

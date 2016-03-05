@@ -2,65 +2,92 @@
 
 namespace exst {
 
-    void GraphStatsCalculator::addDependency(std::list<uint32> deps, Clasp::VarVec heads) {
-        std::list<unsigned int>::iterator it;
-        for (it = deps.begin(); it != deps.end(); ++it) {
-            if (!graph.isVertex(vertexNodeMap[(*it)])) {
-                vertexNodeMap[(*it)] = graph.addVertex();
+    void GraphStatsCalculator::addDep(std::vector<uint32> deps, Clasp::VarVec heads, uint32 negative) {
+        addRuleDependencyGraph(deps, heads, negative);
+        addRuleIncidenceGraph(deps, heads, negative);
+    }
+
+    void GraphStatsCalculator::addRuleIncidenceGraph(std::vector<uint32> deps, Clasp::VarVec heads, uint32 negative) {
+        std::map<int32, htd::vertex_t> &vertexNodeMap = istats.getLitVertexMap();
+        std::map<int32, htd::vertex_t> &ruleVertexMap = istats.getRuleVertexMap();
+        htd::LabeledGraph &graph = istats.getGraph();
+        htd::vertex_t vertex = graph.addVertex();
+        ruleVertexMap[istats.getRuleCount()] = vertex;
+        istats.getRuleCount()++;
+
+        // add body atoms
+        for (int i =0; i< deps.size();++i) {
+            if (!graph.isVertex(vertexNodeMap[deps[i]])) {
+                vertexNodeMap[deps[i]] = graph.addVertex();
             }
-        }
-        Clasp::Var *it_heads;
-        for (it_heads = heads.begin(); it_heads != heads.end(); ++it_heads) {
-            if ((*it_heads) > 1 && !graph.isVertex(vertexNodeMap[(*it_heads)])) {
-                vertexNodeMap[(*it_heads)] = graph.addVertex();
+            if(!graph.isEdge(vertex,vertexNodeMap[deps[i]])){
+                graph.addEdge(vertex,vertexNodeMap[deps[i]]);
             }
         }
 
-        Clasp::Var *it_heads1;
-        std::list<unsigned int>::iterator it_bodies;
-        for (it_heads1 = heads.begin(); it_heads1 != heads.end(); ++it_heads1) {
-            for (it_bodies = deps.begin(); it_bodies != deps.end(); it_bodies++) {
-                if ((*it_heads1) > 1 && !graph.isEdge(vertexNodeMap[*it_heads1], vertexNodeMap[*it_bodies]) &&
-                    !graph.isEdge(vertexNodeMap[*it_bodies], vertexNodeMap[*it_heads1])) {
-                    graph.addEdge(vertexNodeMap[*it_heads1], vertexNodeMap[*it_bodies]);
+        // add head atoms
+        for (int i =0;i< heads.size(); ++i) {
+            if (!graph.isVertex(vertexNodeMap[heads[i]])) {
+                vertexNodeMap[heads[i]] = graph.addVertex();
+            }
+            if(!graph.isEdge(vertex,vertexNodeMap[heads[i]])){
+                graph.addEdge(vertex,vertexNodeMap[heads[i]]);
+            }
+        }
+    }
+
+    void GraphStatsCalculator::addRuleDependencyGraph(std::vector<uint32> deps, Clasp::VarVec heads, uint32 negative) {
+        std::map<int32, htd::vertex_t> &vertexNodeMap = dstats.getLitVertexMap();
+        htd::LabeledGraph &graph = dstats.getGraph();
+        // add body atoms to graph if they are not in it
+        for (int i =0; i< deps.size();++i) {
+            if (!graph.isVertex(vertexNodeMap[deps[i]])) {
+                vertexNodeMap[deps[i]] = graph.addVertex();
+            }
+        }
+
+        // add head atoms to graph if they are not in it
+        for (int i =0;i< heads.size(); ++i) {
+            if (heads[i] > 1 && !graph.isVertex(vertexNodeMap[heads[i]])) {
+                vertexNodeMap[heads[i]] = graph.addVertex();
+            }
+        }
+
+        for (int a =0;a< heads.size();++a) {
+            for (int b =0;b<deps.size();++b) {
+                if ((heads[a]) > 1 && !graph.isEdge(vertexNodeMap[heads[a]], vertexNodeMap[deps[b]]) &&
+                    !graph.isEdge(vertexNodeMap[deps[b]], vertexNodeMap[heads[a]])) {
+                    graph.addEdge(vertexNodeMap[heads[a]], vertexNodeMap[deps[b]]);
                 };
             }
         }
 
-        std::list<unsigned int>::iterator it1, it2;
-        for (it1 = deps.begin(); it1 != deps.end(); ++it1) {
-            for (it2 = deps.begin(); it2 != deps.end(); it2++) {
-                if (!graph.isEdge(vertexNodeMap[*it1], vertexNodeMap[*it2]) &&
-                    !graph.isEdge(vertexNodeMap[*it2], vertexNodeMap[*it1])) {
-                    graph.addEdge(vertexNodeMap[*it1], vertexNodeMap[*it2]);
-                };
+        if (heads.size() == 0 || heads.front() == 1) {
+            for (int a =0;a<deps.size();++a) {
+                for (int b =0;b<deps.size();++b) {
+                    if ((deps[a]) != (deps[b]) && !graph.isEdge(vertexNodeMap[deps[a]], vertexNodeMap[deps[b]]) && !graph.isEdge(vertexNodeMap[deps[b]], vertexNodeMap[deps[a]])) {
+                        graph.addEdge(vertexNodeMap[deps[a]], vertexNodeMap[deps[b]]);
+                    };
+                }
             }
         }
     }
 
     void GraphStatsCalculator::lableGraph(const Clasp::SymbolTable &symbolTable) {
+        lableDepGraph(symbolTable);
+        lableInzGraph(symbolTable);
+    }
+    
+    void GraphStatsCalculator::lableInzGraph(const Clasp::SymbolTable &symbolTable) {
+        std::map<int32, htd::vertex_t> &litVertexMap = istats.getLitVertexMap();
+        std::map<int32, htd::vertex_t> &ruleVertexMap = istats.getRuleVertexMap();
+        htd::LabeledGraph &graph = istats.getGraph();
 
-        for (Clasp::SymbolTable::key_type i = 0; i < vertexNodeMap.size(); i++) {
-            if (vertexNodeMap[i] == 0) {
+        for (Clasp::SymbolTable::key_type i = 0; i < litVertexMap.size(); i++) {
+            if (litVertexMap[i] == 0) {
                 continue;
             }
             const Clasp::SymbolTable::symbol_type *sym = symbolTable.find(i);
-            if (sym != nullptr) {
-                maxLableLength =
-                        maxLableLength > strlen(sym->name.c_str()) ? maxLableLength : strlen(sym->name.c_str());
-            }
-        }
-
-        size_t atomcount = graph.vertexCount();
-        maxIdLength = std::to_string(atomcount).size();
-        maxLableLength = maxLableLength > 8 + maxIdLength ? maxLableLength : maxIdLength + 8;
-
-        for (Clasp::SymbolTable::key_type i = 0; i < vertexNodeMap.size(); i++) {
-            if (vertexNodeMap[i] == 0) {
-                continue;
-            }
-            const Clasp::SymbolTable::symbol_type *sym = symbolTable.find(i);
-            htd::Label <std::string> *label;
 
             //atom has no name
             const char *name;
@@ -71,75 +98,66 @@ namespace exst {
             }
 
             //name of the atom
-            label = new htd::Label<std::string>(
-                    (new std::string(name))->append(std::string(maxLableLength - strlen(name), ' ')));
-            graph.setVertexLabel("name", vertexNodeMap[i], label);
+            graph.setVertexLabel("name", litVertexMap[i], new htd::Label<std::string>(name));
 
             //id of the atom
             std::string id = std::to_string(i);
-            label = new htd::Label<std::string>(id.append(std::string(maxIdLength - id.size(), ' ')));
-            graph.setVertexLabel("id", vertexNodeMap[i], label);
+            graph.setVertexLabel("id", litVertexMap[i], new htd::Label<std::string>(id.c_str()));
         }
-    }
 
-    void GraphStatsCalculator::printMatrix(bool printAll) {
-        const htd::ConstCollection <htd::vertex_t> &vertices = graph.vertices();
-        bool connection = false;
-        printf("\nDependency Matrix: \n");
-        std::list<htd::vertex_t> vertexList;
-
-        //print first line and gather vertices to print
-        printf("%s", std::string(maxIdLength + maxLableLength + 3, ' ').c_str());
-        for (int a = 0; a < vertexNodeMap.size(); a++) {
-            if (vertexNodeMap[a] == 0) {
+        for (Clasp::SymbolTable::key_type i = 0; i < ruleVertexMap.size(); i++) {
+            if (ruleVertexMap[i] == 0) {
                 continue;
             }
-            htd::ConstCollection <htd::edge_t> collection = graph.edges(vertexNodeMap[a]);
-            if (printAll) {
-                vertexList.push_back(vertexNodeMap[a]);
-                graph.vertexLabel("id", vertexNodeMap[a]).print(std::cout);
-                printf(" ");
-            } else if (collection.size() > 0) {
-                vertexList.push_back(vertexNodeMap[a]);
-                graph.vertexLabel("id", vertexNodeMap[a]).print(std::cout);
-                printf(" ");
-            }
+            //name of the atom
+            std::string name = "rule:";
+            name.append(std::to_string(i));
+            graph.setVertexLabel("name", ruleVertexMap[i], new htd::Label<std::string>(name.c_str()));
+
+            //id of the atom
+            std::string id = "r_";
+            id.append(std::to_string(i));
+            graph.setVertexLabel("id", ruleVertexMap[i], new htd::Label<std::string>(id.c_str()));
         }
-        printf("\n");
+    }
+    
+    void GraphStatsCalculator::lableDepGraph(const Clasp::SymbolTable &symbolTable) {
+        std::map<int32, htd::vertex_t> &litVertexMap = dstats.getLitVertexMap();
+        htd::LabeledGraph &dependencyGraph = dstats.getGraph();
 
-        for (std::list<unsigned int>::iterator a = vertexList.begin(); a != vertexList.end(); a++) {
-            htd::ConstCollection <htd::edge_t> collection = graph.edges(*a);
-
-            //print id of atom
-            graph.vertexLabel("id", *a).print(std::cout);
-            printf(": ");
-
-            //print name of atom
-            graph.vertexLabel("name", *a).print(std::cout);
-            printf(" ");
-
-            //print connections of atom
-            for (std::list<unsigned int>::iterator b = vertexList.begin(); b != vertexList.end(); b++) {
-                for (int i = 0; i < collection.size(); i++) {
-                    const htd::edge_t &edge = collection[i];
-                    if (a != b && !connection && (edge.second == *b || edge.first == *b)) {
-                        printf("X%s", std::string(maxIdLength, ' ').c_str());
-                        connection = true;
-                    }
-                }
-                if (!connection) {
-                    printf("-%s", std::string(maxIdLength, ' ').c_str());
-                }
-                connection = false;
+        for (Clasp::SymbolTable::key_type i = 0; i < litVertexMap.size(); i++) {
+            if (litVertexMap[i] == 0) {
+                continue;
             }
-            printf("\n");
-        }
+            const Clasp::SymbolTable::symbol_type *sym = symbolTable.find(i);
 
-        printf("\n");
+            //atom has no name
+            const char *name;
+            if (sym == nullptr) {
+                name = "unknown";
+            } else {
+                name = sym->name.c_str();
+            }
+
+            //name of the atom
+            dependencyGraph.setVertexLabel("name", litVertexMap[i], new htd::Label<std::string>(name));
+
+            //id of the atom
+            std::string id = std::to_string(i);
+            dependencyGraph.setVertexLabel("id", litVertexMap[i], new htd::Label<std::string>(id.c_str()));
+        }
     }
 
-    void GraphStatsCalculator::printEdgeList() {
-        const htd::ConstCollection <htd::vertex_t> vertices = graph.vertices();
+    void GraphStatsCalculator::printDepGraph() {
+        printEdgeList(dstats.getGraph());
+    }
+
+    void GraphStatsCalculator::printIncidenceGraph() {
+        printEdgeList(istats.getGraph());
+    }
+
+    void GraphStatsCalculator::printEdgeList(htd::LabeledGraph graph) {
+        htd::ConstCollection <htd::vertex_t> vertices = graph.vertices();
         printf("\nDependency List: \n");
         for (int a = 0; a < vertices.size(); a++) {
             const htd::vertex_t &vertex = vertices[a];
@@ -158,5 +176,13 @@ namespace exst {
                 printf("\n");
             }
         }
+    }
+
+    void GraphStatsCalculator::addLiteral(const Clasp::Literal lit) {
+        bool neg = lit.sign();
+        int32 id = lit.var();
+        id = litIds[id];
+        id = neg ? -id : id;
+        selectedLits.push_back(id);
     }
 }
