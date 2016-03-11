@@ -4,28 +4,28 @@
 #include <clasp/literal.h>
 #include <clasp/shared_context.h>
 //#include <clasp/logic_program.h>
-#include <htd/LabeledGraph.hpp>
+#include <htd/LabeledHypergraph.hpp>
 #include <htd/Label.hpp>
 
 namespace exst {
 
     class IncidenceGraphStats{
     public:
-        htd::LabeledGraph& getGraph(){return inzidenceGraph;};
+        htd::LabeledHypergraph& getGraph(){return inzidenceGraph;};
         std::map<int32, htd::vertex_t>& getLitVertexMap(){return litVertexMap;};
         std::map<int32, htd::vertex_t>& getRuleVertexMap(){return ruleVertexMap;};
         int& getRuleCount(){return rules;};
-        void setCopy(const htd::LabeledGraph & graph){
+        void setCopy(const htd::LabeledHypergraph & graph){
             copyIGraph = graph;
         }
-        htd::LabeledGraph & getCopy(){
+        htd::LabeledHypergraph & getCopy(){
             return copyIGraph;
         }
 
     private:
         //inzidence graph
-        htd::LabeledGraph inzidenceGraph;
-        htd::LabeledGraph copyIGraph;
+        htd::LabeledHypergraph inzidenceGraph;
+        htd::LabeledHypergraph copyIGraph;
         //rulecount
         int rules=0;
         //mapping from graph vertices to literals
@@ -36,11 +36,11 @@ namespace exst {
 
     class DependencyGraphStats{
     public:
-        htd::LabeledGraph& getGraph(){return dependencyGraph;};
+        htd::LabeledHypergraph& getGraph(){return dependencyGraph;};
         std::map<int32, htd::vertex_t>& getLitVertexMap(){return litVertexMap;};
     private:
         //dependency graph
-        htd::LabeledGraph dependencyGraph;
+        htd::LabeledHypergraph dependencyGraph;
         //mapping from graph vertices to literals
         std::map<int32, htd::vertex_t> litVertexMap;
     };
@@ -59,7 +59,7 @@ namespace exst {
         /*
          * prints the dependency graph as edge list
          */
-        void printEdgeList(htd::LabeledGraph graph);
+        void printEdgeList(htd::LabeledHypergraph graph);
 
         /*
          * adds a dependency to the dependency graph

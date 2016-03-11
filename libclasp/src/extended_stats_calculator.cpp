@@ -10,7 +10,7 @@ namespace exst {
     void GraphStatsCalculator::addRuleIncidenceGraph(std::vector<uint32> deps, Clasp::VarVec heads, uint32 negative) {
         std::map<int32, htd::vertex_t> &vertexNodeMap = istats.getLitVertexMap();
         std::map<int32, htd::vertex_t> &ruleVertexMap = istats.getRuleVertexMap();
-        htd::LabeledGraph &graph = istats.getGraph();
+        htd::LabeledHypergraph &graph = istats.getGraph();
         htd::vertex_t vertex = graph.addVertex();
         ruleVertexMap[istats.getRuleCount()] = vertex;
         istats.getRuleCount()++;
@@ -42,7 +42,7 @@ namespace exst {
 
     void GraphStatsCalculator::addRuleDependencyGraph(std::vector<uint32> deps, Clasp::VarVec heads, uint32 negative) {
         std::map<int32, htd::vertex_t> &vertexNodeMap = dstats.getLitVertexMap();
-        htd::LabeledGraph &graph = dstats.getGraph();
+        htd::LabeledHypergraph &graph = dstats.getGraph();
         // add body atoms to graph if they are not in it
         for (int i =0; i< deps.size();++i) {
             if (!graph.isVertex(vertexNodeMap[deps[i]])) {
@@ -85,7 +85,7 @@ namespace exst {
     void GraphStatsCalculator::lableInzGraph(const Clasp::SymbolTable &symbolTable) {
         std::map<int32, htd::vertex_t> &litVertexMap = istats.getLitVertexMap();
         std::map<int32, htd::vertex_t> &ruleVertexMap = istats.getRuleVertexMap();
-        htd::LabeledGraph &graph = istats.getGraph();
+        htd::LabeledHypergraph &graph = istats.getGraph();
 
         for (Clasp::SymbolTable::key_type i = 0; i < litVertexMap.size(); i++) {
             if (litVertexMap[i] == 0) {
@@ -127,7 +127,7 @@ namespace exst {
     
     void GraphStatsCalculator::lableDepGraph(const Clasp::SymbolTable &symbolTable) {
         std::map<int32, htd::vertex_t> &litVertexMap = dstats.getLitVertexMap();
-        htd::LabeledGraph &dependencyGraph = dstats.getGraph();
+        htd::LabeledHypergraph &dependencyGraph = dstats.getGraph();
 
         for (Clasp::SymbolTable::key_type i = 0; i < litVertexMap.size(); i++) {
             if (litVertexMap[i] == 0) {
@@ -160,19 +160,19 @@ namespace exst {
         printEdgeList(istats.getGraph());
     }
 
-    void GraphStatsCalculator::printEdgeList(htd::LabeledGraph graph) {
+    void GraphStatsCalculator::printEdgeList(htd::LabeledHypergraph graph) {
         htd::ConstCollection <htd::vertex_t> vertices = graph.vertices();
         printf("\nDependency List: \n");
         for (int a = 0; a < vertices.size(); a++) {
             const htd::vertex_t &vertex = vertices[a];
             const htd::ILabel &nameLable = graph.vertexLabel("name", vertex);
-            htd::ConstCollection <htd::edge_t> edges = graph.edges(vertex);
+            htd::ConstCollection <htd::Hyperedge> edges = graph.hyperedges(vertex);
             graph.vertexLabel("id", vertex).print(std::cout);
             printf(": ");
             nameLable.print(std::cout);
             printf("\n");
             for (int b = 0; b < edges.size(); b++) {
-                htd::vertex_t v = edges[b].first == vertex ? edges[b].second : edges[b].first;
+                htd::vertex_t v = edges[b][0] == vertex ? edges[b][1] : edges[b][0];
                 printf(" -> ");
                 graph.vertexLabel("id", v).print(std::cout);
                 printf(": ");
@@ -183,18 +183,13 @@ namespace exst {
         std::flush(std::cout);
     }
 
-    void deleteBodyEdges(htd::LabeledGraph &graph, htd::vertex_t vertex) {
+    void deleteBodyEdges(htd::LabeledHypergraph &graph, htd::vertex_t vertex) {
 
-        const htd::ConstCollection<htd::edge_t> &edges = graph.edges(vertex);
+        htd::ConstCollection<htd::Hyperedge> edges = graph.hyperedges(vertex);
         for(int i = 0; i<edges.size();++i){
-            const htd::edge_t &edge = edges[i];
-            htd::ConstCollection<htd::id_t> eid = graph.associatedEdgeIds(edge.first, edge.second);
-            if(eid.size()==0){
-                eid = graph.associatedEdgeIds(edge.second, edge.first);
-            }
-            if(eid.size()>0 && !htd::accessLabel<bool>(graph.edgeLabel("head",eid[0]))){
-                const htd::id_t &id = eid[0];
-                graph.removeEdge(id);
+            const htd::Hyperedge &edge = edges[i];
+            if(!htd::accessLabel<bool>(graph.edgeLabel("head",edge.id()))){
+                graph.removeEdge(edge.id());
             }
         }
     }
@@ -204,19 +199,15 @@ namespace exst {
         int32 id = lit.var();
         const unsigned int &lid = litIds[id];
         uint32 vertex = istats.getLitVertexMap()[lid];
-        htd::LabeledGraph &graph = istats.getGraph();
-        const htd::ConstCollection<htd::edge_t> &edges = graph.edges(vertex);
+        htd::LabeledHypergraph &graph = istats.getGraph();
+        htd::ConstCollection<htd::Hyperedge> edges = graph.hyperedges(vertex);
         for(int i = 0; i<edges.size();++i){
-            const htd::edge_t &edge = edges[i];
-            htd::ConstCollection<htd::id_t> eid = graph.associatedEdgeIds(edge.first, edge.second);
-            if(eid.size()==0){
-               eid = graph.associatedEdgeIds(edge.second, edge.first);
-            }
-            if(eid.size()>0 && htd::accessLabel<bool>(graph.edgeLabel("negative",eid[0]))!=neg && !htd::accessLabel<bool>(graph.edgeLabel("head",eid[0]))){
-                if(edge.first!=vertex){
-                    deleteBodyEdges(graph, edge.first);
+            const htd::Hyperedge &edge = edges[i];
+            if(htd::accessLabel<bool>(graph.edgeLabel("negative",edge.id()))!=neg && !htd::accessLabel<bool>(graph.edgeLabel("head",edge.id()))){
+                if(edge[0]!=vertex){
+                    deleteBodyEdges(graph, edge[0]);
                 }else{
-                    deleteBodyEdges(graph, edge.second);
+                    deleteBodyEdges(graph, edge[1]);
                 }
             }
         }
