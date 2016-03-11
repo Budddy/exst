@@ -1166,12 +1166,16 @@ namespace Clasp {
             Literal selected;
             if (signScore != 0 && !prefs.has(ValueSet::user_value | ValueSet::saved_value | ValueSet::pref_value)) {
                 selected = Literal(v, signScore < 0);
+                exst::GraphStatsCalculator::getInstance().addAtomReduct(selected);
+                return selected;
             }
             else if (!prefs.empty()) {
                 selected = Literal(v, prefs.sign());
+                exst::GraphStatsCalculator::getInstance().addAtomReduct(selected);
+                return selected;
             }
             selected = s.defaultLit(v);
-            exst::GraphStatsCalculator::getInstance().addLiteral(selected);
+            exst::GraphStatsCalculator::getInstance().addAtomReduct(selected);
             return selected;
         }
     private:

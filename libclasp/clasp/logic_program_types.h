@@ -29,6 +29,7 @@
 #include <clasp/claspfwd.h>
 #include <clasp/literal.h>
 #include <functional>
+#include <clasp/extended_stats_calculator.h>
 
 namespace Clasp {
     class ClauseCreator;
@@ -401,7 +402,13 @@ namespace Clasp {
              * know what you are doing!
              */
             //@{
-            void setLiteral(Literal x) { litIdx_ = x.index(); }
+            void setLiteral(Literal x) {
+                Var var = x.var();
+                uint32 idx = x.index();
+                bool negative = x.sign();
+                exst::GraphStatsCalculator::getInstance().addId(id_,x.var());
+                litIdx_ = x.index();
+            }
             void clearLiteral(bool clVal) {
                 litIdx_ = noIdx;
                 if (clVal) val_ = value_free;

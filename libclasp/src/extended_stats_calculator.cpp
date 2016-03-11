@@ -21,7 +21,9 @@ namespace exst {
                 vertexNodeMap[deps[i]] = graph.addVertex();
             }
             if(!graph.isEdge(vertex,vertexNodeMap[deps[i]])){
-                graph.addEdge(vertex,vertexNodeMap[deps[i]]);
+                htd::id_t edge_id = graph.addEdge(vertex,vertexNodeMap[deps[i]]);
+                graph.setEdgeLabel("negative",edge_id,new htd::Label<bool>(i<=negative));
+                graph.setEdgeLabel("head",edge_id,new htd::Label<bool>(false));
             }
         }
 
@@ -31,7 +33,9 @@ namespace exst {
                 vertexNodeMap[heads[i]] = graph.addVertex();
             }
             if(!graph.isEdge(vertex,vertexNodeMap[heads[i]])){
-                graph.addEdge(vertex,vertexNodeMap[heads[i]]);
+                htd::id_t edge_id = graph.addEdge(vertex, vertexNodeMap[heads[i]]);
+                graph.setEdgeLabel("negative",edge_id,new htd::Label<bool>(false));
+                graph.setEdgeLabel("head",edge_id,new htd::Label<bool>(true));
             }
         }
     }
@@ -176,13 +180,57 @@ namespace exst {
                 printf("\n");
             }
         }
+        std::flush(std::cout);
     }
 
-    void GraphStatsCalculator::addLiteral(const Clasp::Literal lit) {
+    void deleteBodyEdges(htd::LabeledGraph &graph, htd::vertex_t vertex) {
+
+        const htd::ConstCollection<htd::edge_t> &edges = graph.edges(vertex);
+        for(int i = 0; i<edges.size();++i){
+            const htd::edge_t &edge = edges[i];
+            htd::ConstCollection<htd::id_t> eid = graph.associatedEdgeIds(edge.first, edge.second);
+            if(eid.size()==0){
+                eid = graph.associatedEdgeIds(edge.second, edge.first);
+            }
+            if(eid.size()>0 && !htd::accessLabel<bool>(graph.edgeLabel("head",eid[0]))){
+                const htd::id_t &id = eid[0];
+                graph.removeEdge(id);
+            }
+        }
+    }
+
+    void GraphStatsCalculator::addAtomReduct(const Clasp::Literal lit) {
         bool neg = lit.sign();
         int32 id = lit.var();
-        id = litIds[id];
-        id = neg ? -id : id;
-        selectedLits.push_back(id);
+        const unsigned int &lid = litIds[id];
+        uint32 vertex = istats.getLitVertexMap()[lid];
+        htd::LabeledGraph &graph = istats.getGraph();
+        const htd::ConstCollection<htd::edge_t> &edges = graph.edges(vertex);
+        for(int i = 0; i<edges.size();++i){
+            const htd::edge_t &edge = edges[i];
+            htd::ConstCollection<htd::id_t> eid = graph.associatedEdgeIds(edge.first, edge.second);
+            if(eid.size()==0){
+               eid = graph.associatedEdgeIds(edge.second, edge.first);
+            }
+            if(eid.size()>0 && htd::accessLabel<bool>(graph.edgeLabel("negative",eid[0]))!=neg && !htd::accessLabel<bool>(graph.edgeLabel("head",eid[0]))){
+                if(edge.first!=vertex){
+                    deleteBodyEdges(graph, edge.first);
+                }else{
+                    deleteBodyEdges(graph, edge.second);
+                }
+            }
+        }
+    }
+
+    void GraphStatsCalculator::resetAssignment() {
+        istats.setCopy(istats.getGraph());
+    }
+
+    void GraphStatsCalculator::printIGraphReduct() {
+        printEdgeList(istats.getCopy());
+    }
+
+    void GraphStatsCalculator::addId(uint32 before, uint32 after){
+        litIds[after] = before;
     }
 }

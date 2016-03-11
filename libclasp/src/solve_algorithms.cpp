@@ -161,6 +161,7 @@ namespace Clasp {
             rsLimit = rs.current();
         }
         sLimit.setMemLimit(p.reduce.memMax);
+        exst::GraphStatsCalculator::getInstance().resetAssignment();
         for (EventType progress(s, EventType::event_restart, 0, 0); cLimit.global;) {
             uint64 minLimit = cLimit.min();
             assert(minLimit);
@@ -244,6 +245,7 @@ namespace Clasp {
                 }
             }
         }
+        exst::GraphStatsCalculator::getInstance().printIGraphReduct();
         dbPinned = db.pinned;
         s.stats.lastRestart = s.stats.analyzed - s.stats.lastRestart;
         if (lim) {
@@ -288,6 +290,7 @@ namespace Clasp {
                                             "#models not 0: last model may not cover consequences."));
                     }
                 }
+                exst::GraphStatsCalculator::getInstance().lableGraph(ctx->symbolTable());
                 return algo->doSolve(*ctx, assume);
             }
             SolveAlgorithm *algo;

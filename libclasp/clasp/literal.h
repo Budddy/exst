@@ -345,7 +345,9 @@ namespace Clasp {
         /*!
          * \pre find(id) != 0
          */
-        const symbol_type &operator[](key_type id) const { return *find(id); }
+        const symbol_type &operator[](key_type id) const {
+            return *find(id);
+        }
         //! Removes all symbols from this table.
         void clear() {
             for (const_iterator it = map_.begin(), end = map_.end(); it != end; ++it) {

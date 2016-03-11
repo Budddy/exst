@@ -1,13 +1,10 @@
 #ifndef CLASP_ABSTRACTEXTENDEDSTATSCALCULATOR_H
 #define CLASP_ABSTRACTEXTENDEDSTATSCALCULATOR_H
 
-#include <clasp/dependency_graph.h>
 #include <clasp/literal.h>
 #include <clasp/shared_context.h>
-#include <clasp/logic_program.h>
+//#include <clasp/logic_program.h>
 #include <htd/LabeledGraph.hpp>
-#include <bits/stl_list.h>
-#include <bits/stl_pair.h>
 #include <htd/Label.hpp>
 
 namespace exst {
@@ -18,10 +15,17 @@ namespace exst {
         std::map<int32, htd::vertex_t>& getLitVertexMap(){return litVertexMap;};
         std::map<int32, htd::vertex_t>& getRuleVertexMap(){return ruleVertexMap;};
         int& getRuleCount(){return rules;};
+        void setCopy(const htd::LabeledGraph & graph){
+            copyIGraph = graph;
+        }
+        htd::LabeledGraph & getCopy(){
+            return copyIGraph;
+        }
 
     private:
         //inzidence graph
         htd::LabeledGraph inzidenceGraph;
+        htd::LabeledGraph copyIGraph;
         //rulecount
         int rules=0;
         //mapping from graph vertices to literals
@@ -70,10 +74,13 @@ namespace exst {
         /*
          * adds a literal set during solving
          */
-        void addLiteral(const Clasp::Literal lit);
+        void addAtomReduct(const Clasp::Literal lit);
         void printDepGraph();
         void printIncidenceGraph();
+        void printIGraphReduct();
+        void addId(uint32 before, uint32 after);
 
+        void resetAssignment();
     private:
         IncidenceGraphStats istats;
         DependencyGraphStats dstats;
