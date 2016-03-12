@@ -1,0 +1,152 @@
+num(1).
+num(2).
+num(3).
+num(4).
+queen(1,1):-not free(1,1).
+queen(2,1):-not free(2,1).
+queen(3,1):-not free(3,1).
+queen(4,1):-not free(4,1).
+queen(1,2):-not free(1,2).
+queen(2,2):-not free(2,2).
+queen(3,2):-not free(3,2).
+queen(4,2):-not free(4,2).
+queen(1,3):-not free(1,3).
+queen(2,3):-not free(2,3).
+queen(3,3):-not free(3,3).
+queen(4,3):-not free(4,3).
+queen(1,4):-not free(1,4).
+queen(2,4):-not free(2,4).
+queen(3,4):-not free(3,4).
+queen(4,4):-not free(4,4).
+free(1,1):-not queen(1,1).
+free(2,1):-not queen(2,1).
+free(3,1):-not queen(3,1).
+free(4,1):-not queen(4,1).
+free(1,2):-not queen(1,2).
+free(2,2):-not queen(2,2).
+free(3,2):-not queen(3,2).
+free(4,2):-not queen(4,2).
+free(1,3):-not queen(1,3).
+free(2,3):-not queen(2,3).
+free(3,3):-not queen(3,3).
+free(4,3):-not queen(4,3).
+free(1,4):-not queen(1,4).
+free(2,4):-not queen(2,4).
+free(3,4):-not queen(3,4).
+free(4,4):-not queen(4,4).
+row(1):-queen(1,1).
+row(2):-queen(2,1).
+row(3):-queen(3,1).
+row(4):-queen(4,1).
+row(1):-queen(1,2).
+row(2):-queen(2,2).
+row(3):-queen(3,2).
+row(4):-queen(4,2).
+row(1):-queen(1,3).
+row(2):-queen(2,3).
+row(3):-queen(3,3).
+row(4):-queen(4,3).
+row(1):-queen(1,4).
+row(2):-queen(2,4).
+row(3):-queen(3,4).
+row(4):-queen(4,4).
+col(1):-queen(1,1).
+col(1):-queen(2,1).
+col(1):-queen(3,1).
+col(1):-queen(4,1).
+col(2):-queen(1,2).
+col(2):-queen(2,2).
+col(2):-queen(3,2).
+col(2):-queen(4,2).
+col(3):-queen(1,3).
+col(3):-queen(2,3).
+col(3):-queen(3,3).
+col(3):-queen(4,3).
+col(4):-queen(1,4).
+col(4):-queen(2,4).
+col(4):-queen(3,4).
+col(4):-queen(4,4).
+fail:-not row(1);not fail.
+fail:-not row(2);not fail.
+fail:-not row(3);not fail.
+fail:-not row(4);not fail.
+fail:-not col(1);not fail.
+fail:-not col(2);not fail.
+fail:-not col(3);not fail.
+fail:-not col(4);not fail.
+fail:-queen(1,1);queen(1,2);not fail.
+fail:-queen(2,1);queen(2,2);not fail.
+fail:-queen(3,1);queen(3,2);not fail.
+fail:-queen(4,1);queen(4,2);not fail.
+fail:-queen(1,1);queen(1,3);not fail.
+fail:-queen(1,2);queen(1,3);not fail.
+fail:-queen(2,1);queen(2,3);not fail.
+fail:-queen(2,2);queen(2,3);not fail.
+fail:-queen(3,1);queen(3,3);not fail.
+fail:-queen(3,2);queen(3,3);not fail.
+fail:-queen(4,1);queen(4,3);not fail.
+fail:-queen(4,2);queen(4,3);not fail.
+fail:-queen(1,1);queen(1,4);not fail.
+fail:-queen(1,2);queen(1,4);not fail.
+fail:-queen(1,3);queen(1,4);not fail.
+fail:-queen(2,1);queen(2,4);not fail.
+fail:-queen(2,2);queen(2,4);not fail.
+fail:-queen(2,3);queen(2,4);not fail.
+fail:-queen(3,1);queen(3,4);not fail.
+fail:-queen(3,2);queen(3,4);not fail.
+fail:-queen(3,3);queen(3,4);not fail.
+fail:-queen(4,1);queen(4,4);not fail.
+fail:-queen(4,2);queen(4,4);not fail.
+fail:-queen(4,3);queen(4,4);not fail.
+fail:-queen(1,1);queen(2,1);not fail.
+fail:-queen(1,1);queen(3,1);not fail.
+fail:-queen(2,1);queen(3,1);not fail.
+fail:-queen(1,1);queen(4,1);not fail.
+fail:-queen(2,1);queen(4,1);not fail.
+fail:-queen(3,1);queen(4,1);not fail.
+fail:-queen(1,2);queen(2,2);not fail.
+fail:-queen(1,2);queen(3,2);not fail.
+fail:-queen(2,2);queen(3,2);not fail.
+fail:-queen(1,2);queen(4,2);not fail.
+fail:-queen(2,2);queen(4,2);not fail.
+fail:-queen(3,2);queen(4,2);not fail.
+fail:-queen(1,3);queen(2,3);not fail.
+fail:-queen(1,3);queen(3,3);not fail.
+fail:-queen(2,3);queen(3,3);not fail.
+fail:-queen(1,3);queen(4,3);not fail.
+fail:-queen(2,3);queen(4,3);not fail.
+fail:-queen(3,3);queen(4,3);not fail.
+fail:-queen(1,4);queen(2,4);not fail.
+fail:-queen(1,4);queen(3,4);not fail.
+fail:-queen(2,4);queen(3,4);not fail.
+fail:-queen(1,4);queen(4,4);not fail.
+fail:-queen(2,4);queen(4,4);not fail.
+fail:-queen(3,4);queen(4,4);not fail.
+fail:-queen(1,1);queen(2,2);not fail.
+fail:-queen(2,1);queen(3,2);not fail.
+fail:-queen(3,1);queen(4,2);not fail.
+fail:-queen(1,2);queen(2,3);not fail.
+fail:-queen(1,1);queen(3,3);not fail.
+fail:-queen(2,2);queen(3,3);not fail.
+fail:-queen(2,1);queen(4,3);not fail.
+fail:-queen(3,2);queen(4,3);not fail.
+fail:-queen(1,3);queen(2,4);not fail.
+fail:-queen(1,2);queen(3,4);not fail.
+fail:-queen(2,3);queen(3,4);not fail.
+fail:-queen(1,1);queen(4,4);not fail.
+fail:-queen(2,2);queen(4,4);not fail.
+fail:-queen(3,3);queen(4,4);not fail.
+fail:-queen(1,2);queen(2,1);not fail.
+fail:-queen(2,2);queen(3,1);not fail.
+fail:-queen(1,3);queen(3,1);not fail.
+fail:-queen(3,2);queen(4,1);not fail.
+fail:-queen(2,3);queen(4,1);not fail.
+fail:-queen(1,4);queen(4,1);not fail.
+fail:-queen(1,3);queen(2,2);not fail.
+fail:-queen(2,3);queen(3,2);not fail.
+fail:-queen(1,4);queen(3,2);not fail.
+fail:-queen(3,3);queen(4,2);not fail.
+fail:-queen(2,4);queen(4,2);not fail.
+fail:-queen(1,4);queen(2,3);not fail.
+fail:-queen(2,4);queen(3,3);not fail.
+fail:-queen(3,4);queen(4,3);not fail.

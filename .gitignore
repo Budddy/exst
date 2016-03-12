@@ -31,5 +31,5 @@
 .idea
 .sconf_temp
 build/*
+build_*/
 *.zip
-TestData/*

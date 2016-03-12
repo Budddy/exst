@@ -1,0 +1,12 @@
+edge(1,2).
+edge(1,3).
+col(r).
+col(g).
+col(b).
+node(1).
+node(2).
+:-color(1,r);color(2,r).
+:-color(1,g);color(2,g).
+:-color(1,b);color(2,b).
+1==#count{1,0,color(1,r):color(1,r);1,0,color(1,g):color(1,g);1,0,color(1,b):color(1,b)}.
+1==#count{1,0,color(2,r):color(2,r);1,0,color(2,g):color(2,g);1,0,color(2,b):color(2,b)}.
