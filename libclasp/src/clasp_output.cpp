@@ -199,8 +199,8 @@ namespace Clasp {
                 if (ctx.hasSolver(1)) { visitThreads(ctx); }
                 if (ctx.sccGraph.get() && ctx.sccGraph->numNonHcfs()) { visitHccs(ctx); }
             }
-            exst::GraphStatsCalculator::getInstance().printIncidenceGraph();
-            exst::GraphStatsCalculator::getInstance().printDepGraph();
+            //exst::GraphStatsCalculator::getInstance().printIncidenceGraph();
+            //exst::GraphStatsCalculator::getInstance().printDepGraph();
             std::flush(std::cout);
         }
         void StatsVisitor::visitProblemStats(const Clasp::ProblemStats &stats, const Clasp::Asp::LpStats *lp) {

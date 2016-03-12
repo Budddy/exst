@@ -3,55 +3,128 @@
 
 #include <clasp/literal.h>
 #include <clasp/shared_context.h>
-//#include <clasp/logic_program.h>
 #include <htd/LabeledHypergraph.hpp>
 #include <htd/Label.hpp>
 
-namespace exst {
+namespace exst
+{
 
-    class IncidenceGraphStats{
+    /*
+     * class used for calculating and saving stats of the incidence graph and the incidence graph
+     */
+    class IncidenceGraphStats
+    {
     public:
-        htd::LabeledHypergraph& getGraph(){return inzidenceGraph;};
-        std::map<int32, htd::vertex_t>& getLitVertexMap(){return litVertexMap;};
-        std::map<int32, htd::vertex_t>& getRuleVertexMap(){return ruleVertexMap;};
-        int& getRuleCount(){return rules;};
-        void setCopy(const htd::LabeledHypergraph & graph){
-            copyIGraph = graph;
+        /*
+         * returns the incidence graph of the program
+         */
+        htd::LabeledHypergraph &getIncidenceGraph()
+        {
+            return incidenceGraph;
+        };
+
+        /*
+         * returns the atom to vertex map
+         */
+        std::map <int32, htd::vertex_t> &getAtomVertexMap()
+        {
+            return atomVertexMap;
+        };
+
+        /*
+         * returns the rule to vertex map
+         */
+        std::map <int32, htd::vertex_t> &getRuleVertexMap()
+        {
+            return ruleVertexMap;
+        };
+
+        /*
+         * returns the current rule count
+         */
+        int &getRuleCount()
+        {
+            return rules;
+        };
+
+        /*
+         * sets the minimal Incidence Graph
+         */
+        void setMinimalIncidenceGraph(const htd::LabeledHypergraph &graph)
+        {
+            minIncidenceGraph = graph;
         }
-        htd::LabeledHypergraph & getCopy(){
-            return copyIGraph;
+
+        /*
+         * returns the minimal incidence graph
+         */
+        htd::LabeledHypergraph &getMinimalIncidenceGraph()
+        {
+            return minIncidenceGraph;
+        }
+
+        /*
+         * returns the incidence graph of the reduct
+         */
+        htd::LabeledHypergraph &getIncidenceGraphReduct()
+        {
+            return incidenceGraphReduct;
         }
 
     private:
-        //inzidence graph
-        htd::LabeledHypergraph inzidenceGraph;
-        htd::LabeledHypergraph copyIGraph;
-        //rulecount
-        int rules=0;
-        //mapping from graph vertices to literals
-        std::map<int32, htd::vertex_t> litVertexMap;
-        std::map<int32, htd::vertex_t> ruleVertexMap;
-
+        //complete incidence graph
+        htd::LabeledHypergraph incidenceGraph;
+        //minimal incidence graph
+        htd::LabeledHypergraph minIncidenceGraph;
+        //incidence graph of reduct
+        htd::LabeledHypergraph incidenceGraphReduct;
+        //rule counter
+        int rules = 0;
+        //mapping from atoms to vertices in the incidence graph
+        std::map <int32, htd::vertex_t> atomVertexMap;
+        //mapping from rules to vertices in the incidence graph
+        std::map <int32, htd::vertex_t> ruleVertexMap;
     };
 
-    class DependencyGraphStats{
+    /*
+     * class used for calculating and saving stats of the dependency graph and the actual dependency graph
+     */
+    class DependencyGraphStats
+    {
     public:
-        htd::LabeledHypergraph& getGraph(){return dependencyGraph;};
-        std::map<int32, htd::vertex_t>& getLitVertexMap(){return litVertexMap;};
+
+        /*
+         * returns the dependency graph
+         */
+        htd::LabeledHypergraph &getGraph()
+        {
+            return dependencyGraph;
+        };
+
+        /*
+         * returns the map between atoms and vertices
+         */
+        std::map <int32, htd::vertex_t> &getAtomVertexMap()
+        {
+            return atomVertexMap;
+        };
+
     private:
         //dependency graph
         htd::LabeledHypergraph dependencyGraph;
         //mapping from graph vertices to literals
-        std::map<int32, htd::vertex_t> litVertexMap;
+        std::map <int32, htd::vertex_t> atomVertexMap;
     };
 
-    class GraphStatsCalculator {
+    class GraphStatsCalculator
+    {
     public:
 
         /*
-         * returns the single instace of the GraphStatsCalculator
+         * returns the single instance of the GraphStatsCalculator
          */
-        static GraphStatsCalculator &getInstance() {
+        static GraphStatsCalculator &getInstance()
+        {
             static GraphStatsCalculator calc;
             return calc;
         }
@@ -64,37 +137,77 @@ namespace exst {
         /*
          * adds a dependency to the dependency graph
          */
-        void addDep(std::vector<uint32> deps, Clasp::VarVec heads, uint32 negative);
+        void addDep(std::vector <uint32> dependencies, Clasp::VarVec heads, uint32 negative);
 
         /*
-         * adds the atom lables to the graph
+         * adds the atom labels to the graph
          */
-        void lableGraph(const Clasp::SymbolTable &symbolTable);
+        void labelGraph(const Clasp::SymbolTable &symbolTable);
 
         /*
          * adds a literal set during solving
          */
         void addAtomReduct(const Clasp::Literal lit);
+
+        /*
+         * prints the dependency graph
+         */
         void printDepGraph();
+
+        /*
+         * prints the incidence graph of the program
+         */
         void printIncidenceGraph();
+
+        /*
+         * prints the incidence graoh of the reduct
+         */
         void printIGraphReduct();
+
+        /*
+         * maps the new id to the old id
+         */
         void addId(uint32 before, uint32 after);
 
+        /*
+         * resets the incidence graph
+         */
         void resetAssignment();
+
     private:
-        IncidenceGraphStats istats;
-        DependencyGraphStats dstats;
+        //calculator for statistics of incidence graph
+        IncidenceGraphStats incidenceGraphStats;
+        //calculation for statistics of dependency graph
+        DependencyGraphStats dependencyGraphStats;
         //selected literals of current assignment
-        std::vector<int32> selectedLits;
+        std::vector <int32> selectedAtoms;
         //used for matching literal ids before and after pre processing
-        std::map<int32, uint32> litIds;
+        std::map <int32, uint32> atomIds;
 
         //private constructors for singleton
-        GraphStatsCalculator() { };
-        void addRuleDependencyGraph(std::vector<uint32> deps, Clasp::VarVec heads, uint32 negative);
-        void addRuleIncidenceGraph(std::vector<uint32> vector, Clasp::VarVec pod_vector, uint32 negative);
-        void lableDepGraph(const Clasp::SymbolTable &symbolTable);
-        void lableInzGraph(const Clasp::SymbolTable &symbolTable);
+        GraphStatsCalculator()
+        {
+        };
+
+        /*
+         * adds a rule to the dependency graph
+         */
+        void addRuleDependencyGraph(std::vector <uint32> dependencies, Clasp::VarVec heads, uint32 negative);
+
+        /*
+         * adds a rule to the incidence graph
+         */
+        void addRuleIncidenceGraph(std::vector <uint32> vector, Clasp::VarVec pod_vector, uint32 negative);
+
+        /*
+         * adds labels to the dependency graph
+         */
+        void labelDepGraph(const Clasp::SymbolTable &symbolTable);
+
+        /*
+         * adds labels to the incidence graph
+         */
+        void labelInzGraph(const Clasp::SymbolTable &symbolTable);
     };
 }
 
