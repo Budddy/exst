@@ -15,63 +15,10 @@ namespace exst
     class IncidenceGraphStats
     {
     public:
-        /*
-         * returns the incidence graph of the program
-         */
-        htd::LabeledHypergraph &getIncidenceGraph()
-        {
-            return incidenceGraph;
+        struct GraphInfo{
+            bool head = false;
+            bool negative = false;
         };
-
-        /*
-         * returns the atom to vertex map
-         */
-        std::map <int32, htd::vertex_t> &getAtomVertexMap()
-        {
-            return atomVertexMap;
-        };
-
-        /*
-         * returns the rule to vertex map
-         */
-        std::map <int32, htd::vertex_t> &getRuleVertexMap()
-        {
-            return ruleVertexMap;
-        };
-
-        /*
-         * returns the current rule count
-         */
-        int &getRuleCount()
-        {
-            return rules;
-        };
-
-        /*
-         * sets the minimal Incidence Graph
-         */
-        void setMinimalIncidenceGraph(const htd::LabeledHypergraph &graph)
-        {
-            minIncidenceGraph = graph;
-        }
-
-        /*
-         * returns the minimal incidence graph
-         */
-        htd::LabeledHypergraph &getMinimalIncidenceGraph()
-        {
-            return minIncidenceGraph;
-        }
-
-        /*
-         * returns the incidence graph of the reduct
-         */
-        htd::LabeledHypergraph &getIncidenceGraphReduct()
-        {
-            return incidenceGraphReduct;
-        }
-
-    private:
         //complete incidence graph
         htd::LabeledHypergraph incidenceGraph;
         //minimal incidence graph
@@ -81,9 +28,10 @@ namespace exst
         //rule counter
         int rules = 0;
         //mapping from atoms to vertices in the incidence graph
-        std::map <int32, htd::vertex_t> atomVertexMap;
+        std::map<int32, htd::vertex_t> atomVertexMap;
         //mapping from rules to vertices in the incidence graph
-        std::map <int32, htd::vertex_t> ruleVertexMap;
+        std::map<int32, htd::vertex_t> ruleVertexMap;
+        std::map<htd::id_t, GraphInfo> edgeInfo;
     };
 
     /*
@@ -92,28 +40,10 @@ namespace exst
     class DependencyGraphStats
     {
     public:
-
-        /*
-         * returns the dependency graph
-         */
-        htd::LabeledHypergraph &getGraph()
-        {
-            return dependencyGraph;
-        };
-
-        /*
-         * returns the map between atoms and vertices
-         */
-        std::map <int32, htd::vertex_t> &getAtomVertexMap()
-        {
-            return atomVertexMap;
-        };
-
-    private:
         //dependency graph
         htd::LabeledHypergraph dependencyGraph;
         //mapping from graph vertices to literals
-        std::map <int32, htd::vertex_t> atomVertexMap;
+        std::map<int32, htd::vertex_t> atomVertexMap;
     };
 
     class GraphStatsCalculator
@@ -132,12 +62,12 @@ namespace exst
         /*
          * prints the dependency graph as edge list
          */
-        void printEdgeList(htd::LabeledHypergraph graph);
+        void printEdgeList(htd::LabeledHypergraph &graph);
 
         /*
          * adds a dependency to the dependency graph
          */
-        void addDep(std::vector <uint32> dependencies, Clasp::VarVec heads, uint32 negative);
+        void addDep(std::vector<uint32> dependencies, Clasp::VarVec heads, uint32 negative);
 
         /*
          * adds the atom labels to the graph
@@ -179,10 +109,10 @@ namespace exst
         IncidenceGraphStats incidenceGraphStats;
         //calculation for statistics of dependency graph
         DependencyGraphStats dependencyGraphStats;
-        //selected literals of current assignment
-        std::vector <int32> selectedAtoms;
+        //atoms of current assignment
+        std::vector<int32> selectedAtoms;
         //used for matching literal ids before and after pre processing
-        std::map <int32, uint32> atomIds;
+        std::map<int32, uint32> atomIds;
 
         //private constructors for singleton
         GraphStatsCalculator()
@@ -192,12 +122,12 @@ namespace exst
         /*
          * adds a rule to the dependency graph
          */
-        void addRuleDependencyGraph(std::vector <uint32> dependencies, Clasp::VarVec heads, uint32 negative);
+        void addRuleDependencyGraph(std::vector<uint32> dependencies, Clasp::VarVec heads, uint32 negative);
 
         /*
          * adds a rule to the incidence graph
          */
-        void addRuleIncidenceGraph(std::vector <uint32> vector, Clasp::VarVec pod_vector, uint32 negative);
+        void addRuleIncidenceGraph(std::vector<uint32> vector, Clasp::VarVec pod_vector, uint32 negative);
 
         /*
          * adds labels to the dependency graph
@@ -208,6 +138,7 @@ namespace exst
          * adds labels to the incidence graph
          */
         void labelInzGraph(const Clasp::SymbolTable &symbolTable);
+        void deleteBodyEdges(htd::LabeledHypergraph &graph, htd::vertex_t vertex);
     };
 }
 

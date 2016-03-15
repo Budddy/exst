@@ -245,7 +245,7 @@ namespace Clasp {
                 }
             }
         }
-        exst::GraphStatsCalculator::getInstance().printIGraphReduct();
+        //exst::GraphStatsCalculator::getInstance().printIGraphReduct();
         dbPinned = db.pinned;
         s.stats.lastRestart = s.stats.analyzed - s.stats.lastRestart;
         if (lim) {

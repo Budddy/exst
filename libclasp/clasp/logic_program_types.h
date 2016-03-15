@@ -403,10 +403,6 @@ namespace Clasp {
              */
             //@{
             void setLiteral(Literal x) {
-                Var var = x.var();
-                uint32 idx = x.index();
-                bool negative = x.sign();
-                exst::GraphStatsCalculator::getInstance().addId(id_,x.var());
                 litIdx_ = x.index();
             }
             void clearLiteral(bool clVal) {
