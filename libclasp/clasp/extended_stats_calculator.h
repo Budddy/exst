@@ -1,10 +1,13 @@
 #ifndef CLASP_ABSTRACTEXTENDEDSTATSCALCULATOR_H
 #define CLASP_ABSTRACTEXTENDEDSTATSCALCULATOR_H
 
+#include <stdio.h>
 #include <clasp/literal.h>
 #include <clasp/shared_context.h>
 #include <htd/LabeledHypergraph.hpp>
 #include <htd/Label.hpp>
+#include <list>
+#include <unordered_map>
 
 namespace exst
 {
@@ -26,12 +29,16 @@ namespace exst
         //incidence graph of reduct
         htd::LabeledHypergraph incidenceGraphReduct;
         //rule counter
-        int rules = 0;
+        uint32 rules = 0;
         //mapping from atoms to vertices in the incidence graph
-        std::map<int32, htd::vertex_t> atomVertexMap;
+        std::unordered_map<int32, htd::vertex_t> atomVertexMap;
         //mapping from rules to vertices in the incidence graph
-        std::map<int32, htd::vertex_t> ruleVertexMap;
-        std::map<htd::id_t, GraphInfo> edgeInfo;
+        std::unordered_map<int32, htd::vertex_t> ruleVertexMap;
+        std::unordered_map<htd::id_t, GraphInfo> edgeInfo;
+        std::unordered_map<uint32, std::list<uint32>> bodyRuleMap;
+        std::unordered_map<uint32, std::list<uint32>> ruleBodyMap;
+        std::unordered_map<uint32, std::list<uint32>> reductBodyRuleMap;
+        std::unordered_map<uint32, std::list<uint32>> reductRuleBodyMap;
     };
 
     /*
@@ -43,7 +50,8 @@ namespace exst
         //dependency graph
         htd::LabeledHypergraph dependencyGraph;
         //mapping from graph vertices to literals
-        std::map<int32, htd::vertex_t> atomVertexMap;
+        std::unordered_map<int32, htd::vertex_t> atomVertexMap;
+        std::unordered_map<uint32,std::unordered_map<uint32,uint32>> edgeMap;
     };
 
     class GraphStatsCalculator
@@ -110,9 +118,9 @@ namespace exst
         //calculation for statistics of dependency graph
         DependencyGraphStats dependencyGraphStats;
         //atoms of current assignment
-        std::vector<int32> selectedAtoms;
+        std::unordered_map<uint32,bool> selectedAtoms;
         //used for matching literal ids before and after pre processing
-        std::map<int32, uint32> atomIds;
+        std::unordered_map<int32, uint32> atomIds;
 
         //private constructors for singleton
         GraphStatsCalculator()
@@ -139,6 +147,7 @@ namespace exst
          */
         void labelInzGraph(const Clasp::SymbolTable &symbolTable);
         void deleteBodyEdges(htd::LabeledHypergraph &graph, htd::vertex_t vertex);
+        void generateReductGraph();
     };
 }
 
