@@ -117,47 +117,31 @@ namespace exst
     void GraphStatsCalculator::addAtomReduct(const Clasp::Literal lit)
     {
         bool neg = lit.sign();
-        const unsigned int &lid = atomIds[lit.var()];
-        uint32 vertex = incidenceGraphStats.atomVertexMap[lid];
-        htd::LabeledHypergraph &graph = incidenceGraphStats.incidenceGraphReduct;
-        htd::ConstCollection<htd::Hyperedge> edges = graph.hyperedges(vertex);
-
-        for (int i = 0; i < edges.size(); ++i)
-        {
-            const htd::Hyperedge &edge = edges[i];
-            bool head = incidenceGraphStats.edgeInfo[edge.id()].head;
-            bool negative = incidenceGraphStats.edgeInfo[edge.id()].negative;
-            if (negative != neg && !head)
-            {
-                if (edge[0] != vertex)
-                {
-                    deleteBodyEdges(graph, edge[0]);
-                } else
-                {
-                    deleteBodyEdges(graph, edge[1]);
-                }
-            }
-        }
-    }
-
-    void GraphStatsCalculator::deleteBodyEdges(htd::LabeledHypergraph &graph, htd::vertex_t vertex)
-    {
-        htd::ConstCollection<htd::Hyperedge> edges = graph.hyperedges(vertex);
-
-        for (int i = 0; i < edges.size(); ++i)
-        {
-            const htd::Hyperedge &edge = edges[i];
-            bool head = incidenceGraphStats.edgeInfo[edge.id()].head;
-            if (!head)
-            {
-                graph.removeEdge(edge.id());
-            }
-        }
+        uint32 atomId = atomIds[lit.var()];
+        selectedAtoms[atomId] = neg;
     }
 
     void GraphStatsCalculator::resetAssignment()
     {
-        incidenceGraphStats.incidenceGraphReduct = *(incidenceGraphStats.incidenceGraph.clone());
+        incidenceGraphStats.incidenceGraphReduct = *(incidenceGraphStats.minIncidenceGraph.clone());
+        generateReductGraph();
+        incidenceGraphStats.reductBodyRuleMap = incidenceGraphStats.bodyRuleMap;
+    }
+    
+    void GraphStatsCalculator::generateReductGraph() {
+        for(int i = 0; i<incidenceGraphStats.ruleBodyMap.size();i++){
+            bool reduce = false;
+            std::list<unsigned int>::iterator body;
+            for(body = incidenceGraphStats.ruleBodyMap[i].begin(); body != incidenceGraphStats.ruleBodyMap[i].end(); body++){
+                if(selectedAtoms.count(-*body)>0){
+                    reduce = true;
+                    break;
+                }
+            }
+            if(!reduce){
+
+            }
+        }
     }
 
     void GraphStatsCalculator::printIGraphReduct()
