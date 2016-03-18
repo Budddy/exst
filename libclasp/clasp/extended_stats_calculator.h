@@ -29,16 +29,13 @@ namespace exst
         //incidence graph of reduct
         htd::LabeledHypergraph incidenceGraphReduct;
         //rule counter
-        uint32 rules = 0;
+        uint32 rules = 1;
         //mapping from atoms to vertices in the incidence graph
         std::unordered_map<int32, htd::vertex_t> atomVertexMap;
         //mapping from rules to vertices in the incidence graph
         std::unordered_map<int32, htd::vertex_t> ruleVertexMap;
-        std::unordered_map<htd::id_t, GraphInfo> edgeInfo;
-        std::unordered_map<uint32, std::list<uint32>> bodyRuleMap;
-        std::unordered_map<uint32, std::list<uint32>> ruleBodyMap;
-        std::unordered_map<uint32, std::list<uint32>> reductBodyRuleMap;
-        std::unordered_map<uint32, std::list<uint32>> reductRuleBodyMap;
+        std::unordered_map<uint32, std::map<uint32,bool>> bodyRuleMap;
+        std::unordered_map<uint32, std::map<uint32,bool>> ruleBodyMap;
     };
 
     /*
@@ -130,7 +127,7 @@ namespace exst
         /*
          * adds a rule to the dependency graph
          */
-        void addRuleDependencyGraph(std::vector<uint32> dependencies, Clasp::VarVec heads, uint32 negative);
+        void addRuleDependencyGraph(std::vector<uint32> bodies, Clasp::VarVec heads, uint32 negative);
 
         /*
          * adds a rule to the incidence graph
@@ -145,9 +142,9 @@ namespace exst
         /*
          * adds labels to the incidence graph
          */
-        void labelInzGraph(const Clasp::SymbolTable &symbolTable);
-        void deleteBodyEdges(htd::LabeledHypergraph &graph, htd::vertex_t vertex);
+        void labelInzGraph(const Clasp::SymbolTable &symbolTable,htd::LabeledHypergraph &graph);
         void generateReductGraph();
+        const Clasp::SymbolTable *sTable;
     };
 }
 

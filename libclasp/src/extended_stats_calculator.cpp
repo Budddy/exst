@@ -5,79 +5,66 @@ namespace exst
 
     void GraphStatsCalculator::addDep(std::vector<uint32> dependencies, Clasp::VarVec heads, uint32 negative)
     {
-        //addRuleDependencyGraph(dependencies, heads, negative);
-        //addRuleIncidenceGraph(dependencies, heads, negative);
+        addRuleDependencyGraph(dependencies, heads, negative);
+        addRuleIncidenceGraph(dependencies, heads, negative);
     }
 
     void GraphStatsCalculator::addRuleIncidenceGraph(std::vector<uint32> deps, Clasp::VarVec heads, uint32 negative)
     {
-        std::unordered_map<int32, htd::vertex_t> &vertexNodeMap = incidenceGraphStats.atomVertexMap;
-        std::unordered_map<int32, htd::vertex_t> &ruleVertexMap = incidenceGraphStats.ruleVertexMap;
+        htd::vertex_t rule_Vertex = incidenceGraphStats.minIncidenceGraph.addVertex();
+        incidenceGraphStats.incidenceGraph.addVertex();
 
-        htd::LabeledHypergraph &iGraph = incidenceGraphStats.incidenceGraph;
-        htd::LabeledHypergraph &minIGraph = incidenceGraphStats.minIncidenceGraph;
-
-        std::unordered_map<id_t, IncidenceGraphStats::GraphInfo> &iEdgeInfo = incidenceGraphStats.edgeInfo;
-
-        std::unordered_map<uint32, std::list<uint32>> &ruleBodyMap = incidenceGraphStats.ruleBodyMap;
-        std::unordered_map<uint32, std::list<uint32>> &bodyRuleMap = incidenceGraphStats.bodyRuleMap;
-        
-        htd::vertex_t vertex = iGraph.addVertex();
-        minIGraph.addVertex();
-
-        ruleVertexMap[incidenceGraphStats.rules] = vertex;
+        incidenceGraphStats.ruleVertexMap[incidenceGraphStats.rules] = rule_Vertex;
         uint32 ruleNumber = incidenceGraphStats.rules;
         incidenceGraphStats.rules++;
 
         // add body atoms
         for (int i = 0; i < deps.size(); ++i)
         {
-            if (vertexNodeMap.count(deps[i])==0)
+            uint32 dId = deps[i];
+            if (incidenceGraphStats.atomVertexMap.count(dId) == 0)
             {
-                vertexNodeMap[deps[i]] = iGraph.addVertex();
-                minIGraph.addVertex();
+                incidenceGraphStats.atomVertexMap[dId] = incidenceGraphStats.minIncidenceGraph.addVertex();
+                incidenceGraphStats.incidenceGraph.addVertex();
             }
-            htd::id_t edge_id = iGraph.addEdge(vertex, vertexNodeMap[deps[i]]);
-            ruleBodyMap[ruleNumber].push_back(deps[i]);
-            bodyRuleMap[deps[i] * (i<negative ?-1:1)].push_back(ruleNumber);
-            iEdgeInfo[edge_id].head = false;
-            iEdgeInfo[edge_id].negative = i<negative;
+            bool neg = i < negative;
+            incidenceGraphStats.incidenceGraph.addEdge(rule_Vertex, incidenceGraphStats.atomVertexMap[dId]);
+            incidenceGraphStats.ruleBodyMap[ruleNumber][dId]=neg;
+            incidenceGraphStats.bodyRuleMap[dId][ruleNumber]=neg;
         }
 
         // add head atoms
         for (int i = 0; i < heads.size(); ++i)
         {
-            if (vertexNodeMap.count(heads[i])==0)
+            uint32 hId = heads[i];
+            if (incidenceGraphStats.atomVertexMap.count(hId) == 0)
             {
-                vertexNodeMap[heads[i]]= iGraph.addVertex();
-                minIGraph.addVertex();
+                incidenceGraphStats.atomVertexMap[hId] = incidenceGraphStats.minIncidenceGraph.addVertex();
+                incidenceGraphStats.incidenceGraph.addVertex();
             }
-            htd::id_t edge_id = iGraph.addEdge(vertex, vertexNodeMap[heads[i]]);
-            minIGraph.addEdge(iGraph.hyperedge(edge_id));
-            iEdgeInfo[edge_id].head = true;
-            iEdgeInfo[edge_id].negative = false;
+            incidenceGraphStats.incidenceGraph.addEdge(rule_Vertex, incidenceGraphStats.atomVertexMap[hId]);
+            incidenceGraphStats.minIncidenceGraph.addEdge(rule_Vertex, incidenceGraphStats.atomVertexMap[hId]);
         }
     }
 
-    void GraphStatsCalculator::addRuleDependencyGraph(std::vector<uint32> dependencies, Clasp::VarVec heads,
-                                                      uint32 negative)
+    void GraphStatsCalculator::addRuleDependencyGraph(std::vector<uint32> bodies, Clasp::VarVec heads, uint32 negative)
     {
         std::unordered_map<int32, htd::vertex_t> &vertexNodeMap = dependencyGraphStats.atomVertexMap;
         htd::LabeledHypergraph &graph = dependencyGraphStats.dependencyGraph;
 
         // add body atoms to graph if they are not in it
-        for (int i = 0; i < dependencies.size(); ++i)
+        for (int i = 0; i < bodies.size(); ++i)
         {
-            if (vertexNodeMap.count(dependencies[i])==0)
+            if (vertexNodeMap.count(bodies[i]) == 0)
             {
-                vertexNodeMap[dependencies[i]] = graph.addVertex();
+                vertexNodeMap[bodies[i]] = graph.addVertex();
             }
         }
 
         // add head atoms to graph if they are not in it
         for (int i = 0; i < heads.size(); ++i)
         {
-            if (vertexNodeMap.count(heads[i])==0)
+            if (vertexNodeMap.count(heads[i]) == 0)
             {
                 vertexNodeMap[heads[i]] = graph.addVertex();
             }
@@ -85,29 +72,28 @@ namespace exst
 
         for (int a = 0; a < heads.size(); ++a)
         {
-            for (int b = 0; b < dependencies.size(); ++b)
+            for (int b = 0; b < bodies.size(); ++b)
             {
-                if ((heads[a]) > 1 && dependencyGraphStats.edgeMap[heads[a]].count(dependencies[b])==0)
-                                              {
-                    graph.addEdge(vertexNodeMap[heads[a]], vertexNodeMap[dependencies[b]]);
-                    dependencyGraphStats.edgeMap[heads[a]][dependencies[b]]= heads[a];
-                    dependencyGraphStats.edgeMap[dependencies[b]][heads[a]]= dependencies[b];
-
+                if ((heads[a]) > 1 && dependencyGraphStats.edgeMap[heads[a]].count(bodies[b]) == 0)
+                {
+                    graph.addEdge(vertexNodeMap[heads[a]], vertexNodeMap[bodies[b]]);
+                    dependencyGraphStats.edgeMap[heads[a]][bodies[b]] = heads[a];
+                    dependencyGraphStats.edgeMap[bodies[b]][heads[a]] = bodies[b];
                 };
             }
         }
 
         if (heads.size() == 0 || heads.front() == 1)
         {
-            for (int a = 0; a < dependencies.size(); ++a)
+            for (int a = 0; a < bodies.size(); ++a)
             {
-                for (int b = 0; b < dependencies.size(); ++b)
+                for (int b = 0; b < bodies.size(); ++b)
                 {
-                    if ((dependencies[a]) != (dependencies[b]) && dependencyGraphStats.edgeMap[dependencies[a]].count(dependencies[b])==0)
+                    if ((bodies[a]) != (bodies[b]) && dependencyGraphStats.edgeMap[bodies[a]].count(bodies[b]) == 0)
                     {
-                        graph.addEdge(vertexNodeMap[dependencies[a]], vertexNodeMap[dependencies[b]]);
-                        dependencyGraphStats.edgeMap[dependencies[a]][dependencies[b]]= dependencies[a];
-                        dependencyGraphStats.edgeMap[dependencies[b]][dependencies[a]]= dependencies[b];
+                        graph.addEdge(vertexNodeMap[bodies[a]], vertexNodeMap[bodies[b]]);
+                        dependencyGraphStats.edgeMap[bodies[a]][bodies[b]] = bodies[a];
+                        dependencyGraphStats.edgeMap[bodies[b]][bodies[a]] = bodies[b];
                     };
                 }
             }
@@ -125,28 +111,37 @@ namespace exst
     {
         incidenceGraphStats.incidenceGraphReduct = *(incidenceGraphStats.minIncidenceGraph.clone());
         generateReductGraph();
-        incidenceGraphStats.reductBodyRuleMap = incidenceGraphStats.bodyRuleMap;
+        printIGraphReduct();
+        selectedAtoms.clear();
     }
-    
-    void GraphStatsCalculator::generateReductGraph() {
-        for(int i = 0; i<incidenceGraphStats.ruleBodyMap.size();i++){
+
+    void GraphStatsCalculator::generateReductGraph()
+    {
+        for (std::unordered_map<unsigned int, std::map<unsigned int, bool>>::iterator i = incidenceGraphStats.ruleBodyMap.begin();i != incidenceGraphStats.ruleBodyMap.end(); i++)
+        {
             bool reduce = false;
-            std::list<unsigned int>::iterator body;
-            for(body = incidenceGraphStats.ruleBodyMap[i].begin(); body != incidenceGraphStats.ruleBodyMap[i].end(); body++){
-                if(selectedAtoms.count(-*body)>0){
+            //check if rule body is in the reduct
+            for (std::map<unsigned int, bool>::iterator body = (*i).second.begin();
+                 body != (*i).second.end(); body++)
+            {
+                // sign in body is equal to sign in selected atom
+                if (selectedAtoms.count((*body).first) > 0 && selectedAtoms[(*body).first] != (*body).second)
+                {
                     reduce = true;
                     break;
                 }
             }
-            if(!reduce){
-
+            //add body to graph if it is in the reduct
+            if (!reduce)
+            {
+                for (std::map<unsigned int, bool>::iterator body = (*i).second.begin();
+                     body != (*i).second.end(); body++)
+                {
+                    incidenceGraphStats.incidenceGraphReduct.addEdge(incidenceGraphStats.ruleVertexMap[(*i).first],
+                                                                     incidenceGraphStats.atomVertexMap[(*body).first]);
+                }
             }
         }
-    }
-
-    void GraphStatsCalculator::printIGraphReduct()
-    {
-        printEdgeList(incidenceGraphStats.incidenceGraphReduct);
     }
 
     void GraphStatsCalculator::addId(uint32 before, uint32 after)
@@ -156,15 +151,15 @@ namespace exst
 
     void GraphStatsCalculator::labelGraph(const Clasp::SymbolTable &symbolTable)
     {
-        labelDepGraph(symbolTable);
-        labelInzGraph(symbolTable);
+        sTable = &symbolTable;
+        labelDepGraph(*sTable);
+        labelInzGraph(*sTable,incidenceGraphStats.incidenceGraph);
     }
 
-    void GraphStatsCalculator::labelInzGraph(const Clasp::SymbolTable &symbolTable)
+    void GraphStatsCalculator::labelInzGraph(const Clasp::SymbolTable &symbolTable,htd::LabeledHypergraph &graph)
     {
         std::unordered_map<int32, htd::vertex_t> &litVertexMap = incidenceGraphStats.atomVertexMap;
         std::unordered_map<int32, htd::vertex_t> &ruleVertexMap = incidenceGraphStats.ruleVertexMap;
-        htd::LabeledHypergraph &graph = incidenceGraphStats.incidenceGraph;
 
         for (Clasp::SymbolTable::key_type i = 0; i < litVertexMap.size(); i++)
         {
@@ -243,20 +238,30 @@ namespace exst
         }
     }
 
+    void GraphStatsCalculator::printIGraphReduct()
+    {
+        /*
+        std::cout << "\nIncidence Graph Reduct\n";
+        labelInzGraph(*sTable,incidenceGraphStats.incidenceGraphReduct);
+        printEdgeList(incidenceGraphStats.incidenceGraphReduct);
+         */
+    }
+
     void GraphStatsCalculator::printDepGraph()
     {
+        std::cout << "\nDependency Graph\n";
         printEdgeList(dependencyGraphStats.dependencyGraph);
     }
 
     void GraphStatsCalculator::printIncidenceGraph()
     {
+        std::cout << "\nIncidence Graph Program\n";
         printEdgeList(incidenceGraphStats.incidenceGraph);
     }
 
     void GraphStatsCalculator::printEdgeList(htd::LabeledHypergraph &graph)
     {
         htd::ConstCollection<htd::vertex_t> vertices = graph.vertices();
-        printf("\nEdge List: \n");
 
         for (int a = 0; a < vertices.size(); a++)
         {
@@ -280,5 +285,4 @@ namespace exst
 
         std::flush(std::cout);
     }
-
 }
