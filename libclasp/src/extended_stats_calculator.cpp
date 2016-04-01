@@ -240,9 +240,9 @@ namespace exst
 
     void GraphStatsCalculator::printIGraphReduct()
     {
-        std::cout << "\n_Incidence Graph Reduct_ Nodes: ";
+        std::cout << "\n_Incidence Graph Reduct_ \nNodes: ";
         std::cout << incidenceGraphStats.incidenceGraphReduct.vertexCount();
-        std::cout << " Edges: ";
+        std::cout << "\nEdges: ";
         std::cout << incidenceGraphStats.incidenceGraphReduct.edgeCount();
         std::cout << "\n";
         /*
@@ -254,9 +254,9 @@ namespace exst
 
     void GraphStatsCalculator::printDepGraph()
     {
-        std::cout << "\n_Dependency Graph_ Nodes: ";
+        std::cout << "\n_Dependency Graph_ \nNodes: ";
         std::cout << dependencyGraphStats.dependencyGraph.vertexCount();
-        std::cout << " Edges: ";
+        std::cout << "\nEdges: ";
         std::cout << dependencyGraphStats.dependencyGraph.edgeCount();
         /*
         std::cout << "\nDependency Graph\n";
@@ -266,9 +266,9 @@ namespace exst
 
     void GraphStatsCalculator::printIncidenceGraph()
     {
-        std::cout << "_Incidence Graph_ Nodes: ";
+        std::cout << "_Incidence Graph_ \nNodes: ";
         std::cout << incidenceGraphStats.incidenceGraph.vertexCount();
-        std::cout << " Edges: ";
+        std::cout << "\nEdges: ";
         std::cout << incidenceGraphStats.incidenceGraph.edgeCount();
         /*
         std::cout << "\nIncidence Graph Program\n";
