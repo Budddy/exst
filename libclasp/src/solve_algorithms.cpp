@@ -250,7 +250,6 @@ namespace Clasp {
             if (lim->conflicts != UINT64_MAX) { lim->conflicts = cLimit.global; }
             if (lim->restarts != UINT64_MAX) { lim->restarts = limRestarts; }
         }
-        exst::GraphStatsCalculator::getInstance().resetAssignment();
         return result;
     }
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -102,14 +102,14 @@ namespace exst
 
     void GraphStatsCalculator::addAtomReduct(const Clasp::Literal lit)
     {
-        bool neg = lit.sign();
+        bool neg = true;
         uint32 atomId = atomIds[lit.var()];
         selectedAtoms[atomId] = neg;
     }
 
     void GraphStatsCalculator::resetAssignment()
     {
-        incidenceGraphStats.incidenceGraphReduct = *(incidenceGraphStats.minIncidenceGraph.clone());
+        incidenceGraphStats.incidenceGraphReduct = (incidenceGraphStats.minIncidenceGraph);
         generateReductGraph();
         printIGraphReduct();
         selectedAtoms.clear();
@@ -240,23 +240,40 @@ namespace exst
 
     void GraphStatsCalculator::printIGraphReduct()
     {
+        std::cout << "\n_Incidence Graph Reduct_ Nodes: ";
+        std::cout << incidenceGraphStats.incidenceGraphReduct.vertexCount();
+        std::cout << " Edges: ";
+        std::cout << incidenceGraphStats.incidenceGraphReduct.edgeCount();
+        std::cout << "\n";
         /*
         std::cout << "\nIncidence Graph Reduct\n";
         labelInzGraph(*sTable,incidenceGraphStats.incidenceGraphReduct);
         printEdgeList(incidenceGraphStats.incidenceGraphReduct);
-         */
+        */
     }
 
     void GraphStatsCalculator::printDepGraph()
     {
+        std::cout << "\n_Dependency Graph_ Nodes: ";
+        std::cout << dependencyGraphStats.dependencyGraph.vertexCount();
+        std::cout << " Edges: ";
+        std::cout << dependencyGraphStats.dependencyGraph.edgeCount();
+        /*
         std::cout << "\nDependency Graph\n";
         printEdgeList(dependencyGraphStats.dependencyGraph);
+         */
     }
 
     void GraphStatsCalculator::printIncidenceGraph()
     {
+        std::cout << "_Incidence Graph_ Nodes: ";
+        std::cout << incidenceGraphStats.incidenceGraph.vertexCount();
+        std::cout << " Edges: ";
+        std::cout << incidenceGraphStats.incidenceGraph.edgeCount();
+        /*
         std::cout << "\nIncidence Graph Program\n";
         printEdgeList(incidenceGraphStats.incidenceGraph);
+         */
     }
 
     void GraphStatsCalculator::printEdgeList(htd::LabeledHypergraph &graph)

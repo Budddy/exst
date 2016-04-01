@@ -858,6 +858,7 @@ namespace Clasp {
                         }
                     }
                 }
+                exst::GraphStatsCalculator::getInstance().resetAssignment();
                 if (*format[cat_value_term]) {
                     printSep(cat_value);
                     printf("%s", format[cat_value_term]);
@@ -875,6 +876,9 @@ namespace Clasp {
         void TextOutput::printNames(const Clasp::SymbolTable &sym, const Clasp::Model &m) {
             bool first = true;
             for (SymbolTable::const_iterator it = sym.begin(); it != sym.end(); ++it) {
+                if(!m.isTrue(it->second.lit)){
+                    exst::GraphStatsCalculator::getInstance().addAtomReduct(it->second.lit);
+                }
                 if (m.isTrue(it->second.lit) && doPrint(it->second)) {
                     if (!first) { printSep(cat_value); }
                     printf(format[cat_atom], it->second.name.c_str());
