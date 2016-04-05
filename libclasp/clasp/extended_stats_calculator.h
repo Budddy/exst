@@ -108,6 +108,7 @@ namespace exst
          * resets the incidence graph
          */
         void resetAssignment();
+        void buildIncidenzeGraph();
 
     private:
         //calculator for statistics of incidence graph

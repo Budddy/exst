@@ -213,6 +213,7 @@ namespace Clasp {
         while (input()->skipWhite() && input()->parseInt(rt) && rt != 0 && parseRule(rt)) {
             active_->clear();
         }
+        exst::GraphStatsCalculator::getInstance().buildIncidenzeGraph();
         return check(rt == 0, "Rule type expected!")
                && check(matchEol(*input(), true), "Symbol table expected!")
                && input()->skipWhite();

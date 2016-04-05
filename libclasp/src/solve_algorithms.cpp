@@ -288,7 +288,7 @@ namespace Clasp {
                                             "#models not 0: last model may not cover consequences."));
                     }
                 }
-                exst::GraphStatsCalculator::getInstance().labelGraph(ctx->symbolTable());
+                //exst::GraphStatsCalculator::getInstance().labelGraph(ctx->symbolTable());
                 return algo->doSolve(*ctx, assume);
             }
             SolveAlgorithm *algo;

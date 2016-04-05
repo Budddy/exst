@@ -12,7 +12,6 @@ namespace exst
     void GraphStatsCalculator::addRuleIncidenceGraph(std::vector<uint32> deps, Clasp::VarVec heads, uint32 negative)
     {
         htd::vertex_t rule_Vertex = incidenceGraphStats.minIncidenceGraph.addVertex();
-        incidenceGraphStats.incidenceGraph.addVertex();
 
         incidenceGraphStats.ruleVertexMap[incidenceGraphStats.rules] = rule_Vertex;
         uint32 ruleNumber = incidenceGraphStats.rules;
@@ -25,10 +24,8 @@ namespace exst
             if (incidenceGraphStats.atomVertexMap.count(dId) == 0)
             {
                 incidenceGraphStats.atomVertexMap[dId] = incidenceGraphStats.minIncidenceGraph.addVertex();
-                incidenceGraphStats.incidenceGraph.addVertex();
             }
             bool neg = i < negative;
-            incidenceGraphStats.incidenceGraph.addEdge(rule_Vertex, incidenceGraphStats.atomVertexMap[dId]);
             incidenceGraphStats.ruleBodyMap[ruleNumber][dId]=neg;
             incidenceGraphStats.bodyRuleMap[dId][ruleNumber]=neg;
         }
@@ -40,9 +37,7 @@ namespace exst
             if (incidenceGraphStats.atomVertexMap.count(hId) == 0)
             {
                 incidenceGraphStats.atomVertexMap[hId] = incidenceGraphStats.minIncidenceGraph.addVertex();
-                incidenceGraphStats.incidenceGraph.addVertex();
             }
-            incidenceGraphStats.incidenceGraph.addEdge(rule_Vertex, incidenceGraphStats.atomVertexMap[hId]);
             incidenceGraphStats.minIncidenceGraph.addEdge(rule_Vertex, incidenceGraphStats.atomVertexMap[hId]);
         }
     }
@@ -301,5 +296,18 @@ namespace exst
         }
 
         std::flush(std::cout);
+    }
+
+    void GraphStatsCalculator::buildIncidenzeGraph() {
+        this->incidenceGraphStats.incidenceGraph = this->incidenceGraphStats.minIncidenceGraph;
+        for (std::unordered_map<unsigned int, std::map<unsigned int, bool>>::iterator i = incidenceGraphStats.ruleBodyMap.begin();i != incidenceGraphStats.ruleBodyMap.end(); i++)
+        {
+                for (std::map<unsigned int, bool>::iterator body = (*i).second.begin();
+                     body != (*i).second.end(); body++)
+                {
+                    incidenceGraphStats.incidenceGraph.addEdge(incidenceGraphStats.ruleVertexMap[(*i).first],
+                                                                     incidenceGraphStats.atomVertexMap[(*body).first]);
+                }
+        }
     }
 }
