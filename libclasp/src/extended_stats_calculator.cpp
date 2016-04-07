@@ -5,6 +5,7 @@ namespace exst
 
     void GraphStatsCalculator::addDep(std::vector<uint32> dependencies, Clasp::VarVec heads, uint32 negative)
     {
+        if(dependencies.size()==0) return;
         addRuleDependencyGraph(dependencies, heads, negative);
         addRuleIncidenceGraph(dependencies, heads, negative);
     }
