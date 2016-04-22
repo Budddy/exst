@@ -47,6 +47,11 @@ namespace exst
         void printDepGraph();
 
         /*
+         *
+         */
+        void printExtendedStats();
+
+        /*
          * prints the incidence graph of the program
          */
         void printIncidenceGraph();
@@ -76,8 +81,9 @@ namespace exst
         std::unordered_map<uint32_t, bool> selectedAtoms;
         //used for matching literal ids before and after pre processing
         std::unordered_map<int32_t, uint32_t> atomIds;
-        uint32_t hornClauses = 0;
-        uint32_t dualHornClauses = 0;
+        uint32 numNonHornClauses = 0;
+        uint32 numNonDualHornClauses = 0;
+        uint32 normalClause = 0;
 
         //private constructors for singleton
         GraphStatsCalculator()

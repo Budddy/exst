@@ -9,20 +9,24 @@ namespace exst
     void GraphStatsCalculator::addDep(std::vector<uint32_t> dependencies, Clasp::PodVector<Clasp::Var>::type heads,
                                       uint32_t negative)
     {
+        //exclude facts (where id is 0)
         if (dependencies.size() == 0)
         {
             return;
         }
-        //horn clause
-        if (negative == 0)
+        //non horn clause
+        if (negative != 0)
         {
-            ++hornClauses;
+            ++numNonHornClauses;
         }
-        //normal clause
-        //dual horn clause
-        if (negative >= dependencies.size() - 1)
+        //normal clause TODO
+        if(false){
+            ++normalClause;
+        }
+        //non dual horn clause
+        if (negative < dependencies.size() - 1)
         {
-            ++dualHornClauses;
+            ++numNonDualHornClauses;
         }
         addRuleDependencyGraph(dependencies, heads, negative);
         addRuleIncidenceGraph(dependencies, heads, negative);
@@ -318,4 +322,13 @@ namespace exst
             }
         }
     }
+    void GraphStatsCalculator::printExtendedStats() {
+        printDepGraph();
+        printIncidenceGraph();
+        std::cout << "\n";
+        std::cout << "Non Horn Clauses: " << this->numNonHornClauses << "\n";
+        //std::cout << "Non Normal Clauses: " << this->normalClause << "\n";
+        std::cout << "Non Dual Horn Clauses: " << this->numNonDualHornClauses << "\n";
+    }
+
 }
