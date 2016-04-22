@@ -29,12 +29,9 @@
 #include <cstdlib>
 #include <signal.h>
 #include <limits>
-#include <clasp/extended_stats_calculator.h>
 
 #if WITH_THREADS
 #include <clasp/util/mutex.h>
-#include <clasp/extended_stats_calculator.h>
-
 #endif
 namespace Clasp {
 /////////////////////////////////////////////////////////////////////////////////////////

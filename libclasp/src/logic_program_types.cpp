@@ -29,6 +29,7 @@
 #include <clasp/util/misc_types.h>
 
 #include <deque>
+#include <clasp/exst/graph_stats_calculator.h>
 
 namespace Clasp {
     namespace Asp {

@@ -28,6 +28,7 @@
 #include <climits>
 #include <string>
 #include <cstdlib>
+#include <clasp/exst/graph_stats_calculator.h>
 
 #if !defined(_WIN32)
 #include <signal.h>
@@ -41,7 +42,6 @@
 #elif defined(__cplusplus) && __cplusplus >= 201103L
 
 #include <cmath>
-#include <clasp/extended_stats_calculator.h>
 
 #define CLASP_ISNAN(x) std::isnan(x)
 #else

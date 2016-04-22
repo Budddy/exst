@@ -29,7 +29,6 @@
 #include <clasp/claspfwd.h>
 #include <clasp/literal.h>
 #include <functional>
-#include <clasp/extended_stats_calculator.h>
 
 namespace Clasp {
     class ClauseCreator;
