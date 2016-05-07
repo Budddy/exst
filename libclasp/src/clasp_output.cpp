@@ -42,6 +42,7 @@
 #elif defined(__cplusplus) && __cplusplus >= 201103L
 
 #include <cmath>
+#include <iostream>
 
 #define CLASP_ISNAN(x) std::isnan(x)
 #else
@@ -857,7 +858,6 @@ namespace Clasp {
                         }
                     }
                 }
-                exst::GraphStatsCalculator::getInstance().resetAssignment();
                 if (*format[cat_value_term]) {
                     printSep(cat_value);
                     printf("%s", format[cat_value_term]);

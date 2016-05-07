@@ -213,7 +213,6 @@ namespace Clasp {
         while (input()->skipWhite() && input()->parseInt(rt) && rt != 0 && parseRule(rt)) {
             active_->clear();
         }
-        exst::GraphStatsCalculator::getInstance().buildIncidenzeGraph();
         return check(rt == 0, "Rule type expected!")
                && check(matchEol(*input(), true), "Symbol table expected!")
                && input()->skipWhite();
@@ -263,7 +262,7 @@ namespace Clasp {
             dep_list.push_back(atom);
             active_->addToBody(atom, i >= neg, 1);
         }
-        exst::GraphStatsCalculator::getInstance().addDep(dep_list, active()->heads, neg);
+        exst::GraphStatsCalculator::getInstance().parseRule(dep_list, active()->heads, neg);
         if (readWeights) {
             for (uint32 i = 0; i < lits; ++i) {
                 active_->body[i].second = input()->parseInt(0, INT_MAX, "Weight Rule: bad or missing weight!");

@@ -1,22 +1,21 @@
 #ifndef CLASP_GRAPH_STATS_CALCULATOR_H
 #define CLASP_GRAPH_STATS_CALCULATOR_H
 
-#include <htd/LabeledHypergraph.hpp>
+#include <unordered_map>
 #include <clasp/literal.h>
-#include <clasp/exst/incidence_graph_stats.h>
-#include <clasp/exst/dependency_graph_stats.h>
+#include "incidence_graph_stats.h"
+#include "dependency_graph_stats.h"
+#include "ExstTypes.h"
 
-namespace exst
-{
-    class GraphStatsCalculator
-    {
+namespace exst {
+
+    class GraphStatsCalculator {
     public:
 
         /*
          * returns the single instance of the GraphStatsCalculator
          */
-        static GraphStatsCalculator &getInstance()
-        {
+        static GraphStatsCalculator &getInstance() {
             static GraphStatsCalculator calc;
             return calc;
         }
@@ -24,17 +23,12 @@ namespace exst
         /*
          * prints the dependency graph as edge list
          */
-        void printEdgeList(htd::LabeledHypergraph &graph);
+        std::string getDIMACS(MyGraph &graph, uint32 edgecount);
 
         /*
          * adds a dependency to the dependency graph
          */
-        void addDep(std::vector<uint32_t> dependencies, Clasp::PodVector<Clasp::Var>::type heads, uint32_t negative);
-
-        /*
-         * adds the atom labels to the graph
-         */
-        void labelGraph(const Clasp::SymbolTable &symbolTable);
+        void parseRule(std::vector<uint32> dependencies, Clasp::PodVector<Clasp::Var>::type heads, uint32 negative);
 
         /*
          * adds a literal set during solving
@@ -64,13 +58,13 @@ namespace exst
         /*
          * maps the new id to the old id
          */
-        void addId(uint32_t before, uint32_t after);
+        void addId(uint32 before, uint32 after);
 
         /*
          * resets the incidence graph
          */
         void resetAssignment();
-        void buildIncidenzeGraph();
+        void reduceGraph(uint32 lit, bool neg);
 
     private:
         //calculator for statistics of incidence graph
@@ -78,39 +72,31 @@ namespace exst
         //calculation for statistics of dependency graph
         DependencyGraphStats dependencyGraphStats;
         //atoms of current assignment
-        std::unordered_map<uint32_t, bool> selectedAtoms;
+        std::unordered_map<uint32, bool> selectedAtoms;
         //used for matching literal ids before and after pre processing
-        std::unordered_map<int32_t, uint32_t> atomIds;
+        std::unordered_map<int32, uint32> atomIds;
         uint32 numNonHornClauses = 0;
         uint32 numNonDualHornClauses = 0;
-        uint32 normalClause = 0;
 
         //private constructors for singleton
-        GraphStatsCalculator()
-        {
+        GraphStatsCalculator() {
         };
 
         /*
          * adds a rule to the dependency graph
          */
-        void addRuleDependencyGraph(std::vector<uint32_t> bodies, Clasp::PodVector<Clasp::Var>::type heads, uint32_t negative);
+        void addRuleDependencyGraph(std::vector<uint32> bodies, Clasp::PodVector<Clasp::Var>::type head);
 
         /*
          * adds a rule to the incidence graph
          */
-        void addRuleIncidenceGraph(std::vector<uint32_t> vector, Clasp::PodVector<Clasp::Var>::type pod_vector, uint32_t negative);
+        void addRuleIncidenceGraph(std::vector<uint32> bodies, Clasp::PodVector<Clasp::Var>::type head,
+                                   uint32 negative);
 
-        /*
-         * adds labels to the dependency graph
-         */
-        void labelDepGraph(const Clasp::SymbolTable &symbolTable);
-
-        /*
-         * adds labels to the incidence graph
-         */
-        void labelInzGraph(const Clasp::SymbolTable &symbolTable, htd::LabeledHypergraph &graph);
         void generateReductGraph();
         const Clasp::SymbolTable *sTable;
+        int numClauses = 0;
+        void reduceGraph(MyGraph graph, long lit);
     };
 }
 

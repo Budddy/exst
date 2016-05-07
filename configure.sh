@@ -211,7 +211,7 @@ else
 echo "CXX         ?= g++"         >> FLAGS
 fi
 echo "CXXFLAGS    := ${CXXFLAGS}" >> FLAGS
-echo "WARNFLAGS   := -W -Wall"    >> FLAGS
+echo "WARNFLAGS   := -W -Wall -std=c++11 "    >> FLAGS
 echo "LDFLAGS     := ${LDFLAGS}"  >> FLAGS
 echo ""                           >> FLAGS
 # create Makefiles

@@ -27,6 +27,7 @@
 #include <clasp/solver_types.h>
 #include <clasp/solver_strategies.h>
 #include <clasp/shared_context.h>
+#include <clasp/exst/graph_stats_calculator.h>
 
 namespace Clasp {
 
@@ -1165,13 +1166,13 @@ namespace Clasp {
             Literal selected;
             if (signScore != 0 && !prefs.has(ValueSet::user_value | ValueSet::saved_value | ValueSet::pref_value)) {
                 selected = Literal(v, signScore < 0);
-                return selected;
             }
             else if (!prefs.empty()) {
                 selected = Literal(v, prefs.sign());
-                return selected;
+            }else {
+                selected = s.defaultLit(v);
             }
-            selected = s.defaultLit(v);
+            exst::GraphStatsCalculator::getInstance().reduceGraph(selected.index(),selected.sign());
             return selected;
         }
     private:
