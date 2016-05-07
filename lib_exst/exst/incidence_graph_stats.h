@@ -2,8 +2,8 @@
 #define CLASP_INCIDENCE_GRAPH_STATS_H
 
 #include <unordered_map>
-#include <map>
-#include "ExstTypes.h"
+#include <exst/ExstTypes.h>
+#include <clasp/util/platform.h>
 
 /*
  * class used for calculating and saving stats of the incidence graph and the incidence graph

@@ -23,6 +23,7 @@
 #include <clasp/minimize_constraint.h>
 #include <clasp/util/timer.h>
 #include <clasp/util/atomic.h>
+#include <exst/incidence_graph_stats.h>
 
 namespace Clasp {
 /////////////////////////////////////////////////////////////////////////////////////////

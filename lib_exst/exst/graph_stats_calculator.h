@@ -3,9 +3,9 @@
 
 #include <unordered_map>
 #include <clasp/literal.h>
-#include "incidence_graph_stats.h"
-#include "dependency_graph_stats.h"
-#include "ExstTypes.h"
+#include <exst/incidence_graph_stats.h>
+#include <exst/dependency_graph_stats.h>
+#include <exst/ExstTypes.h>
 
 namespace exst {
 
@@ -64,6 +64,7 @@ namespace exst {
          * resets the incidence graph
          */
         void resetAssignment();
+
         void reduceGraph(uint32 lit, bool neg);
 
     private:
@@ -93,10 +94,8 @@ namespace exst {
         void addRuleIncidenceGraph(std::vector<uint32> bodies, Clasp::PodVector<Clasp::Var>::type head,
                                    uint32 negative);
 
-        void generateReductGraph();
         const Clasp::SymbolTable *sTable;
         int numClauses = 0;
-        void reduceGraph(MyGraph graph, long lit);
     };
 }
 

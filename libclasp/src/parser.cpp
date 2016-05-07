@@ -30,6 +30,7 @@
 #include <stdarg.h>
 #include <bits/stl_list.h>
 #include <exst/graph_stats_calculator.h>
+#include <exst/extended_stats_calculator.h>
 
 #ifdef _WIN32
 #pragma warning (disable : 4996)

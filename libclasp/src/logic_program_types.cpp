@@ -30,6 +30,7 @@
 
 #include <deque>
 #include <exst/graph_stats_calculator.h>
+#include <exst/extended_stats_calculator.h>
 
 namespace Clasp {
     namespace Asp {

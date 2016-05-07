@@ -43,6 +43,8 @@
 
 #include <cmath>
 #include <iostream>
+#include <exst/incidence_graph_stats.h>
+#include <exst/extended_stats_calculator.h>
 
 #define CLASP_ISNAN(x) std::isnan(x)
 #else

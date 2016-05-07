@@ -2,7 +2,7 @@
 #define CLASP_DEPENDENCY_GRAPH_STATS_H
 
 #include <unordered_map>
-#include "ExstTypes.h"
+#include <exst/ExstTypes.h>
 
 /*
  * class used for calculating and saving stats of the dependency graph and the actual dependency graph

@@ -28,6 +28,7 @@
 #include <clasp/solver_strategies.h>
 #include <clasp/shared_context.h>
 #include <exst/graph_stats_calculator.h>
+#include <exst/incidence_graph_stats.h>
 
 namespace Clasp {
 
