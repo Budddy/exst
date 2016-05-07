@@ -28,7 +28,7 @@
 #include <climits>
 #include <string>
 #include <cstdlib>
-#include <clasp/exst/graph_stats_calculator.h>
+#include <exst/graph_stats_calculator.h>
 
 #if !defined(_WIN32)
 #include <signal.h>

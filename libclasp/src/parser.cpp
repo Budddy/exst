@@ -29,7 +29,7 @@
 #include <limits.h>
 #include <stdarg.h>
 #include <bits/stl_list.h>
-#include <clasp/exst/graph_stats_calculator.h>
+#include <exst/graph_stats_calculator.h>
 
 #ifdef _WIN32
 #pragma warning (disable : 4996)
