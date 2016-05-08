@@ -96,6 +96,26 @@ namespace exst {
 
         const Clasp::SymbolTable *sTable;
         int numClauses = 0;
+        unsigned long clauseSize = 0;
+        unsigned long clauseSizePositive = 0;
+        uint32 clauseSizeNegative = 0;
+        std::unordered_map<uint32, uint32> atomOccurences;
+        std::unordered_map<uint32, uint32> atomOccurencesPositive;
+        std::unordered_map<uint32, uint32> atomOccurencesNegative;
+        std::unordered_map<uint32, uint32> atomOccurencesTotal;
+
+        void parseAtomOccurencesPositive(std::vector<uint32> &dependencies,
+                                         Clasp::PodVector<unsigned int>::type &heads,
+                                         uint32 &negative);
+
+        void parseAtomOccurencesNegative(uint32 &negative, std::vector<uint32> &dependencies);
+
+        void countAtomOccurences(std::vector<uint32> &dependencies, Clasp::PodVector<unsigned int>::type &heads);
+
+        void countAtomOccurencesTotal(std::vector<uint32> &dependencies, Clasp::PodVector<unsigned int>::type &heads);
+
+        int numFacts = 0;
+        int numRules = 0;
     };
 }
 

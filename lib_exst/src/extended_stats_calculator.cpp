@@ -23,18 +23,77 @@ namespace exst {
 
     void GraphStatsCalculator::parseRule(std::vector<uint32> dependencies, Clasp::PodVector<uint32>::type heads,
                                          uint32 negative) {
-        //exclude facts (where id is 0)
-        if (dependencies.size() <= 0) return;
+
+        //rules
+        numRules++;
+        // num clauses
+        if (dependencies.size() > 0)
+            numClauses++;
+
+        // num facts
+        if (dependencies.size() == 0)
+            numFacts++;
 
         //non horn clause
         if (negative != 0) ++GraphStatsCalculator::numNonHornClauses;
         //non dual horn clause
         if (negative < dependencies.size() - 1) ++GraphStatsCalculator::numNonDualHornClauses;
+        //clause size
+        clauseSize = clauseSize < dependencies.size() ? dependencies.size() : clauseSize;
+        //negative clause size
+        clauseSizePositive = clauseSizePositive < dependencies.size() - negative ? dependencies.size() - negative
+                                                                                 : clauseSizePositive;
+        //positive clause size
+        clauseSizeNegative = clauseSizeNegative < negative ? negative : clauseSizeNegative;
 
-        //number of clauses
-        ++GraphStatsCalculator::numClauses;
+        //atom occurences
+        countAtomOccurencesTotal(dependencies, heads);
+
+        //atom occurences
+        countAtomOccurences(dependencies, heads);
+
+        //atom occurences Positive
+        parseAtomOccurencesPositive(dependencies, heads, negative);
+
+        //atom occurences Negative
+        parseAtomOccurencesNegative(negative, dependencies);
+
         GraphStatsCalculator::addRuleDependencyGraph(dependencies, heads);
         GraphStatsCalculator::addRuleIncidenceGraph(dependencies, heads, negative);
+    }
+
+    void GraphStatsCalculator::countAtomOccurences(std::vector<uint32> &dependencies,
+                                                   Clasp::PodVector<unsigned int>::type &heads) {
+        std::vector<uint32>::iterator it1;
+        for (it1 = dependencies.begin(); it1 != dependencies.end(); it1++) {
+            atomOccurences[(*it1)]++;
+        }
+        uint32 *it2;
+        for (it2 = heads.begin(); it2 != heads.end(); it2++) {
+            atomOccurences[(*it2)]++;
+        }
+    }
+
+    void GraphStatsCalculator::parseAtomOccurencesNegative(uint32 &negative, std::vector<uint32> &dependencies) {
+        std::vector<uint32>::iterator it5 = dependencies.begin();
+        int i;
+        for (i = 0; i < negative; i++) {
+            atomOccurencesNegative[(*(it5 + i))]++;
+        }
+    }
+
+    void GraphStatsCalculator::parseAtomOccurencesPositive(std::vector<uint32> &dependencies,
+                                                           Clasp::PodVector<unsigned int>::type &heads,
+                                                           uint32 &negative) {
+        std::vector<uint32>::iterator it3 = dependencies.begin();
+        uint32 a;
+        for (a = negative; a < dependencies.size(); a++) {
+            atomOccurencesPositive[(*(it3 + a))]++;
+        }
+        uint32 *it4;
+        for (it4 = heads.begin(); it4 != heads.end(); it4++) {
+            atomOccurencesPositive[(*it4)]++;
+        }
     }
 
     void GraphStatsCalculator::addId(uint32 before, uint32 after) {
@@ -47,5 +106,21 @@ namespace exst {
         std::cout << "Non Horn Clauses: " << this->numNonHornClauses << "\n";
         std::cout << "Non Dual Horn Clauses: " << this->numNonDualHornClauses << "\n";
         std::cout << "Clauses: " << this->numClauses << "\n";
+        std::cout << "Facts: " << this->numFacts << "\n";
+        std::cout << "Rules: " << this->numRules << "\n";
     }
+
+    void GraphStatsCalculator::countAtomOccurencesTotal(std::vector<uint32> &dependencies,
+                                                        Clasp::PodVector<unsigned int>::type &heads) {
+        std::vector<uint32>::iterator it1;
+        for (it1 = dependencies.begin(); it1 != dependencies.end(); it1++) {
+            atomOccurencesTotal[(*it1)]++;
+        }
+        uint32 *it2;
+        for (it2 = heads.begin(); it2 != heads.end(); it2++) {
+            atomOccurencesTotal[(*it2)]++;
+        }
+
+    }
+
 }
