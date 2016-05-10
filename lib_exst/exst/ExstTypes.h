@@ -4,9 +4,11 @@
 #include <unordered_map>
 #include <clasp/util/platform.h>
 
-namespace exst {
+namespace exst
+{
 
-    enum EdgeType {
+    enum EdgeType
+    {
         positive, negative, head, body
     };
 

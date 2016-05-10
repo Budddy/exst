@@ -7,15 +7,18 @@
 #include <exst/dependency_graph_stats.h>
 #include <exst/ExstTypes.h>
 
-namespace exst {
+namespace exst
+{
 
-    class GraphStatsCalculator {
+    class GraphStatsCalculator
+    {
     public:
 
         /*
          * returns the single instance of the GraphStatsCalculator
          */
-        static GraphStatsCalculator &getInstance() {
+        static GraphStatsCalculator &getInstance()
+        {
             static GraphStatsCalculator calc;
             return calc;
         }
@@ -23,7 +26,7 @@ namespace exst {
         /*
          * prints the dependency graph as edge list
          */
-        std::string getDIMACS(MyGraph &graph, uint32 edgecount);
+        static std::string getDIMACS(MyGraph &graph, uint32 edgecount);
 
         /*
          * adds a dependency to the dependency graph
@@ -34,11 +37,6 @@ namespace exst {
          * adds a literal set during solving
          */
         void addAtomReduct(const Clasp::Literal lit);
-
-        /*
-         * prints the dependency graph
-         */
-        void printDepGraph();
 
         /*
          *
@@ -67,11 +65,11 @@ namespace exst {
 
         void reduceGraph(uint32 lit, bool neg);
 
+        //calculation for statistics of dependency graph
+        DependencyGraphStats dependencyGraphStats;
     private:
         //calculator for statistics of incidence graph
         IncidenceGraphStats incidenceGraphStats;
-        //calculation for statistics of dependency graph
-        DependencyGraphStats dependencyGraphStats;
         //atoms of current assignment
         std::unordered_map<uint32, bool> selectedAtoms;
         //used for matching literal ids before and after pre processing
@@ -80,13 +78,9 @@ namespace exst {
         uint32 numNonDualHornClauses = 0;
 
         //private constructors for singleton
-        GraphStatsCalculator() {
+        GraphStatsCalculator()
+        {
         };
-
-        /*
-         * adds a rule to the dependency graph
-         */
-        void addRuleDependencyGraph(std::vector<uint32> bodies, Clasp::PodVector<Clasp::Var>::type head);
 
         /*
          * adds a rule to the incidence graph
@@ -95,7 +89,7 @@ namespace exst {
                                    uint32 negative);
 
         const Clasp::SymbolTable *sTable;
-        int numClauses = 0;
+        uint32 numClauses = 0;
         unsigned long clauseSize = 0;
         unsigned long clauseSizePositive = 0;
         uint32 clauseSizeNegative = 0;
@@ -104,8 +98,7 @@ namespace exst {
         std::unordered_map<uint32, uint32> atomOccurencesNegative;
         std::unordered_map<uint32, uint32> atomOccurencesTotal;
 
-        void parseAtomOccurencesPositive(std::vector<uint32> &dependencies,
-                                         Clasp::PodVector<unsigned int>::type &heads,
+        void parseAtomOccurencesPositive(std::vector<uint32> &dependencies, Clasp::PodVector<unsigned int>::type &heads,
                                          uint32 &negative);
 
         void parseAtomOccurencesNegative(uint32 &negative, std::vector<uint32> &dependencies);
@@ -114,8 +107,8 @@ namespace exst {
 
         void countAtomOccurencesTotal(std::vector<uint32> &dependencies, Clasp::PodVector<unsigned int>::type &heads);
 
-        int numFacts = 0;
-        int numRules = 0;
+        uint32 numFacts = 0;
+        uint32 numRules = 0;
     };
 }
 

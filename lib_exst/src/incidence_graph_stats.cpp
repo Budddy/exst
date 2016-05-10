@@ -2,9 +2,11 @@
 #include <exst/graph_stats_calculator.h>
 #include <iostream>
 
-namespace exst {
-    void GraphStatsCalculator::addRuleIncidenceGraph(std::vector<uint32> deps,
-                                                     Clasp::PodVector<uint32>::type heads, uint32 negative) {
+namespace exst
+{
+    void GraphStatsCalculator::addRuleIncidenceGraph(std::vector<uint32> deps, Clasp::PodVector<uint32>::type heads,
+                                                     uint32 negative)
+    {
 
         std::unordered_map<uint32, std::unordered_map<uint32, EdgeType>> &igraph = incidenceGraphStats.incidenceGraph;
         std::unordered_map<uint32, uint32> &avmap = incidenceGraphStats.atomVertexMap;
@@ -15,9 +17,11 @@ namespace exst {
         igraph[rule_Vertex];
 
         // add body atoms
-        for (int i = 0; i < deps.size(); ++i) {
+        for (uint32 i = 0; i < deps.size(); ++i)
+        {
             uint32 dId = deps[i];
-            if (avmap.count(dId) == 0) {
+            if (avmap.count(dId) == 0)
+            {
                 avmap[dId] = incidenceGraphStats.nodecount;
                 incidenceGraphStats.nodecount++;
                 igraph[avmap[dId]];
@@ -28,9 +32,11 @@ namespace exst {
         }
 
         // add head atoms
-        for (int i = 0; i < heads.size(); ++i) {
+        for (uint32 i = 0; i < heads.size(); ++i)
+        {
             uint32 hId = heads[i];
-            if (avmap.count(hId) == 0) {
+            if (avmap.count(hId) == 0)
+            {
                 avmap[hId] = incidenceGraphStats.nodecount;
                 incidenceGraphStats.nodecount++;
                 igraph[avmap[hId]];
@@ -41,30 +47,37 @@ namespace exst {
         }
     }
 
-    void GraphStatsCalculator::addAtomReduct(const Clasp::Literal lit) {
+    void GraphStatsCalculator::addAtomReduct(const Clasp::Literal lit)
+    {
         bool neg = true;
         uint32 atomId = atomIds[lit.var()];
         selectedAtoms[atomId] = neg;
     }
 
-    void GraphStatsCalculator::resetAssignment() {
+    void GraphStatsCalculator::resetAssignment()
+    {
         std::cout << "reset Incidence graph";
         selectedAtoms.clear();
         incidenceGraphStats.edgecountReduct = incidenceGraphStats.edgecount;
         incidenceGraphStats.incidenceGraphReduct = copyMyGraph(incidenceGraphStats.incidenceGraph);
     }
 
-    void GraphStatsCalculator::reduceGraph(uint32 lit, bool neg) {
+    void GraphStatsCalculator::reduceGraph(uint32 lit, bool neg)
+    {
         uint32 nodeIdBody = incidenceGraphStats.atomVertexMap[atomIds[lit]];
         MyGraph &igraph = incidenceGraphStats.incidenceGraphReduct;
 
         std::unordered_map<unsigned int, EdgeType>::iterator it;
-        for (it = igraph[nodeIdBody].begin(); it != igraph[nodeIdBody].end(); it++) {
-            if ((*it).second == neg ? positive : negative) {
+        for (it = igraph[nodeIdBody].begin(); it != igraph[nodeIdBody].end(); it++)
+        {
+            if ((*it).second == neg ? positive : negative)
+            {
                 std::unordered_map<uint32, EdgeType> &bodies = incidenceGraphStats.ruleBodyMap[(*it).first];
                 std::unordered_map<unsigned int, EdgeType>::iterator bodyIt;
-                for (bodyIt = bodies.begin(); bodyIt != bodies.end(); bodyIt++) {
-                    if (bodyIt->second == positive || bodyIt->second == negative) {
+                for (bodyIt = bodies.begin(); bodyIt != bodies.end(); bodyIt++)
+                {
+                    if (bodyIt->second == positive || bodyIt->second == negative)
+                    {
                         igraph[bodyIt->first].erase(it->first);
                         incidenceGraphStats.edgecountReduct--;
                     }
@@ -74,7 +87,8 @@ namespace exst {
         printIGraphReduct();
     }
 
-    void GraphStatsCalculator::printIGraphReduct() {
+    void GraphStatsCalculator::printIGraphReduct()
+    {
         std::cout << "\n_Incidence Graph Reduct_ \nNodes: ";
         std::cout << incidenceGraphStats.nodecountReduct;
         std::cout << "\nEdges: ";
@@ -82,7 +96,8 @@ namespace exst {
         std::cout << "\n";
     }
 
-    void GraphStatsCalculator::printIncidenceGraph() {
+    void GraphStatsCalculator::printIncidenceGraph()
+    {
         std::cout << "_Incidence Graph_ \nNodes: ";
         std::cout << incidenceGraphStats.nodecount;
         std::cout << "\nEdges: ";

@@ -2,17 +2,22 @@
 #include <exst/graph_stats_calculator.h>
 #include <iostream>
 
-namespace exst {
+namespace exst
+{
 
-    std::__cxx11::string GraphStatsCalculator::getDIMACS(MyGraph &graph, uint32 edgecount) {
+    std::__cxx11::string GraphStatsCalculator::getDIMACS(MyGraph &graph, uint32 edgecount)
+    {
         std::__cxx11::string dimacs;
         dimacs += "p edge " + std::__cxx11::to_string(graph.size()) + " " + std::__cxx11::to_string(edgecount);
 
         std::unordered_map<unsigned int, std::unordered_map<unsigned int, exst::EdgeType>>::iterator it;
-        for (it = graph.begin(); it != graph.end(); it++) {
+        for (it = graph.begin(); it != graph.end(); it++)
+        {
             std::unordered_map<unsigned int, exst::EdgeType>::iterator it2;
-            for (it2 = it->second.begin(); it2 != it->second.end(); it2++) {
-                if (it->first < it2->first) {
+            for (it2 = it->second.begin(); it2 != it->second.end(); it2++)
+            {
+                if (it->first < it2->first)
+                {
                     dimacs += "\ne " + std::to_string(it->first);
                     dimacs += " " + std::to_string(it2->first);
                 }
@@ -22,7 +27,8 @@ namespace exst {
     }
 
     void GraphStatsCalculator::parseRule(std::vector<uint32> dependencies, Clasp::PodVector<uint32>::type heads,
-                                         uint32 negative) {
+                                         uint32 negative)
+    {
 
         //rules
         numRules++;
@@ -35,14 +41,16 @@ namespace exst {
             numFacts++;
 
         //non horn clause
-        if (negative != 0) ++GraphStatsCalculator::numNonHornClauses;
+        if (negative != 0)
+            ++GraphStatsCalculator::numNonHornClauses;
         //non dual horn clause
-        if (negative < dependencies.size() - 1) ++GraphStatsCalculator::numNonDualHornClauses;
+        if (negative < dependencies.size() - 1)
+            ++GraphStatsCalculator::numNonDualHornClauses;
         //clause size
-        clauseSize = clauseSize < dependencies.size() ? dependencies.size() : clauseSize;
+        clauseSize = (unsigned long) (clauseSize < dependencies.size() ? dependencies.size() : clauseSize);
         //negative clause size
-        clauseSizePositive = clauseSizePositive < dependencies.size() - negative ? dependencies.size() - negative
-                                                                                 : clauseSizePositive;
+        clauseSizePositive = (unsigned long) (clauseSizePositive < dependencies.size() - negative ? dependencies.size() - negative
+                                                                                                  : clauseSizePositive);
         //positive clause size
         clauseSizeNegative = clauseSizeNegative < negative ? negative : clauseSizeNegative;
 
@@ -58,50 +66,60 @@ namespace exst {
         //atom occurences Negative
         parseAtomOccurencesNegative(negative, dependencies);
 
-        GraphStatsCalculator::addRuleDependencyGraph(dependencies, heads);
-        GraphStatsCalculator::addRuleIncidenceGraph(dependencies, heads, negative);
+        dependencyGraphStats.addRuleDependencyGraph(dependencies, heads);
+        addRuleIncidenceGraph(dependencies, heads, negative);
     }
 
     void GraphStatsCalculator::countAtomOccurences(std::vector<uint32> &dependencies,
-                                                   Clasp::PodVector<unsigned int>::type &heads) {
+                                                   Clasp::PodVector<unsigned int>::type &heads)
+    {
         std::vector<uint32>::iterator it1;
-        for (it1 = dependencies.begin(); it1 != dependencies.end(); it1++) {
+        for (it1 = dependencies.begin(); it1 != dependencies.end(); it1++)
+        {
             atomOccurences[(*it1)]++;
         }
         uint32 *it2;
-        for (it2 = heads.begin(); it2 != heads.end(); it2++) {
+        for (it2 = heads.begin(); it2 != heads.end(); it2++)
+        {
             atomOccurences[(*it2)]++;
         }
     }
 
-    void GraphStatsCalculator::parseAtomOccurencesNegative(uint32 &negative, std::vector<uint32> &dependencies) {
+    void GraphStatsCalculator::parseAtomOccurencesNegative(uint32 &negative, std::vector<uint32> &dependencies)
+    {
         std::vector<uint32>::iterator it5 = dependencies.begin();
-        int i;
-        for (i = 0; i < negative; i++) {
+        uint32 i;
+        for (i = 0; i < negative; i++)
+        {
             atomOccurencesNegative[(*(it5 + i))]++;
         }
     }
 
     void GraphStatsCalculator::parseAtomOccurencesPositive(std::vector<uint32> &dependencies,
                                                            Clasp::PodVector<unsigned int>::type &heads,
-                                                           uint32 &negative) {
+                                                           uint32 &negative)
+    {
         std::vector<uint32>::iterator it3 = dependencies.begin();
         uint32 a;
-        for (a = negative; a < dependencies.size(); a++) {
+        for (a = negative; a < dependencies.size(); a++)
+        {
             atomOccurencesPositive[(*(it3 + a))]++;
         }
         uint32 *it4;
-        for (it4 = heads.begin(); it4 != heads.end(); it4++) {
+        for (it4 = heads.begin(); it4 != heads.end(); it4++)
+        {
             atomOccurencesPositive[(*it4)]++;
         }
     }
 
-    void GraphStatsCalculator::addId(uint32 before, uint32 after) {
+    void GraphStatsCalculator::addId(uint32 before, uint32 after)
+    {
         atomIds[after] = before;
     }
 
-    void GraphStatsCalculator::printExtendedStats() {
-        printDepGraph();
+    void GraphStatsCalculator::printExtendedStats()
+    {
+        dependencyGraphStats.printDepGraph();
         printIncidenceGraph();
         std::cout << "Non Horn Clauses: " << this->numNonHornClauses << "\n";
         std::cout << "Non Dual Horn Clauses: " << this->numNonDualHornClauses << "\n";
@@ -111,16 +129,17 @@ namespace exst {
     }
 
     void GraphStatsCalculator::countAtomOccurencesTotal(std::vector<uint32> &dependencies,
-                                                        Clasp::PodVector<unsigned int>::type &heads) {
+                                                        Clasp::PodVector<unsigned int>::type &heads)
+    {
         std::vector<uint32>::iterator it1;
-        for (it1 = dependencies.begin(); it1 != dependencies.end(); it1++) {
+        for (it1 = dependencies.begin(); it1 != dependencies.end(); it1++)
+        {
             atomOccurencesTotal[(*it1)]++;
         }
         uint32 *it2;
-        for (it2 = heads.begin(); it2 != heads.end(); it2++) {
+        for (it2 = heads.begin(); it2 != heads.end(); it2++)
+        {
             atomOccurencesTotal[(*it2)]++;
         }
-
     }
-
 }

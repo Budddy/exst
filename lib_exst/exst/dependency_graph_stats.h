@@ -3,13 +3,20 @@
 
 #include <unordered_map>
 #include <exst/ExstTypes.h>
+#include <unordered_map>
+#include <clasp/literal.h>
+#include <exst/incidence_graph_stats.h>
+#include <exst/dependency_graph_stats.h>
+#include <exst/ExstTypes.h>
 
 /*
  * class used for calculating and saving stats of the dependency graph and the actual dependency graph
  */
 
-namespace exst {
-    class DependencyGraphStats {
+namespace exst
+{
+    class DependencyGraphStats
+    {
     public:
         //dependency graph
         MyGraph dependencyGraph;
@@ -18,6 +25,14 @@ namespace exst {
         MyGraph edgeMap;
         uint32 edgecount = 0;
         uint32 nodecount = 0;
+        /*
+                 * adds a rule to the dependency graph
+                 */
+        void addRuleDependencyGraph(std::vector<uint32> bodies, Clasp::PodVector<uint32>::type head);
+        /*
+             * prints the dependency graph
+             */
+        void printDepGraph();
     };
 }
 

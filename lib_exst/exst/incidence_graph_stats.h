@@ -8,8 +8,10 @@
 /*
  * class used for calculating and saving stats of the incidence graph and the incidence graph
  */
-namespace exst {
-    class IncidenceGraphStats {
+namespace exst
+{
+    class IncidenceGraphStats
+    {
     public:
         //complete incidence graph
         MyGraph incidenceGraph;
@@ -22,6 +24,8 @@ namespace exst {
         uint32 nodecount = 0;
         uint32 edgecountReduct = 0;
         uint32 nodecountReduct = 0;
+
+    private:
     };
 }
 
