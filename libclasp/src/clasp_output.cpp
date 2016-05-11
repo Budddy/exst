@@ -202,7 +202,7 @@ namespace Clasp {
                 if (ctx.hasSolver(1)) { visitThreads(ctx); }
                 if (ctx.sccGraph.get() && ctx.sccGraph->numNonHcfs()) { visitHccs(ctx); }
             }
-            exst::GraphStatsCalculator::getInstance().printExtendedStats();
+            exst::StatsCalculator::getInstance().printExtendedStats();
             std::flush(std::cout);
         }
         void StatsVisitor::visitProblemStats(const Clasp::ProblemStats &stats, const Clasp::Asp::LpStats *lp) {
@@ -878,7 +878,8 @@ namespace Clasp {
             bool first = true;
             for (SymbolTable::const_iterator it = sym.begin(); it != sym.end(); ++it) {
                 if(!m.isTrue(it->second.lit)){
-                    exst::GraphStatsCalculator::getInstance().addAtomReduct(it->second.lit);
+                    exst::StatsCalculator::getInstance().graphStatsCalculator.incidenceGraphStats.addAtomReduct(
+                            it->second.lit);
                 }
                 if (m.isTrue(it->second.lit) && doPrint(it->second)) {
                     if (!first) { printSep(cat_value); }

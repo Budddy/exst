@@ -624,7 +624,7 @@ namespace Clasp {
                 else {
                     const Literal &x = posLit(prg.ctx()->addVar(Var_t::atom_var));
                     setLiteral(x);
-                    exst::GraphStatsCalculator::getInstance().addId(id_,x.var());
+                    exst::StatsCalculator::getInstance().addId(id_,x.var());
                 }
             }
         }

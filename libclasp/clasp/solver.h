@@ -29,6 +29,7 @@
 #include <clasp/shared_context.h>
 #include <exst/graph_stats_calculator.h>
 #include <exst/incidence_graph_stats.h>
+#include <exst/extended_stats_calculator.h>
 
 namespace Clasp {
 
@@ -1173,7 +1174,8 @@ namespace Clasp {
             }else {
                 selected = s.defaultLit(v);
             }
-            exst::GraphStatsCalculator::getInstance().reduceGraph(selected.index(),selected.sign());
+            exst::StatsCalculator::getInstance().graphStatsCalculator.incidenceGraphStats.reduceGraph(selected.index(),
+                                                                                                      selected.sign());
             return selected;
         }
     private:

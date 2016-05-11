@@ -6,14 +6,20 @@
 
 namespace exst
 {
-
+    /*
+     *
+     */
     enum EdgeType
     {
         positive, negative, head, body
     };
 
+    //
     typedef std::unordered_map<uint32, std::unordered_map<uint32, EdgeType>> MyGraph;
 
+    /*
+     *
+     */
     MyGraph copyMyGraph(MyGraph graph);
 }
 

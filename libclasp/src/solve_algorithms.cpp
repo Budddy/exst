@@ -289,7 +289,8 @@ namespace Clasp {
                                             "#models not 0: last model may not cover consequences."));
                     }
                 }
-                //exst::GraphStatsCalculator::getInstance().labelGraph(ctx->symbolTable());
+                //TODO
+                //exst::StatsCalculator::getInstance().labelGraph(ctx->symbolTable());
                 return algo->doSolve(*ctx, assume);
             }
             SolveAlgorithm *algo;
@@ -361,10 +362,10 @@ namespace Clasp {
         // Add assumptions - if this fails, the problem is unsat
         // under the current assumptions but not necessarily unsat.
         for (ValueRep res; more; solve.reset()) {
-            exst::GraphStatsCalculator::getInstance().resetAssignment();
+            exst::StatsCalculator::getInstance().graphStatsCalculator.incidenceGraphStats.resetAssignment();
             while ((res = solve.solve()) == value_true && (!enumerator().commitModel(s) || reportModel(s))) {
                 enumerator().update(s);
-                exst::GraphStatsCalculator::getInstance().resetAssignment();
+                exst::StatsCalculator::getInstance().graphStatsCalculator.incidenceGraphStats.resetAssignment();
             }
             if (res != value_false) {
                 more = (res == value_free || moreModels(s));

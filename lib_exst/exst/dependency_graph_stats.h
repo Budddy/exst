@@ -18,21 +18,25 @@ namespace exst
     class DependencyGraphStats
     {
     public:
+        /*
+         * adds a rule to the dependency graph
+         */
+        void addRuleDependencyGraph(std::vector<uint32> bodies, Clasp::PodVector<uint32>::type head);
+        /*
+         * prints the dependency graph
+         */
+        void printDepGraph();
+
         //dependency graph
         MyGraph dependencyGraph;
         //mapping from graph vertices to literals
         std::unordered_map<uint32, uint32> atomVertexMap;
+        //
         MyGraph edgeMap;
+        //
         uint32 edgecount = 0;
+        //
         uint32 nodecount = 0;
-        /*
-                 * adds a rule to the dependency graph
-                 */
-        void addRuleDependencyGraph(std::vector<uint32> bodies, Clasp::PodVector<uint32>::type head);
-        /*
-             * prints the dependency graph
-             */
-        void printDepGraph();
     };
 }
 

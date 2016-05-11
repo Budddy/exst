@@ -263,7 +263,7 @@ namespace Clasp {
             dep_list.push_back(atom);
             active_->addToBody(atom, i >= neg, 1);
         }
-        exst::GraphStatsCalculator::getInstance().parseRule(dep_list, active()->heads, neg);
+        exst::StatsCalculator::getInstance().parseRule(dep_list, active()->heads, neg);
         if (readWeights) {
             for (uint32 i = 0; i < lits; ++i) {
                 active_->body[i].second = input()->parseInt(0, INT_MAX, "Weight Rule: bad or missing weight!");
