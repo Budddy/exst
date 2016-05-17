@@ -4,7 +4,6 @@
 #include <unordered_map>
 #include <exst/ExstTypes.h>
 #include <clasp/util/platform.h>
-#include <c++/vector>
 #include <clasp/pod_vector.h>
 #include <clasp/literal.h>
 
