@@ -17,9 +17,6 @@ namespace exst
         if (body.size() == 0)
             numFacts++;
 
-        if (head.front() == 1)
-            constraint++;
-
         int negative = 0;
         for (int i = 0; i < body.size(); i++)
         {
@@ -28,6 +25,14 @@ namespace exst
                 negative++;
             }
         };
+
+        if (head.front() == 1)
+        {
+            maxPositiveRuleSizeConstraint = maxPositiveRuleSizeConstraint<body.size()-negative?body.size()-negative:maxPositiveRuleSizeConstraint;
+            constraint++;
+        }else{
+            maxPositiveRuleSizeNonConstraint = maxPositiveRuleSizeNonConstraint<body.size()-negative+head.size()?body.size()-negative+head.size():maxPositiveRuleSizeNonConstraint;
+        }
         //non horn clause
         if (negative != 0)
             ++numNonHornClauses;
@@ -46,7 +51,7 @@ namespace exst
         maxClauseSizeNegative = maxClauseSizeNegative < negative ? negative : maxClauseSizeNegative;
 
         //get variables
-        variableOccurrences(body,head);
+        variableOccurrences(body, head);
 
         //atom occurrences
         countAtomOccurences(body, head);
@@ -100,9 +105,12 @@ namespace exst
 
     void StatsCalculator::addId(uint32 before, uint32 after)
     {
-        if(after == 0){
+        if (after == 0)
+        {
             variableNegative.erase(variableNegative.find(before));
             variablePositive.erase(variablePositive.find(before));
+            variableNegativeWithoutHelper.erase(variableNegative.find(before));
+            variablePositiveWithoutHelper.erase(variablePositive.find(before));
         }
         atomIds[after] = before;
     }
@@ -153,6 +161,7 @@ namespace exst
         //maximum number of negative occurrences of an atom
         std::cout << "maximum number of negative occurrences of an atom: " << maxValue(atomOccurencesNegative) << "\n";
 
+        //TODO
         /*std::ofstream dfile;
         dfile.open("dgraph.txt", std::ios::out);
         dfile << getDIMACS(graphStatsCalculator.dependencyGraphStats.dependencyGraph,
@@ -161,8 +170,8 @@ namespace exst
         std::ofstream ifile;
         ifile.open("igraph.txt", std::ios::out);
         ifile << getDIMACS(graphStatsCalculator.incidenceGraphStats.incidenceGraph,
-                           graphStatsCalculator.incidenceGraphStats.edgecount);
-*/
+                           graphStatsCalculator.incidenceGraphStats.edgecount);*/
+
         std::flush(std::cout);
     }
 
@@ -174,14 +183,37 @@ namespace exst
             if (it->first.sign())
             {
                 variableNegative[id] = true;
+                variableNegativeWithoutHelper[id] = true;
             } else
             {
                 variablePositive[id] = true;
+                variablePositiveWithoutHelper[id] = true;
             }
         }
         for (uint32 *it = head.begin(); it != head.end(); it++)
         {
             variablePositive[(*it)] = true;
+            variablePositiveWithoutHelper[(*it)] = true;
+        }
+    }
+
+    void StatsCalculator::setSymbolTable(Clasp::SymbolTable &table)
+    {
+        this->sTable = &table;
+        std::unordered_map<unsigned int, bool>::iterator it;
+        for (it = variablePositiveWithoutHelper.begin(); it != variablePositiveWithoutHelper.end(); it++)
+        {
+            if (table.find((*it).first) == nullptr)
+            {
+                variablePositiveWithoutHelper.erase((*it).first);
+            }
+        }
+        for (it = variableNegativeWithoutHelper.begin(); it != variableNegativeWithoutHelper.end(); it++)
+        {
+            if (table.find((*it).first) == nullptr)
+            {
+                variableNegativeWithoutHelper.erase((*it).first);
+            }
         }
     }
 }

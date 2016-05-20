@@ -35,6 +35,8 @@ namespace exst
          */
         void addId(uint32 before, uint32 after);
 
+        void setSymbolTable(Clasp::SymbolTable &table);
+
         /*
          *
          */
@@ -77,7 +79,7 @@ namespace exst
         //number of dual horn clauses in the program
         uint32 numNonDualHornClauses = 0;
         //symbol table to match the atom ids with their symbols
-        const Clasp::SymbolTable *sTable;
+        Clasp::SymbolTable* sTable;
         //maximal clause size
         uint64 maxClauseSize = 0;
         //maximal positive clause size
@@ -92,13 +94,13 @@ namespace exst
         std::unordered_map<uint32, uint32> atomOccurencesNegative;
         //
         GraphStatsCalculator graphStatsCalculator;
-        //TODO variable occurs negative
+        //variable occurs negative
         std::unordered_map<uint32, bool> variableNegative;
-        //TODO variable occurs positive
+        //variable occurs positive
         std::unordered_map<uint32, bool> variablePositive;
-        //TODO negative variable occurrences without helpers
+        //negative variable occurrences without helpers
         std::unordered_map<uint32, bool> variableNegativeWithoutHelper;
-        //TODO positive variable occurrences without helpers
+        //positive variable occurrences without helpers
         std::unordered_map<uint32, bool> variablePositiveWithoutHelper;
         //TODO
         uint32 constraint = 0;
