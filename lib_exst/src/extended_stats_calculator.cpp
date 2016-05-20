@@ -1,89 +1,109 @@
 #include <exst/extended_stats_calculator.h>
 #include <iostream>
+#include <fstream>
 
 namespace exst
 {
-    void StatsCalculator::parseRule(std::vector<uint32> dependencies, Clasp::PodVector<uint32>::type heads,
-                                    uint32 negative)
+    void StatsCalculator::parseRule(Clasp::WeightLitVec &body, Clasp::PodVector<uint32>::type &head)
     {
-
         //rules
         numRules++;
+
         // num clauses
-        if (dependencies.size() > 0)
+        if (body.size() > 0)
             numClauses++;
 
         // num facts
-        if (dependencies.size() == 0)
+        if (body.size() == 0)
             numFacts++;
 
+        if (head.front() == 1)
+            constraint++;
+
+        int negative = 0;
+        for (int i = 0; i < body.size(); i++)
+        {
+            if (body[i].first.sign())
+            {
+                negative++;
+            }
+        };
         //non horn clause
         if (negative != 0)
             ++numNonHornClauses;
+
         //non dual horn clause
-        if (negative < dependencies.size() - 1)
+        if (negative < body.size() - 1)
             ++numNonDualHornClauses;
+
         //clause size
-        clauseSize = (unsigned long) (clauseSize < dependencies.size() ? dependencies.size() : clauseSize);
-        //negative clause size
-        clauseSizePositive = (unsigned long) (clauseSizePositive < dependencies.size() - negative ?
-                                              dependencies.size() - negative : clauseSizePositive);
+        maxClauseSize = (unsigned long) (maxClauseSize < body.size() + head.size() ? body.size() + head.size()
+                                                                                   : maxClauseSize);
         //positive clause size
-        clauseSizeNegative = clauseSizeNegative < negative ? negative : clauseSizeNegative;
+        maxClauseSizePositive = (unsigned long) (maxClauseSizePositive < body.size() - negative + head.size() ?
+                                                 body.size() - negative + head.size() : maxClauseSizePositive);
+        //negative clause size
+        maxClauseSizeNegative = maxClauseSizeNegative < negative ? negative : maxClauseSizeNegative;
 
-        //atom occurences
-        countAtomOccurencesTotal(dependencies, heads);
+        //get variables
+        variableOccurrences(body,head);
 
-        //atom occurences
-        countAtomOccurences(dependencies, heads);
+        //atom occurrences
+        countAtomOccurences(body, head);
 
-        //atom occurences Positive
-        parseAtomOccurencesPositive(dependencies, heads, negative);
+        //number of variables that occur in positive/negative literals
+        parseVariableLiteral(body, head);
 
-        //atom occurences Negative
-        parseAtomOccurencesNegative(negative, dependencies);
-
-        graphStatsCalculator.dependencyGraphStats.addRuleDependencyGraph(dependencies, heads);
-        graphStatsCalculator.incidenceGraphStats.addRuleIncidenceGraph(dependencies, heads, negative);
+        graphStatsCalculator.dependencyGraphStats.addRuleDependencyGraph(body, head);
+        graphStatsCalculator.incidenceGraphStats.addRuleIncidenceGraph(body, head, negative);
     }
 
-    void StatsCalculator::countAtomOccurences(std::vector<uint32> &dependencies, Clasp::PodVector<uint32>::type &heads)
+    void StatsCalculator::countAtomOccurences(Clasp::WeightLitVec &body, Clasp::PodVector<uint32>::type &head)
     {
-        for (std::vector<uint32>::iterator it1 = dependencies.begin(); it1 != dependencies.end(); it1++)
+        for (Clasp::WeightLiteral *it = body.begin(); it != body.end(); it++)
         {
-            atomOccurences[(*it1)]++;
+            uint32 id = it->first.index();
+            if (it->first.sign())
+            {
+                atomOccurencesNegative[id]++;
+            } else
+            {
+                atomOccurencesPositive[id]++;
+            }
+            atomOccurences[id]++;
         }
-        for (uint32 *it2 = heads.begin(); it2 != heads.end(); it2++)
+        for (uint32 *it = head.begin(); it != head.end(); it++)
         {
-            atomOccurences[(*it2)]++;
+            atomOccurences[(*it)]++;
+            atomOccurencesPositive[(*it)]++;
         }
     }
 
-    void StatsCalculator::parseAtomOccurencesNegative(uint32 &negative, std::vector<uint32> &dependencies)
+    void StatsCalculator::variableOccurrences(Clasp::WeightLitVec &body, Clasp::PodVector<uint32>::type &head)
     {
-        std::vector<uint32>::iterator it5 = dependencies.begin();
-        for (uint32 i = 0; i < negative; i++)
+        for (Clasp::WeightLiteral *it = body.begin(); it != body.end(); it++)
         {
-            atomOccurencesNegative[(*(it5 + i))]++;
+            uint32 id = it->first.index();
+            if (it->first.sign())
+            {
+                variableNegative[id] = true;
+            } else
+            {
+                variablePositive[id] = true;
+            }
         }
-    }
-
-    void StatsCalculator::parseAtomOccurencesPositive(std::vector<uint32> &dependencies,
-                                                      Clasp::PodVector<uint32>::type &heads, uint32 &negative)
-    {
-        std::vector<uint32>::iterator it3 = dependencies.begin();
-        for (uint32 a = negative; a < dependencies.size(); a++)
+        for (uint32 *it = head.begin(); it != head.end(); it++)
         {
-            atomOccurencesPositive[(*(it3 + a))]++;
-        }
-        for (uint32 *it4 = heads.begin(); it4 != heads.end(); it4++)
-        {
-            atomOccurencesPositive[(*it4)]++;
+            variablePositive[(*it)] = true;
         }
     }
 
     void StatsCalculator::addId(uint32 before, uint32 after)
     {
+        if(after == 0){
+            variableNegative.erase(variableNegative.find(before));
+            variablePositive.erase(variablePositive.find(before));
+        }
         atomIds[after] = before;
     }
 
@@ -91,46 +111,77 @@ namespace exst
     {
         graphStatsCalculator.dependencyGraphStats.printDepGraph();
         graphStatsCalculator.incidenceGraphStats.printIncidenceGraph();
-        std::cout << "Non Horn Clauses: " << this->numNonHornClauses << "\n";
-        std::cout << "Non Dual Horn Clauses: " << this->numNonDualHornClauses << "\n";
-        std::cout << "Clauses: " << this->numClauses << "\n";
-        std::cout << "Facts: " << this->numFacts << "\n";
-        std::cout << "Rules: " << this->numRules << "\n";
+        std::cout << "\nNon Horn Clauses: " << numNonHornClauses << "\n";
+        std::cout << "Non Dual Horn Clauses: " << numNonDualHornClauses << "\n";
+        std::cout << "Clauses: " << numClauses << "\n";
+        std::cout << "Facts: " << numFacts << "\n";
+        std::cout << "Rules: " << numRules << "\n";
+        std::cout << "Constraints: " << constraint << "\n";
+
+        //maximum weight of the minimal model
+        std::cout << "\nmaximum weight of the minimal model: " << maxWeightMinModel << "\n";
+
+        //maximum clause size
+        std::cout << "\nmax clause size: " << maxClauseSize << "\n";
+
+        //maximum positive/negative clause size, i.e., only positive/negative literals are counted
+        std::cout << "max positive clause size: " << maxClauseSizePositive << "\n";
+        std::cout << "max negative clause size: " << maxClauseSizeNegative << "\n";
+
+        //number of variables that occur as positive/negative literals
+        std::cout << "\nnumber of variables that occur as positive literals: " << "\n";
+        std::cout << "with helpers: " << variablePositive.size() << " without helpers: " <<
+        variablePositiveWithoutHelper.size() << "\n";
+        std::cout << "number of variables that occur as negative literals: " << "\n";
+        std::cout << "with helpers: " << variableNegative.size() << " without helpers: " <<
+        variableNegativeWithoutHelper.size() << "\n";
+
+        //maximum positive rule size (constraint/non-constraint)
+        std::cout << "\nmaximum positive rule size constraint: " << maxPositiveRuleSizeConstraint << "\n";
+        std::cout << "maximum positive rule size non-constraint: " << maxPositiveRuleSizeNonConstraint << "\n";
+
+        //total number of atom occurrences in the program (constraints/non-constraint)
+        std::cout << "\ntotal number of atom occurrences constraint: " << atomOccurencesConstraint << "\n";
+        std::cout << "total number of atom occurrences non-constraint: " << atomOccurencesNonConstraint << "\n";
+
+        //maximum number of occurrences of an atom
+        std::cout << "\nmaximum number of occurrences of an atom: " << maxValue(atomOccurences) << "\n";
+
+        //maximum number of positive occurrences of an atom
+        std::cout << "maximum number of positive occurrences of an atom: " << maxValue(atomOccurencesPositive) << "\n";
+
+        //maximum number of negative occurrences of an atom
+        std::cout << "maximum number of negative occurrences of an atom: " << maxValue(atomOccurencesNegative) << "\n";
+
+        /*std::ofstream dfile;
+        dfile.open("dgraph.txt", std::ios::out);
+        dfile << getDIMACS(graphStatsCalculator.dependencyGraphStats.dependencyGraph,
+                           graphStatsCalculator.dependencyGraphStats.edgecount);
+
+        std::ofstream ifile;
+        ifile.open("igraph.txt", std::ios::out);
+        ifile << getDIMACS(graphStatsCalculator.incidenceGraphStats.incidenceGraph,
+                           graphStatsCalculator.incidenceGraphStats.edgecount);
+*/
+        std::flush(std::cout);
     }
 
-    void StatsCalculator::countAtomOccurencesTotal(std::vector<uint32> &dependencies,
-                                                   Clasp::PodVector<uint32>::type &heads)
+    void StatsCalculator::parseVariableLiteral(Clasp::WeightLitVec &body, Clasp::PodVector<uint32>::type &head)
     {
-        std::vector<uint32>::iterator it1;
-        for (it1 = dependencies.begin(); it1 != dependencies.end(); it1++)
+        for (Clasp::WeightLiteral *it = body.begin(); it != body.end(); it++)
         {
-            atomOccurencesTotal[(*it1)]++;
-        }
-        uint32 *it2;
-        for (it2 = heads.begin(); it2 != heads.end(); it2++)
-        {
-            atomOccurencesTotal[(*it2)]++;
-        }
-    }
-
-    std::string GraphStatsCalculator::getDIMACS(MyGraph &graph, uint32 edgecount)
-    {
-        std::__cxx11::string dimacs;
-        dimacs += "p edge " + std::__cxx11::to_string(graph.size()) + " " + std::__cxx11::to_string(edgecount);
-
-        std::unordered_map<unsigned int, std::unordered_map<unsigned int, exst::EdgeType>>::iterator it;
-        for (it = graph.begin(); it != graph.end(); it++)
-        {
-            std::unordered_map<unsigned int, exst::EdgeType>::iterator it2;
-            for (it2 = it->second.begin(); it2 != it->second.end(); it2++)
+            uint32 id = it->first.index();
+            if (it->first.sign())
             {
-                if (it->first < it2->first)
-                {
-                    dimacs += "\ne " + std::to_string(it->first);
-                    dimacs += " " + std::to_string(it2->first);
-                }
+                variableNegative[id] = true;
+            } else
+            {
+                variablePositive[id] = true;
             }
         }
-        return dimacs;
+        for (uint32 *it = head.begin(); it != head.end(); it++)
+        {
+            variablePositive[(*it)] = true;
+        }
     }
 }

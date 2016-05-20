@@ -3,7 +3,7 @@
 
 namespace exst
 {
-    void exst::IncidenceGraphStats::addRuleIncidenceGraph(std::vector<uint32> deps,
+    void exst::IncidenceGraphStats::addRuleIncidenceGraph(Clasp::WeightLitVec deps,
                                                           Clasp::PodVector<uint32>::type heads, uint32 negative)
     {
 
@@ -18,7 +18,7 @@ namespace exst
         // add body atoms
         for (uint32 i = 0; i < deps.size(); ++i)
         {
-            uint32 dId = deps[i];
+            uint32 dId = deps[i].first.index();
             if (avmap.count(dId) == 0)
             {
                 avmap[dId] = nodecount;
@@ -57,6 +57,7 @@ namespace exst
     {
         std::cout << "reset Incidence graph";
         selectedAtoms.clear();
+        nodecountReduct = nodecount;
         edgecountReduct = edgecount;
         incidenceGraphReduct = copyMyGraph(incidenceGraph);
     }

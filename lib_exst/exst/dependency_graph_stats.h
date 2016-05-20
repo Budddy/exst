@@ -21,7 +21,8 @@ namespace exst
         /*
          * adds a rule to the dependency graph
          */
-        void addRuleDependencyGraph(std::vector<uint32> bodies, Clasp::PodVector<uint32>::type head);
+        void addRuleDependencyGraph(Clasp::WeightLitVec bodies, Clasp::PodVector<uint32>::type head);
+
         /*
          * prints the dependency graph
          */
@@ -33,9 +34,9 @@ namespace exst
         std::unordered_map<uint32, uint32> atomVertexMap;
         //
         MyGraph edgeMap;
-        //
+        //number of edges in the dependency graph
         uint32 edgecount = 0;
-        //
+        //number of nodes in the dependency graph
         uint32 nodecount = 0;
     };
 }

@@ -12,19 +12,17 @@ namespace exst
     class GraphStatsCalculator
     {
     public:
-        GraphStatsCalculator(std::unordered_map<int32, uint32> &atomIds, std::unordered_map<uint32, bool> &selectedAtoms) :
-                atomIds(atomIds),selectedAtoms(selectedAtoms),incidenceGraphStats( atomIds,selectedAtoms)
+        GraphStatsCalculator(std::unordered_map<int32, uint32> &atomIds,
+                             std::unordered_map<uint32, bool> &selectedAtoms) :
+                atomIds(atomIds), selectedAtoms(selectedAtoms), incidenceGraphStats(atomIds, selectedAtoms)
         {
-
         }
-        /*
-         * prints the dependency graph as edge list
-         */
-        static std::string getDIMACS(MyGraph &graph, uint32 edgecount);
 
         //calculation for statistics of dependency graph
         DependencyGraphStats dependencyGraphStats;
+        //
         std::unordered_map<int32, uint32> &atomIds;
+        //
         std::unordered_map<uint32, bool> &selectedAtoms;
         //calculator for statistics of incidence graph
         IncidenceGraphStats incidenceGraphStats;
