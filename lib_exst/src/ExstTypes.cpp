@@ -13,7 +13,7 @@ namespace exst
         return newGraph;
     }
 
-    static std::string getDIMACS(MyGraph &graph, uint32 edgecount)
+    std::string getDIMACS(MyGraph &graph, uint32_t edgecount)
     {
         std::__cxx11::string dimacs;
         dimacs += "p edge " + std::__cxx11::to_string(graph.size()) + " " + std::__cxx11::to_string(edgecount);

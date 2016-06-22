@@ -4,7 +4,7 @@
 
 namespace exst
 {
-    void StatsCalculator::parseRule(Clasp::WeightLitVec &body, Clasp::PodVector<uint32>::type &head)
+    void StatsCalculator::parseRule(std::list<lit_type> body, std::list<lit_type> head)
     {
         //rules
         numRules++;
@@ -17,21 +17,31 @@ namespace exst
         if (body.size() == 0)
             numFacts++;
 
-        int negative = 0;
-        for (int i = 0; i < body.size(); i++)
+        uint32_t negative = 0;
+        std::list<exst::lit_type>::iterator i;
+        for (i = body.begin(); i != body.end(); i++)
         {
-            if (body[i].first.sign())
+            if ((*i).s == -1)
             {
                 negative++;
             }
         };
 
-        if (head.front() == 1)
+        if (head.front().id == 1)
         {
-            maxPositiveRuleSizeConstraint = maxPositiveRuleSizeConstraint<body.size()-negative?body.size()-negative:maxPositiveRuleSizeConstraint;
+            maxPositiveRuleSizeConstraint = (uint32_t) (maxPositiveRuleSizeConstraint < body.size() - negative ?
+                                                        body.size() - negative : maxPositiveRuleSizeConstraint);
             constraint++;
-        }else{
-            maxPositiveRuleSizeNonConstraint = maxPositiveRuleSizeNonConstraint<body.size()-negative+head.size()?body.size()-negative+head.size():maxPositiveRuleSizeNonConstraint;
+            atomOccurencesConstraint += head.size();
+            atomOccurencesConstraint += body.size();
+        } else
+        {
+            maxPositiveRuleSizeNonConstraint = (uint32_t) (maxPositiveRuleSizeNonConstraint <
+                                                           body.size() - negative + head.size() ? body.size() -
+                                                                                                  negative + head.size()
+                                                                                                : maxPositiveRuleSizeNonConstraint);
+            atomOccurencesNonConstraint += head.size();
+            atomOccurencesNonConstraint += body.size();
         }
         //non horn clause
         if (negative != 0)
@@ -42,11 +52,11 @@ namespace exst
             ++numNonDualHornClauses;
 
         //clause size
-        maxClauseSize = (unsigned long) (maxClauseSize < body.size() + head.size() ? body.size() + head.size()
-                                                                                   : maxClauseSize);
+        maxClauseSize = (maxClauseSize < body.size() + head.size() ? body.size() + head.size() : maxClauseSize);
         //positive clause size
-        maxClauseSizePositive = (unsigned long) (maxClauseSizePositive < body.size() - negative + head.size() ?
-                                                 body.size() - negative + head.size() : maxClauseSizePositive);
+        maxClauseSizePositive = (maxClauseSizePositive < body.size() - negative + head.size() ? body.size() - negative +
+                                                                                                head.size()
+                                                                                              : maxClauseSizePositive);
         //negative clause size
         maxClauseSizeNegative = maxClauseSizeNegative < negative ? negative : maxClauseSizeNegative;
 
@@ -60,15 +70,16 @@ namespace exst
         parseVariableLiteral(body, head);
 
         graphStatsCalculator.dependencyGraphStats.addRuleDependencyGraph(body, head);
-        graphStatsCalculator.incidenceGraphStats.addRuleIncidenceGraph(body, head, negative);
+        graphStatsCalculator.incidenceGraphStats.addRuleIncidenceGraph(body, head);
     }
 
-    void StatsCalculator::countAtomOccurences(Clasp::WeightLitVec &body, Clasp::PodVector<uint32>::type &head)
+    void StatsCalculator::countAtomOccurences(std::list<lit_type> body, std::list<lit_type> head)
     {
-        for (Clasp::WeightLiteral *it = body.begin(); it != body.end(); it++)
+        std::list<exst::lit_type>::iterator it;
+        for (it = body.begin(); it != body.end(); it++)
         {
-            uint32 id = it->first.index();
-            if (it->first.sign())
+            uint32_t id = it->id;
+            if (it->s == -1)
             {
                 atomOccurencesNegative[id]++;
             } else
@@ -77,19 +88,27 @@ namespace exst
             }
             atomOccurences[id]++;
         }
-        for (uint32 *it = head.begin(); it != head.end(); it++)
+        for (it = head.begin(); it != head.end(); it++)
         {
-            atomOccurences[(*it)]++;
-            atomOccurencesPositive[(*it)]++;
+            uint32_t id = it->id;
+            if (it->s == -1)
+            {
+                atomOccurencesNegative[id]++;
+            } else
+            {
+                atomOccurencesPositive[id]++;
+            }
+            atomOccurencesPositive[id]++;
         }
     }
 
-    void StatsCalculator::variableOccurrences(Clasp::WeightLitVec &body, Clasp::PodVector<uint32>::type &head)
+    void StatsCalculator::variableOccurrences(std::list<lit_type> body, std::list<lit_type> head)
     {
-        for (Clasp::WeightLiteral *it = body.begin(); it != body.end(); it++)
+        std::list<exst::lit_type>::iterator it;
+        for (it = body.begin(); it != body.end(); it++)
         {
-            uint32 id = it->first.index();
-            if (it->first.sign())
+            uint32_t id = it->id;
+            if (it->s == -1)
             {
                 variableNegative[id] = true;
             } else
@@ -97,13 +116,20 @@ namespace exst
                 variablePositive[id] = true;
             }
         }
-        for (uint32 *it = head.begin(); it != head.end(); it++)
+        for (it = head.begin(); it != head.end(); it++)
         {
-            variablePositive[(*it)] = true;
+            uint32_t id = it->id;
+            if (it->s == -1)
+            {
+                variableNegative[id] = true;
+            } else
+            {
+                variablePositive[id] = true;
+            }
         }
     }
 
-    void StatsCalculator::addId(uint32 before, uint32 after)
+    void StatsCalculator::addId(uint32_t before, uint32_t after)
     {
         if (after == 0)
         {
@@ -175,12 +201,13 @@ namespace exst
         std::flush(std::cout);
     }
 
-    void StatsCalculator::parseVariableLiteral(Clasp::WeightLitVec &body, Clasp::PodVector<uint32>::type &head)
+    void StatsCalculator::parseVariableLiteral(std::list<lit_type> body, std::list<lit_type> head)
     {
-        for (Clasp::WeightLiteral *it = body.begin(); it != body.end(); it++)
+        std::list<exst::lit_type>::iterator it;
+        for (it = body.begin(); it != body.end(); it++)
         {
-            uint32 id = it->first.index();
-            if (it->first.sign())
+            uint32_t id = it->id;
+            if (it->s == -1)
             {
                 variableNegative[id] = true;
                 variableNegativeWithoutHelper[id] = true;
@@ -190,30 +217,49 @@ namespace exst
                 variablePositiveWithoutHelper[id] = true;
             }
         }
-        for (uint32 *it = head.begin(); it != head.end(); it++)
+        for (it = head.begin(); it != head.end(); it++)
         {
-            variablePositive[(*it)] = true;
-            variablePositiveWithoutHelper[(*it)] = true;
+            uint32_t id = it->id;
+            if (it->s == -1)
+            {
+                variableNegative[id] = true;
+                variableNegativeWithoutHelper[id] = true;
+            } else
+            {
+                variablePositive[id] = true;
+                variablePositiveWithoutHelper[id] = true;
+            }
         }
     }
 
-    void StatsCalculator::setSymbolTable(Clasp::SymbolTable &table)
+    void StatsCalculator::setSymbolTable(std::unordered_map<uint32_t, const char *> &table)
     {
         this->sTable = &table;
+        std::list<unsigned int> rem;
         std::unordered_map<unsigned int, bool>::iterator it;
         for (it = variablePositiveWithoutHelper.begin(); it != variablePositiveWithoutHelper.end(); it++)
         {
-            if (table.find((*it).first) == nullptr)
+            if (table.count(it->first) == 0)
             {
-                variablePositiveWithoutHelper.erase((*it).first);
+                rem.push_back((*it).first);
             }
+        }
+        while (rem.size() > 0)
+        {
+            variablePositiveWithoutHelper.erase(rem.front());
+            rem.pop_front();
         }
         for (it = variableNegativeWithoutHelper.begin(); it != variableNegativeWithoutHelper.end(); it++)
         {
-            if (table.find((*it).first) == nullptr)
+            if (table.count((*it).first) == 0)
             {
-                variableNegativeWithoutHelper.erase((*it).first);
+                rem.push_back((*it).first);
             }
+        }
+        while (rem.size() > 0)
+        {
+            variableNegativeWithoutHelper.erase(rem.front());
+            rem.pop_front();
         }
     }
 }

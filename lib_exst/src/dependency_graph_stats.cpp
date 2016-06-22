@@ -12,15 +12,16 @@ namespace exst
         std::cout << "\n";
     }
 
-    void DependencyGraphStats::addRuleDependencyGraph(Clasp::WeightLitVec bodies, Clasp::PodVector<uint32>::type heads)
+    void DependencyGraphStats::addRuleDependencyGraph(std::list<lit_type> bodies, std::list<lit_type> heads)
     {
-        std::unordered_map<uint32, uint32> &vertexNodeMap = atomVertexMap;
-        std::unordered_map<uint32, std::unordered_map<uint32, EdgeType>> &graph = dependencyGraph;
+        std::unordered_map<uint32_t, uint32_t> &vertexNodeMap = atomVertexMap;
+        std::unordered_map<uint32_t, std::unordered_map<uint32_t, EdgeType>> &graph = dependencyGraph;
 
         // add body atoms to graph if they are not in it
-        for (uint32 i = 0; i < bodies.size(); ++i)
+        std::list<exst::lit_type>::iterator it;
+        for (it = bodies.begin(); it != bodies.end(); it++)
         {
-            uint32 id = bodies[i].first.index();
+            uint32_t id = it->id;
             if (vertexNodeMap.count(id) == 0)
             {
                 vertexNodeMap[id] = nodecount;
@@ -30,40 +31,44 @@ namespace exst
         }
 
         // add head atoms to graph if they are not in it
-        for (uint32 i = 0; i < heads.size(); ++i)
+        for (it = heads.begin(); it != heads.end(); it++)
         {
-            if (vertexNodeMap.count(heads[i]) == 0)
+            uint32_t id = it->id;
+            if (vertexNodeMap.count(id) == 0)
             {
-                vertexNodeMap[heads[i]] = nodecount;
+                vertexNodeMap[id] = nodecount;
                 nodecount++;
-                vertexNodeMap[heads[i]];
+                vertexNodeMap[id];
             }
         }
 
-        for (uint32 a = 0; a < heads.size(); ++a)
+        std::list<exst::lit_type>::iterator a;
+        for (a = heads.begin(); a != heads.end(); a++)
         {
-            for (uint32 b = 0; b < bodies.size(); ++b)
+            std::list<exst::lit_type>::iterator b;
+            for (b = bodies.begin(); b != bodies.end(); b++)
             {
-                uint32 id = bodies[b].first.index();
-                if ((heads[a]) > 1 && edgeMap[heads[a]].count(id) == 0)
+                uint32_t id = b->id;
+                if ((a->id) > 1 && edgeMap[a->id].count(id) == 0)
                 {
-                    graph[vertexNodeMap[heads[a]]][vertexNodeMap[id]] = head;
+                    graph[vertexNodeMap[a->id]][vertexNodeMap[id]] = HEAD;
                     edgecount++;
                 };
             }
         }
 
-        if (heads.size() == 0 || heads.front() == 1)
+        if (heads.size() == 0 || heads.front().id == 1)
         {
-            for (uint32 a = 0; a < bodies.size(); ++a)
+            for (a = bodies.begin(); a != bodies.end(); a++)
             {
-                uint32 ida = bodies[a].first.index();
-                for (uint32 b = 0; b < bodies.size(); ++b)
+                uint32_t ida = a->id;
+                std::list<exst::lit_type>::iterator b;
+                for (b = bodies.begin(); b != bodies.end(); b++)
                 {
-                    uint32 idb = bodies[b].first.index();
+                    uint32_t idb = b->id;
                     if ((ida) != (idb) && edgeMap[ida].count(idb) == 0)
                     {
-                        graph[vertexNodeMap[ida]][vertexNodeMap[idb]] = body;
+                        graph[vertexNodeMap[ida]][vertexNodeMap[idb]] = BODY;
                     };
                 }
             }

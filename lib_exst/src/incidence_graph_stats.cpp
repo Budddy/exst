@@ -3,53 +3,53 @@
 
 namespace exst
 {
-    void exst::IncidenceGraphStats::addRuleIncidenceGraph(Clasp::WeightLitVec deps,
-                                                          Clasp::PodVector<uint32>::type heads, uint32 negative)
+    void exst::IncidenceGraphStats::addRuleIncidenceGraph(std::list<lit_type> bodies, std::list<lit_type> heads)
     {
 
-        std::unordered_map<uint32, std::unordered_map<uint32, EdgeType>> &igraph = incidenceGraph;
-        std::unordered_map<uint32, uint32> &avmap = atomVertexMap;
-        std::unordered_map<uint32, std::unordered_map<uint32, EdgeType>> &rbmap = ruleBodyMap;
+        std::unordered_map<uint32_t, std::unordered_map<uint32_t, EdgeType>> &igraph = incidenceGraph;
+        std::unordered_map<uint32_t, uint32_t> &avmap = atomVertexMap;
+        std::unordered_map<uint32_t, std::unordered_map<uint32_t, EdgeType>> &rbmap = ruleBodyMap;
 
-        uint32 rule_Vertex = nodecount;
+        uint32_t rule_Vertex = nodecount;
         nodecount++;
         igraph[rule_Vertex];
 
         // add body atoms
-        for (uint32 i = 0; i < deps.size(); ++i)
+        std::list<exst::lit_type>::iterator it;
+        for (it = bodies.begin(); it != bodies.end(); it++)
         {
-            uint32 dId = deps[i].first.index();
+            uint32_t dId = it->id;
             if (avmap.count(dId) == 0)
             {
                 avmap[dId] = nodecount;
                 nodecount++;
                 igraph[avmap[dId]];
             }
-            bool neg = i < negative;
-            rbmap[rule_Vertex][dId] = neg ? exst::negative : positive;
+            bool neg = it->s == -1;
+            rbmap[rule_Vertex][dId] = neg ? exst::NEG : POS;
             edgecount++;
         }
 
         // add head atoms
-        for (uint32 i = 0; i < heads.size(); ++i)
+        for (it = heads.begin(); it != heads.end(); it++)
         {
-            uint32 hId = heads[i];
+            uint32_t hId = it->id;
             if (avmap.count(hId) == 0)
             {
                 avmap[hId] = nodecount;
                 nodecount++;
                 igraph[avmap[hId]];
             }
-            igraph[avmap[hId]][rule_Vertex] = head;
-            igraph[rule_Vertex][avmap[hId]] = head;
+            igraph[avmap[hId]][rule_Vertex] = HEAD;
+            igraph[rule_Vertex][avmap[hId]] = HEAD;
             edgecount++;
         }
     }
 
-    void exst::IncidenceGraphStats::addAtomReduct(const Clasp::Literal lit)
+    void exst::IncidenceGraphStats::addAtomReduct(lit_type lit)
     {
         bool neg = true;
-        uint32 atomId = atomIds[lit.var()];
+        uint32_t atomId = atomIds[lit.id];
         selectedAtoms[atomId] = neg;
     }
 
@@ -62,21 +62,21 @@ namespace exst
         incidenceGraphReduct = copyMyGraph(incidenceGraph);
     }
 
-    void exst::IncidenceGraphStats::reduceGraph(uint32 lit, bool neg)
+    void exst::IncidenceGraphStats::reduceGraph(lit_type lit)
     {
-        uint32 nodeIdBody = atomVertexMap[atomIds[lit]];
+        uint32_t nodeIdBody = atomVertexMap[atomIds[lit.id]];
         MyGraph &igraph = incidenceGraphReduct;
 
         std::unordered_map<unsigned int, exst::EdgeType>::iterator it;
         for (it = igraph[nodeIdBody].begin(); it != igraph[nodeIdBody].end(); it++)
         {
-            if ((*it).second == neg ? positive : negative)
+            if ((*it).second == lit.s ? POS : NEG)
             {
-                std::unordered_map<uint32, EdgeType> &bodies = ruleBodyMap[(*it).first];
+                std::unordered_map<uint32_t, EdgeType> &bodies = ruleBodyMap[(*it).first];
                 std::unordered_map<unsigned int, exst::EdgeType>::iterator bodyIt;
                 for (bodyIt = bodies.begin(); bodyIt != bodies.end(); bodyIt++)
                 {
-                    if (bodyIt->second == positive || bodyIt->second == negative)
+                    if (bodyIt->second == POS || bodyIt->second == NEG)
                     {
                         igraph[bodyIt->first].erase(it->first);
                         edgecountReduct--;

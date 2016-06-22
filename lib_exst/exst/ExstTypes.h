@@ -2,7 +2,6 @@
 #define CLASP_EXSTTYPES_H
 
 #include <unordered_map>
-#include <clasp/util/platform.h>
 
 namespace exst
 {
@@ -11,11 +10,22 @@ namespace exst
      */
     enum EdgeType
     {
-        positive, negative, head, body
+        POS = 1, NEG = -1, HEAD, BODY
+    };
+
+    enum Sign
+    {
+        POSITIVE = 1, NEGATIVE = -1
+    };
+
+    struct lit_type
+    {
+        uint32_t id;
+        Sign s;
     };
 
     //datatype for internal exst graph representation
-    typedef std::unordered_map<uint32, std::unordered_map<uint32, EdgeType>> MyGraph;
+    typedef std::unordered_map<uint32_t, std::unordered_map<uint32_t, EdgeType>> MyGraph;
 
     /*
      * returns a copy of the given graph
@@ -25,7 +35,7 @@ namespace exst
     /*
      * prints the dependency graph as edge list
      */
-    static std::string getDIMACS(MyGraph &graph, uint32 edgecount);
+    std::string getDIMACS(MyGraph &graph, uint32_t edgecount);
 }
 
 #endif //CLASP_EXSTTYPES_H

@@ -1,22 +1,21 @@
 SHELL        ?= /bin/sh
 AR           ?= ar
 CXX          ?= g++
+BUILD_DIR    ?= .
 ROOT_DIR     ?= .
-TARGET_DIR   ?= $(ROOT_DIR)/lib
-BUILD_DIR    ?= $(ROOT_DIR)/lib
 CXXFLAGS     ?= -O3 -DNDEBUG
 FLAGS        ?=
 ifneq ($(FLAGS),)
 -include $(FLAGS)
 endif
-INCLUDE      := -I $(ROOT_DIR) 
-ALL_CXXFLAGS := -W -Wall $(INCLUDE) $(CXXFLAGS) 
-TARGET       := $(TARGET_DIR)/libclasp.a
+INCLUDE      := -I $(ROOT_DIR)
+ALL_CXXFLAGS := -W -Wall $(INCLUDE) $(CXXFLAGS)
+TARGET       := $(BUILD_DIR)/lib/exst.a
 SOURCES      := $(patsubst $(ROOT_DIR)/src/%.cpp,%.cpp,$(wildcard $(ROOT_DIR)/src/*.cpp))
 DEPS         := $(patsubst %.cpp,$(BUILD_DIR)/%.dep, $(SOURCES))
 OBJECTS      := $(patsubst %.cpp,$(BUILD_DIR)/%.o, $(SOURCES))
 vpath %.cpp $(ROOT_DIR)/src
-vpath %.h   $(ROOT_DIR)/clasp
+vpath %.h   $(ROOT_DIR)/program_opts
 
 $(TARGET):	$(FLAGS) $(DEPS) $(OBJECTS)
 	$(AR)  cvrs $(TARGET) $(OBJECTS)
@@ -33,7 +32,8 @@ $(BUILD_DIR)/%.o: %.cpp $(FLAGS)
 	$(CXX) $(ALL_CXXFLAGS) -c $< -o $@
 
 
-.PHONY:	clean 
+.PHONY:	clean
+
 ifeq ($(findstring Windows,$(OS)),)
 clean:
 	@$(RM) $(TARGET)
