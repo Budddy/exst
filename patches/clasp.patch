@@ -1,0 +1,162 @@
+diff -rupN clasp-3.1.4/app/CMakeLists.txt clasp-3.1.4_patched/app/CMakeLists.txt
+--- clasp-3.1.4/app/CMakeLists.txt	2015-12-10 03:14:58.000000000 -0800
++++ clasp-3.1.4_patched/app/CMakeLists.txt	2016-06-21 01:05:33.000000000 -0700
+@@ -1,7 +1,7 @@
+ file(GLOB APP_SRC *.cpp)
+-include_directories(${CMAKE_SOURCE_DIR}/libclasp ${CMAKE_SOURCE_DIR}/libprogram_opts)
++include_directories(${CMAKE_SOURCE_DIR}/libclasp ${CMAKE_SOURCE_DIR}/libprogram_opts ${CMAKE_SOURCE_DIR}/lib_exst)
+ add_executable(clasp_app ${APP_SRC})
+-target_link_libraries(clasp_app libclasp libprogram_opts)
++target_link_libraries(clasp_app libclasp libprogram_opts lib_exst)
+ if(TBB_FOUND)
+ 	MESSAGE (STATUS "TBB found. Building with threads.")
+ 	target_link_libraries(clasp_app tbb)
+diff -rupN clasp-3.1.4/CMakeLists.txt clasp-3.1.4_patched/CMakeLists.txt
+--- clasp-3.1.4/CMakeLists.txt	2015-12-10 03:14:58.000000000 -0800
++++ clasp-3.1.4_patched/CMakeLists.txt	2016-06-21 01:04:27.000000000 -0700
+@@ -1,8 +1,9 @@
+-cmake_minimum_required(VERSION 2.6)
++cmake_minimum_required(VERSION 3.2)
+ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/tools")
+ project(clasp)
++set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -W -Wall -std=c++11 -O3 -DNDEBUG")
+ find_package(TBB)
+-include_directories (libclasp libprogram_opts)
++include_directories(libclasp libprogram_opts lib_exst)
+ 
+ if(NOT TBB_FOUND)
+ 	MESSAGE (STATUS "TBB not found. Building without threads.")
+@@ -15,5 +16,6 @@ else(NOT TBB_FOUND)
+ endif(NOT TBB_FOUND)
+ add_subdirectory(libclasp)
+ add_subdirectory(libprogram_opts)
++add_subdirectory(lib_exst)
+ add_subdirectory(app)
+ 
+diff -rupN clasp-3.1.4/libclasp/clasp/solver.h clasp-3.1.4_patched/libclasp/clasp/solver.h
+--- clasp-3.1.4/libclasp/clasp/solver.h	2015-12-10 03:14:58.000000000 -0800
++++ clasp-3.1.4_patched/libclasp/clasp/solver.h	2016-06-21 01:46:19.000000000 -0700
+@@ -27,6 +27,7 @@
+ #include <clasp/solver_types.h>
+ #include <clasp/solver_strategies.h>
+ #include <clasp/shared_context.h>
++#include <exst/extended_stats_calculator.h>
+ 
+ namespace Clasp { 
+ 
+@@ -1058,13 +1059,17 @@ public:
+ 	}
+ 	static Literal selectLiteral(Solver& s, Var v, int signScore) {
+ 		ValueSet prefs = s.pref(v);
++		Literal selected;
+ 		if (signScore != 0 && !prefs.has(ValueSet::user_value | ValueSet::saved_value | ValueSet::pref_value)) {
+-			return Literal(v, signScore < 0); 
++			selected = Literal(v, signScore < 0);
+ 		}
+ 		else if (!prefs.empty()) {
+-			return Literal(v, prefs.sign());
++			selected = Literal(v, prefs.sign());
++		}else {
++			selected = s.defaultLit(v);
+ 		}
+-		return s.defaultLit(v);
++		exst::StatsCalculator::getInstance().graphStatsCalculator.incidenceGraphStats.reduceGraph(selected.index(), selected.sign());
++		return selected;
+ 	}
+ private:
+ 	DecisionHeuristic(const DecisionHeuristic&);
+diff -rupN clasp-3.1.4/libclasp/src/clasp_output.cpp clasp-3.1.4_patched/libclasp/src/clasp_output.cpp
+--- clasp-3.1.4/libclasp/src/clasp_output.cpp	2015-12-10 03:14:58.000000000 -0800
++++ clasp-3.1.4_patched/libclasp/src/clasp_output.cpp	2016-06-21 01:41:57.000000000 -0700
+@@ -28,6 +28,8 @@
+ #include <climits>
+ #include <string>
+ #include <cstdlib>
++#include <exst/extended_stats_calculator.h>
++
+ #if !defined(_WIN32)
+ #include <signal.h>
+ #elif !defined(SIGALRM)
+@@ -190,6 +192,8 @@ void StatsVisitor::visitStats(const Shar
+ 		if (ctx.hasSolver(1)) { visitThreads(ctx); }
+ 		if (ctx.sccGraph.get() && ctx.sccGraph->numNonHcfs()) { visitHccs(ctx); }
+ 	}
++	exst::StatsCalculator::getInstance().setSymbolTable(ctx.symbolTable());
++	exst::StatsCalculator::getInstance().printExtendedStats();
+ }
+ void StatsVisitor::visitProblemStats(const Clasp::ProblemStats& stats, const Clasp::Asp::LpStats* lp) {
+ 	if (lp) { visitLogicProgramStats(*lp); }
+@@ -813,6 +817,10 @@ void TextOutput::printModel(const Symbol
+ void TextOutput::printNames(const Clasp::SymbolTable& sym, const Clasp::Model& m) {
+ 	bool first = true;
+ 	for (SymbolTable::const_iterator it = sym.begin(); it != sym.end(); ++it) {
++		if(!m.isTrue(it->second.lit)){
++			exst::StatsCalculator::getInstance().graphStatsCalculator.incidenceGraphStats.addAtomReduct(
++					it->second.lit);
++		}
+ 		if (m.isTrue(it->second.lit) && doPrint(it->second)) {
+ 			if (!first) { printSep(cat_value); }
+ 			printf(format[cat_atom], it->second.name.c_str());
+diff -rupN clasp-3.1.4/libclasp/src/logic_program_types.cpp clasp-3.1.4_patched/libclasp/src/logic_program_types.cpp
+--- clasp-3.1.4/libclasp/src/logic_program_types.cpp	2015-12-10 03:14:58.000000000 -0800
++++ clasp-3.1.4_patched/libclasp/src/logic_program_types.cpp	2016-06-21 01:43:00.000000000 -0700
+@@ -28,6 +28,7 @@
+ #include <clasp/util/misc_types.h>
+ 
+ #include <deque>
++#include <exst/extended_stats_calculator.h>
+ 
+ namespace Clasp { namespace Asp {
+ 
+@@ -593,7 +594,9 @@ void PrgHead::assignVar(LogicProgram& pr
+ 			prg.incEqs(Var_t::atom_body_var);
+ 		}
+ 		else {
+-			setLiteral(posLit(prg.ctx()->addVar(Var_t::atom_var)));
++			const Literal &x = posLit(prg.ctx()->addVar(Var_t::atom_var));
++			setLiteral(x);
++			exst::StatsCalculator::getInstance().addId(id_,x.var());
+ 		}
+ 	}
+ }
+diff -rupN clasp-3.1.4/libclasp/src/parser.cpp clasp-3.1.4_patched/libclasp/src/parser.cpp
+--- clasp-3.1.4/libclasp/src/parser.cpp	2015-12-10 03:14:58.000000000 -0800
++++ clasp-3.1.4_patched/libclasp/src/parser.cpp	2016-06-21 01:43:49.000000000 -0700
+@@ -28,6 +28,7 @@
+ #include <stdlib.h>
+ #include <limits.h>
+ #include <stdarg.h>
++#include <exst/extended_stats_calculator.h>
+ #ifdef _WIN32
+ #pragma warning (disable : 4996)
+ #endif
+@@ -246,6 +247,7 @@ bool LparseParser::parseBody(uint32 lits
+ 	for (uint32 i = 0; i != lits; ++i) {
+ 		active_->addToBody(parseAtom(), i >= neg, 1);
+ 	}
++	exst::StatsCalculator::getInstance().parseRule(active()->body, active()->heads);
+ 	if (readWeights) {
+ 		for (uint32 i = 0; i < lits; ++i) {
+ 			active_->body[i].second = input()->parseInt(0, INT_MAX, "Weight Rule: bad or missing weight!");
+diff -rupN clasp-3.1.4/libclasp/src/solve_algorithms.cpp clasp-3.1.4_patched/libclasp/src/solve_algorithms.cpp
+--- clasp-3.1.4/libclasp/src/solve_algorithms.cpp	2015-12-10 03:14:58.000000000 -0800
++++ clasp-3.1.4_patched/libclasp/src/solve_algorithms.cpp	2016-06-21 01:44:55.000000000 -0700
+@@ -23,6 +23,7 @@
+ #include <clasp/minimize_constraint.h>
+ #include <clasp/util/timer.h>
+ #include <clasp/util/atomic.h>
++#include <exst/extended_stats_calculator.h>
+ namespace Clasp { 
+ /////////////////////////////////////////////////////////////////////////////////////////
+ // Basic solve
+@@ -312,8 +313,10 @@ bool SequentialSolve::doSolve(SharedCont
+ 	// Add assumptions - if this fails, the problem is unsat 
+ 	// under the current assumptions but not necessarily unsat.
+ 	for (ValueRep res; more; solve.reset()) {
++		exst::StatsCalculator::getInstance().graphStatsCalculator.incidenceGraphStats.resetAssignment();
+ 		while ((res = solve.solve()) == value_true && (!enumerator().commitModel(s) || reportModel(s))) {
+ 			enumerator().update(s);
++			exst::StatsCalculator::getInstance().graphStatsCalculator.incidenceGraphStats.resetAssignment();
+ 		}
+ 		if      (res != value_false)           { more = (res == value_free || moreModels(s)); break; }
+ 		else if ((stop=interrupted()) == true) { break; }
