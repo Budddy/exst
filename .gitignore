@@ -1,3 +1,5 @@
+*.dep
+
 # Compiled Object files
 *.slo
 *.lo
@@ -33,3 +35,10 @@
 build/*
 build_*/
 *.zip
+app/*
+build_vc/*
+libclasp/*
+libprogram_opts/*
+tools/*
+./CMakeLists.txt
+./COPYING
