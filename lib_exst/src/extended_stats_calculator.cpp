@@ -4,73 +4,107 @@
 
 namespace exst
 {
+    bool StatsCalculator::isConstraint(std::list<lit_type> head, std::list<lit_type> body)
+    {
+        std::list<exst::lit_type>::iterator it;
+        for (it = head.begin(); it != head.end(); it++)
+        {
+            if (atomIdsOldNew.count(it->id))
+            {
+                return true;
+            }
+        }
+        for (it = body.begin(); it != body.end(); it++)
+        {
+            if (atomIdsOldNew.count(it->id))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     void StatsCalculator::parseRule(std::list<lit_type> body, std::list<lit_type> head)
     {
-        //rules
-        numRules++;
-
-        // num clauses
-        if (body.size() > 0)
-            numClauses++;
-
-        // num facts
-        if (body.size() == 0)
-            numFacts++;
-
-        uint32_t negative = 0;
-        std::list<exst::lit_type>::iterator i;
-        for (i = body.begin(); i != body.end(); i++)
-        {
-            if ((*i).s == -1)
-            {
-                negative++;
-            }
-        };
-
-        if (head.front().id == 1)
-        {
-            maxPositiveRuleSizeConstraint = (uint32_t) (maxPositiveRuleSizeConstraint < body.size() - negative ?
-                                                        body.size() - negative : maxPositiveRuleSizeConstraint);
-            constraint++;
-            atomOccurencesConstraint += head.size();
-            atomOccurencesConstraint += body.size();
-        } else
-        {
-            maxPositiveRuleSizeNonConstraint = (uint32_t) (maxPositiveRuleSizeNonConstraint <
-                                                           body.size() - negative + head.size() ? body.size() -
-                                                                                                  negative + head.size()
-                                                                                                : maxPositiveRuleSizeNonConstraint);
-            atomOccurencesNonConstraint += head.size();
-            atomOccurencesNonConstraint += body.size();
-        }
-        //non horn clause
-        if (negative != 0)
-            ++numNonHornClauses;
-
-        //non dual horn clause
-        if (negative < body.size() - 1)
-            ++numNonDualHornClauses;
-
-        //clause size
-        maxClauseSize = (maxClauseSize < body.size() + head.size() ? body.size() + head.size() : maxClauseSize);
-        //positive clause size
-        maxClauseSizePositive = (maxClauseSizePositive < body.size() - negative + head.size() ? body.size() - negative +
-                                                                                                head.size()
-                                                                                              : maxClauseSizePositive);
-        //negative clause size
-        maxClauseSizeNegative = maxClauseSizeNegative < negative ? negative : maxClauseSizeNegative;
-
-        //get variables
-        variableOccurrences(body, head);
-
-        //atom occurrences
-        countAtomOccurences(body, head);
-
-        //number of variables that occur in positive/negative literals
-        parseVariableLiteral(body, head);
-
         graphStatsCalculator.dependencyGraphStats.addRuleDependencyGraph(body, head);
         graphStatsCalculator.incidenceGraphStats.addRuleIncidenceGraph(body, head);
+        std::pair<std::list<lit_type>, std::list<lit_type>> rule;
+        rule.first = head;
+        rule.second = body;
+        rules.push_back(rule);
+    }
+
+    void StatsCalculator::calculateStats()
+    {
+        std::list<std::pair<std::__cxx11::list<exst::lit_type>, std::__cxx11::list<exst::lit_type>>>::iterator it;
+        for (it = rules.begin(); it != rules.end(); it++)
+        {
+            std::list<lit_type> &head = it->first;
+            std::list<lit_type> &body = it->second;
+            //rules
+            numRules++;
+
+            // num facts
+            if (body.size() == 0)
+                numFacts++;
+
+            uint32_t negative = 0, positive = 0;
+            std::list<exst::lit_type>::iterator i;
+            for (i = body.begin(); i != body.end(); i++)
+            {
+                if ((*i).s == -1)
+                {
+                    negative++;
+                } else
+                {
+                    positive++;
+                }
+            };
+            for (i = head.begin(); i != head.end(); i++)
+            {
+                if ((*i).s == -1)
+                {
+                    negative++;
+                } else
+                {
+                    positive++;
+                }
+            };
+
+            if (isConstraint(head, body))
+            {
+                maxPositiveRuleSizeConstraint = (uint32_t) (maxPositiveRuleSizeConstraint < positive ? positive : maxPositiveRuleSizeConstraint);
+                numConstraints++;
+                atomOccurencesConstraint += head.size();
+                atomOccurencesConstraint += body.size();
+            } else
+            {
+                maxPositiveRuleSizeNonConstraint = (uint32_t) (maxPositiveRuleSizeNonConstraint < positive ? positive : maxPositiveRuleSizeNonConstraint);
+                atomOccurencesNonConstraint += head.size();
+                atomOccurencesNonConstraint += body.size();
+            }
+            //non horn clause
+            if (!((head.size() == 0 && negative <= 1) || (head.size() == 1 && negative <= 0)) && (body.size() > 0))
+                ++numNonHornClauses;
+
+            //non dual horn clause
+            if ((body.size() - negative > 1) && (body.size() > 0))
+                ++numNonDualHornClauses;
+
+            //clause size
+            maxClauseSize = (maxClauseSize < body.size() + head.size() ? body.size() + head.size() : maxClauseSize);
+            //positive clause size
+            maxClauseSizePositive = (maxClauseSizePositive < body.size() - negative + head.size() ? body.size() - negative + head.size()
+                                                                                                  : maxClauseSizePositive);
+            //negative clause size
+            maxClauseSizeNegative = maxClauseSizeNegative < negative ? negative : maxClauseSizeNegative;
+
+            //atom occurrences
+            countAtomOccurences(body, head);
+
+            //number of variables that occur in positive/negative literals
+            parseVariableLiteral(body, head);
+        }
     }
 
     void StatsCalculator::countAtomOccurences(std::list<lit_type> body, std::list<lit_type> head)
@@ -98,59 +132,23 @@ namespace exst
             {
                 atomOccurencesPositive[id]++;
             }
-            atomOccurencesPositive[id]++;
-        }
-    }
-
-    void StatsCalculator::variableOccurrences(std::list<lit_type> body, std::list<lit_type> head)
-    {
-        std::list<exst::lit_type>::iterator it;
-        for (it = body.begin(); it != body.end(); it++)
-        {
-            uint32_t id = it->id;
-            if (it->s == -1)
-            {
-                variableNegative[id] = true;
-            } else
-            {
-                variablePositive[id] = true;
-            }
-        }
-        for (it = head.begin(); it != head.end(); it++)
-        {
-            uint32_t id = it->id;
-            if (it->s == -1)
-            {
-                variableNegative[id] = true;
-            } else
-            {
-                variablePositive[id] = true;
-            }
+            atomOccurences[id]++;
         }
     }
 
     void StatsCalculator::addId(uint32_t before, uint32_t after)
     {
-        if (after == 0)
-        {
-            variableNegative.erase(variableNegative.find(before));
-            variablePositive.erase(variablePositive.find(before));
-            variableNegativeWithoutHelper.erase(variableNegative.find(before));
-            variablePositiveWithoutHelper.erase(variablePositive.find(before));
-        }
-        atomIds[after] = before;
+        atomIdsNewOld[after] = before;
+        atomIdsOldNew[before] = after;
     }
 
     void StatsCalculator::printExtendedStats()
     {
+        calculateStats();
         graphStatsCalculator.dependencyGraphStats.printDepGraph();
         graphStatsCalculator.incidenceGraphStats.printIncidenceGraph();
         std::cout << "\nNon Horn Clauses: " << numNonHornClauses << "\n";
         std::cout << "Non Dual Horn Clauses: " << numNonDualHornClauses << "\n";
-        std::cout << "Clauses: " << numClauses << "\n";
-        std::cout << "Facts: " << numFacts << "\n";
-        std::cout << "Rules: " << numRules << "\n";
-        std::cout << "Constraints: " << constraint << "\n";
 
         //maximum weight of the minimal model
         std::cout << "\nmaximum weight of the minimal model: " << maxWeightMinModel << "\n";
@@ -164,11 +162,9 @@ namespace exst
 
         //number of variables that occur as positive/negative literals
         std::cout << "\nnumber of variables that occur as positive literals: " << "\n";
-        std::cout << "with helpers: " << variablePositive.size() << " without helpers: " <<
-        variablePositiveWithoutHelper.size() << "\n";
+        std::cout << "with helpers: " << variablePositive.size() << " without helpers: " << variablePositiveWithoutHelper.size() << "\n";
         std::cout << "number of variables that occur as negative literals: " << "\n";
-        std::cout << "with helpers: " << variableNegative.size() << " without helpers: " <<
-        variableNegativeWithoutHelper.size() << "\n";
+        std::cout << "with helpers: " << variableNegative.size() << " without helpers: " << variableNegativeWithoutHelper.size() << "\n";
 
         //maximum positive rule size (constraint/non-constraint)
         std::cout << "\nmaximum positive rule size constraint: " << maxPositiveRuleSizeConstraint << "\n";
@@ -187,17 +183,6 @@ namespace exst
         //maximum number of negative occurrences of an atom
         std::cout << "maximum number of negative occurrences of an atom: " << maxValue(atomOccurencesNegative) << "\n";
 
-        //TODO
-        /*std::ofstream dfile;
-        dfile.open("dgraph.txt", std::ios::out);
-        dfile << getDIMACS(graphStatsCalculator.dependencyGraphStats.dependencyGraph,
-                           graphStatsCalculator.dependencyGraphStats.edgecount);
-
-        std::ofstream ifile;
-        ifile.open("igraph.txt", std::ios::out);
-        ifile << getDIMACS(graphStatsCalculator.incidenceGraphStats.incidenceGraph,
-                           graphStatsCalculator.incidenceGraphStats.edgecount);*/
-
         std::flush(std::cout);
     }
 
@@ -207,27 +192,33 @@ namespace exst
         for (it = body.begin(); it != body.end(); it++)
         {
             uint32_t id = it->id;
-            if (it->s == -1)
+            if (atomIdsOldNew.count(id) > 0)
             {
-                variableNegative[id] = true;
-                variableNegativeWithoutHelper[id] = true;
-            } else
-            {
-                variablePositive[id] = true;
-                variablePositiveWithoutHelper[id] = true;
+                if (it->s == -1)
+                {
+                    variableNegative[id] = true;
+                    variableNegativeWithoutHelper[id] = true;
+                } else
+                {
+                    variablePositive[id] = true;
+                    variablePositiveWithoutHelper[id] = true;
+                }
             }
         }
         for (it = head.begin(); it != head.end(); it++)
         {
             uint32_t id = it->id;
-            if (it->s == -1)
+            if (atomIdsOldNew.count(id) > 0)
             {
-                variableNegative[id] = true;
-                variableNegativeWithoutHelper[id] = true;
-            } else
-            {
-                variablePositive[id] = true;
-                variablePositiveWithoutHelper[id] = true;
+                if (it->s == -1)
+                {
+                    variableNegative[id] = true;
+                    variableNegativeWithoutHelper[id] = true;
+                } else
+                {
+                    variablePositive[id] = true;
+                    variablePositiveWithoutHelper[id] = true;
+                }
             }
         }
     }

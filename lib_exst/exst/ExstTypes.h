@@ -10,7 +10,7 @@ namespace exst
      */
     enum EdgeType
     {
-        POS = 1, NEG = -1, HEAD, BODY
+        POS = 1, NEG = -1, HEAD = 2, BODY = 3
     };
 
     enum Sign
@@ -20,6 +20,14 @@ namespace exst
 
     struct lit_type
     {
+        lit_type(uint32_t id, Sign s) : id(id), s(s)
+        {
+        }
+
+        lit_type()
+        {
+        }
+
         uint32_t id;
         Sign s;
     };
@@ -36,6 +44,8 @@ namespace exst
      * prints the dependency graph as edge list
      */
     std::string getDIMACS(MyGraph &graph, uint32_t edgecount);
+
+    uint32_t maxValue(std::unordered_map<uint32_t, uint32_t> values);
 }
 
 #endif //CLASP_EXSTTYPES_H

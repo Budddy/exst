@@ -43,19 +43,9 @@ namespace exst
          */
         void printExtendedStats();
 
-        void parseVariableLiteral(std::list<lit_type> body, std::list<lit_type> head);
-        void variableOccurrences(std::list<lit_type> body, std::list<lit_type> head);
+        void calculateStats();
 
-        uint32_t maxValue(std::unordered_map<uint32_t, uint32_t> values)
-        {
-            uint32_t maxValue = 0;
-            std::unordered_map<unsigned int, unsigned int>::iterator it;
-            for (it = values.begin(); it != values.end(); it++)
-            {
-                maxValue = it->second > maxValue ? it->second : maxValue;
-            }
-            return maxValue;
-        }
+        void parseVariableLiteral(std::list<lit_type> body, std::list<lit_type> head);
 
         uint32_t minValue(std::unordered_map<uint32_t, uint32_t> values)
         {
@@ -74,14 +64,17 @@ namespace exst
         //number of rules in the program
         uint32_t numRules = 0;
 
-        //number of clauses in the program
-        uint32_t numClauses = 0;
+        //rules
+        std::list<std::pair<std::list<lit_type>, std::list<lit_type>>> rules;
 
         //atoms of current assignment
         std::unordered_map<uint32_t, bool> selectedAtoms;
 
         //used for matching literal ids before and after pre processing
-        std::unordered_map<uint32_t, uint32_t> atomIds;
+        std::unordered_map<uint32_t, uint32_t> atomIdsNewOld;
+
+        //used for matching literal ids before and after pre processing
+        std::unordered_map<uint32_t, uint32_t> atomIdsOldNew;
 
         //number of not horn clauses in the program
         uint32_t numNonHornClauses = 0;
@@ -126,7 +119,7 @@ namespace exst
         std::unordered_map<uint32_t, bool> variablePositiveWithoutHelper;
 
         //number of constraints in the program
-        uint32_t constraint = 0;
+        uint32_t numConstraints = 0;
 
         //TODO maximum weight of the minimal model
         uint32_t maxWeightMinModel = 0;
@@ -144,9 +137,10 @@ namespace exst
         uint32_t atomOccurencesNonConstraint = 0;
 
         //private constructors for singleton
-        StatsCalculator() : graphStatsCalculator(atomIds, selectedAtoms)
+        StatsCalculator() : graphStatsCalculator(atomIdsNewOld, selectedAtoms)
         {
         };
+        bool isConstraint(std::list<lit_type> head, std::list<lit_type> body);
     };
 }
 #endif //CLASP_EXTENDED_STATS_CALCULATOR_H

@@ -13,8 +13,7 @@ namespace exst
     class IncidenceGraphStats
     {
     public:
-        IncidenceGraphStats(std::unordered_map<uint32_t, uint32_t> &atomIds,
-                            std::unordered_map<uint32_t, bool> &selectedAtoms) :
+        IncidenceGraphStats(std::unordered_map<uint32_t, uint32_t> &atomIds, std::unordered_map<uint32_t, bool> &selectedAtoms) :
                 atomIds(atomIds), selectedAtoms(selectedAtoms)
         {
         }

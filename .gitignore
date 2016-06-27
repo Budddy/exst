@@ -35,6 +35,8 @@
 build/*
 build_*/
 *.zip
+
+# Clasp files
 app/*
 build_vc/*
 libclasp/*

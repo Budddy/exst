@@ -33,4 +33,15 @@ namespace exst
         }
         return dimacs;
     }
+
+    uint32_t maxValue(std::unordered_map<uint32_t, uint32_t> values)
+    {
+        uint32_t maxValue = 0;
+        std::unordered_map<unsigned int, unsigned int>::iterator it;
+        for (it = values.begin(); it != values.end(); it++)
+        {
+            maxValue = it->second > maxValue ? it->second : maxValue;
+        }
+        return maxValue;
+    }
 }

@@ -9,13 +9,13 @@ ifneq ($(FLAGS),)
 -include $(FLAGS)
 endif
 INCLUDE      := -I $(ROOT_DIR)
-ALL_CXXFLAGS := -W -Wall $(INCLUDE) $(CXXFLAGS)
+ALL_CXXFLAGS := -std=c++11 -W -Wall $(INCLUDE) $(CXXFLAGS)
 TARGET       := $(BUILD_DIR)/lib/exst.a
 SOURCES      := $(patsubst $(ROOT_DIR)/src/%.cpp,%.cpp,$(wildcard $(ROOT_DIR)/src/*.cpp))
 DEPS         := $(patsubst %.cpp,$(BUILD_DIR)/%.dep, $(SOURCES))
 OBJECTS      := $(patsubst %.cpp,$(BUILD_DIR)/%.o, $(SOURCES))
 vpath %.cpp $(ROOT_DIR)/src
-vpath %.h   $(ROOT_DIR)/program_opts
+vpath %.h   $(ROOT_DIR)/exst
 
 $(TARGET):	$(FLAGS) $(DEPS) $(OBJECTS)
 	$(AR)  cvrs $(TARGET) $(OBJECTS)
