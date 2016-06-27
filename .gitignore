@@ -37,6 +37,7 @@ build_*/
 *.zip
 
 # Clasp files
+./CMakeLists.txt
 app/*
 build_vc/*
 libclasp/*
