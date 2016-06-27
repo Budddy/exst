@@ -1,1 +1,0 @@
-../build_vagrant/bin/clasp --help

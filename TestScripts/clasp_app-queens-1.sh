@@ -1,1 +1,0 @@
-../build_vagrant/bin/clasp --stats=2 -V ../TestData/queens1.out
