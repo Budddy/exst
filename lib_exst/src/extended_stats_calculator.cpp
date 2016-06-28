@@ -145,44 +145,58 @@ namespace exst
     void StatsCalculator::printExtendedStats()
     {
         calculateStats();
-        graphStatsCalculator.dependencyGraphStats.printDepGraph();
-        graphStatsCalculator.incidenceGraphStats.printIncidenceGraph();
-        std::cout << "\nNon Horn Clauses: " << numNonHornClauses << "\n";
-        std::cout << "Non Dual Horn Clauses: " << numNonDualHornClauses << "\n";
+        //graphStatsCalculator.dependencyGraphStats.printDepGraph();
+        //graphStatsCalculator.incidenceGraphStats.printIncidenceGraph();
+        std::cout << "\n\n\n\n\n\n\n\n\n\n{\n";
 
-        //maximum weight of the minimal model
-        std::cout << "\nmaximum weight of the minimal model: " << maxWeightMinModel << "\n";
+        //dependency graph
+        std::cout << "  \"Dependency Graph Nodes\": " << graphStatsCalculator.dependencyGraphStats.nodecount << ",\n";
+        std::cout << "  \"Dependency Graph Edges\": " << graphStatsCalculator.dependencyGraphStats.edgecount << ",\n";
+
+        //incidence graph
+        std::cout << "  \"Incidence Graph Nodes\": " << graphStatsCalculator.incidenceGraphStats.nodecount << ",\n";
+        std::cout << "  \"Incidence Graph Edges\": " << graphStatsCalculator.incidenceGraphStats.edgecount << ",\n";
+
+        //number of non horn clauses
+        std::cout << "  \"Non Horn Clauses\": " << numNonHornClauses << ",\n";
+
+        //number of non dual horn clauses
+        std::cout << "  \"Non Dual Horn Clauses\": " << numNonDualHornClauses << ",\n";
+
+        //maximum weight of the minimal model TODO
+        //std::cout << "  \"maximum weight of the minimal model\": " << maxWeightMinModel << ",\n";
 
         //maximum clause size
-        std::cout << "\nmax clause size: " << maxClauseSize << "\n";
+        std::cout << "  \"max clause size\": " << maxClauseSize << ",\n";
 
         //maximum positive/negative clause size, i.e., only positive/negative literals are counted
-        std::cout << "max positive clause size: " << maxClauseSizePositive << "\n";
-        std::cout << "max negative clause size: " << maxClauseSizeNegative << "\n";
+        std::cout << "  \"max positive clause size\": " << maxClauseSizePositive << ",\n";
+        std::cout << "  \"max negative clause size\": " << maxClauseSizeNegative << ",\n";
 
         //number of variables that occur as positive/negative literals
-        std::cout << "\nnumber of variables that occur as positive literals: " << "\n";
-        std::cout << "with helpers: " << variablePositive.size() << " without helpers: " << variablePositiveWithoutHelper.size() << "\n";
-        std::cout << "number of variables that occur as negative literals: " << "\n";
-        std::cout << "with helpers: " << variableNegative.size() << " without helpers: " << variableNegativeWithoutHelper.size() << "\n";
+        std::cout << "  \"number of variables that occur as positive literals with helpers\": " << variablePositive.size() << ",\n";
+        std::cout << "  \"number of variables that occur as positive literals without helpers\": " << variablePositiveWithoutHelper.size() << ",\n";
+        std::cout << "  \"number of variables that occur as negative literals with helpers\": " << variableNegative.size() << ",\n";
+        std::cout << "  \"number of variables that occur as negative literals without helpers\": " << variableNegativeWithoutHelper.size() << ",\n";
 
         //maximum positive rule size (constraint/non-constraint)
-        std::cout << "\nmaximum positive rule size constraint: " << maxPositiveRuleSizeConstraint << "\n";
-        std::cout << "maximum positive rule size non-constraint: " << maxPositiveRuleSizeNonConstraint << "\n";
+        std::cout << "  \"maximum positive rule size constraint\": " << maxPositiveRuleSizeConstraint << ",\n";
+        std::cout << "  \"maximum positive rule size non-constraint\": " << maxPositiveRuleSizeNonConstraint << ",\n";
 
         //total number of atom occurrences in the program (constraints/non-constraint)
-        std::cout << "\ntotal number of atom occurrences constraint: " << atomOccurencesConstraint << "\n";
-        std::cout << "total number of atom occurrences non-constraint: " << atomOccurencesNonConstraint << "\n";
+        std::cout << "  \"total number of atom occurrences constraint\": " << atomOccurencesConstraint << ",\n";
+        std::cout << "  \"total number of atom occurrences non-constraint\": " << atomOccurencesNonConstraint << ",\n";
 
         //maximum number of occurrences of an atom
-        std::cout << "\nmaximum number of occurrences of an atom: " << maxValue(atomOccurences) << "\n";
+        std::cout << "  \"maximum number of occurrences of an atom\": " << maxValue(atomOccurences) << ",\n";
 
         //maximum number of positive occurrences of an atom
-        std::cout << "maximum number of positive occurrences of an atom: " << maxValue(atomOccurencesPositive) << "\n";
+        std::cout << "  \"maximum number of positive occurrences of an atom\": " << maxValue(atomOccurencesPositive) << ",\n";
 
         //maximum number of negative occurrences of an atom
-        std::cout << "maximum number of negative occurrences of an atom: " << maxValue(atomOccurencesNegative) << "\n";
+        std::cout << "  \"maximum number of negative occurrences of an atom\": " << maxValue(atomOccurencesNegative) << "\n";
 
+        std::cout << "}";
         std::flush(std::cout);
     }
 
