@@ -58,6 +58,9 @@ namespace exst
         std::unordered_map<uint32_t, uint32_t> atomVertexMap;
 
         //maps the rules to the bodies
+        MyGraph ruleBodyMapReduct;
+
+        //maps the rules to the bodies
         MyGraph ruleBodyMap;
 
         //numer of edges in the incidence graph

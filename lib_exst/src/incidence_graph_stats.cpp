@@ -25,8 +25,10 @@ namespace exst
                 nodecount++;
                 igraph[avmap[dId]];
             }
-            bool neg = it->s == -1;
-            rbmap[rule_Vertex][dId] = neg ? exst::NEG : POS;
+            bool neg = it->s == NEGATIVE;
+            rbmap[rule_Vertex][dId] = neg ? NEG : POS;
+            igraph[avmap[dId]][rule_Vertex] = neg ? NEG : POS;
+            igraph[rule_Vertex][avmap[dId]] = neg ? NEG : POS;
             edgecount++;
         }
 
@@ -55,10 +57,10 @@ namespace exst
 
     void exst::IncidenceGraphStats::resetAssignment()
     {
-        std::cout << "reset Incidence graph";
         selectedAtoms.clear();
         nodecountReduct = nodecount;
         edgecountReduct = edgecount;
+        ruleBodyMapReduct.insert(ruleBodyMap.begin(),ruleBodyMap.end());
         incidenceGraphReduct = copyMyGraph(incidenceGraph);
     }
 
@@ -66,19 +68,22 @@ namespace exst
     {
         uint32_t nodeIdBody = atomVertexMap[atomIds[lit.id]];
         MyGraph &igraph = incidenceGraphReduct;
+        std::unordered_map<uint32_t, EdgeType> edges = igraph[nodeIdBody];
 
         std::unordered_map<unsigned int, exst::EdgeType>::iterator it;
-        for (it = igraph[nodeIdBody].begin(); it != igraph[nodeIdBody].end(); it++)
+        for (it = edges.begin(); it != edges.end(); it++)
         {
-            if ((*it).second == lit.s ? POS : NEG)
+            if ((*it).second == (lit.s == POSITIVE ? NEG : POS))
             {
-                std::unordered_map<uint32_t, EdgeType> &bodies = ruleBodyMap[(*it).first];
+                std::unordered_map<uint32_t, EdgeType> bodies = ruleBodyMapReduct[(*it).first];
                 std::unordered_map<unsigned int, exst::EdgeType>::iterator bodyIt;
                 for (bodyIt = bodies.begin(); bodyIt != bodies.end(); bodyIt++)
                 {
                     if (bodyIt->second == POS || bodyIt->second == NEG)
                     {
                         igraph[bodyIt->first].erase(it->first);
+                        ruleBodyMapReduct[it->first].erase(bodyIt->first);
+                        igraph[it->first].erase(bodyIt->first);
                         edgecountReduct--;
                     }
                 }
@@ -89,11 +94,11 @@ namespace exst
 
     void exst::IncidenceGraphStats::printIGraphReduct()
     {
-        std::cout << "\n_Incidence Graph Reduct_ \nNodes: ";
+        std::cout << "{\"_Incidence Graph Reduct_\": [ \n  [\"Nodes\", ";
         std::cout << nodecountReduct;
-        std::cout << "\nEdges: ";
+        std::cout << "],\n  [\"Edges\", ";
         std::cout << edgecountReduct;
-        std::cout << "\n";
+        std::cout << "]\n}\n";
     }
 
     void exst::IncidenceGraphStats::printIncidenceGraph()
