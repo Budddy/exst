@@ -6,6 +6,7 @@ Created on Nov 8, 2012
 
 from misc.printer import Printer
 from featureExtractor import FeatureExtractor
+from time import time
 
 from subprocess import Popen, PIPE
 import signal
@@ -34,6 +35,10 @@ class Exst(Claspre2):
                 instance : instance to solve
         '''
 
+        #TODO - total runtime
+        '''
+        start_time = time()
+        '''
         ret = Claspre2.run_extractor(self, args_dic, instance)
 
         Printer.print_c("\nExtended Stats Feature Extraction:")
@@ -54,11 +59,8 @@ class Exst(Claspre2):
         signal.signal(signal.SIGXCPU, self.__clean_up_with_signal)
         signal.signal(signal.SIGXFSZ, self.__clean_up_with_signal)
 
-        # stdout_file = NamedTemporaryFile(prefix="OUT-FEATURES",dir=".",delete=True)
         try:
             self._popen_ = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE)
-            self._timer = threading.Timer(self._maxTime, self._timeout, [self._popen_])
-            self._timer.start()
             self._instance.seek(0)
             if isinstance(self._instance, file) and self._instance.name.endswith(".gz"):
                 zcat_popen = Popen(["zcat", self._instance.name], stdout=PIPE)
@@ -71,19 +73,20 @@ class Exst(Claspre2):
 
         features = None
         try:
+            # TODO - optional output
+            '''
+            end_time = time()
+            time_taken = end_time - start_time
             out_ = out_.split("########## Extended Stats ##########")[1]
-            pr = self._out[:len(self._out)-2] + "," + out_[3:]
+            pr = self._out[:len(self._out) - 3] + ",\n \"Time\" : " + str(time_taken) + "," + out_[3:]
             print pr
+            '''
             feature_dict = json.loads(out_)
         except:
             try:
                 Printer.print_w("Could not parse features. %s!" % (self._instance.name))
             except AttributeError:
                 Printer.print_w("Could not parse features from stdin!")
-            try:
-                self._timer.cancel()
-            except:
-                pass
             return features
 
         preprocessing_feats = feature_dict["Extended Stats"]
@@ -109,17 +112,10 @@ class Exst(Claspre2):
         features = flat_feats
         ret += features
 
-        try:
-            self._timer.cancel()
-        except:
-            Printer.print_w("Could not cancel threading timer (should not happen)")
-            pass
-
         return ret
 
     def __clean_up_with_signal(self, signal, frame):
         try:
-            self._timer.cancel()
             self._popen_.kill()
         except:
             pass
