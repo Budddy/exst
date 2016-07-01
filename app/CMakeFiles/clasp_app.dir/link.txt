@@ -1,0 +1,1 @@
+/usr/bin/c++    -W -Wall -std=c++11 -O3 -DNDEBUG   CMakeFiles/clasp_app.dir/clasp_app.cpp.o CMakeFiles/clasp_app.dir/main.cpp.o  -o ../bin/clasp_app -rdynamic ../libclasp/lib/liblibclasp.a ../libprogram_opts/lib/liblibprogram_opts.a ../lib_exst/lib/liblib_exst.a -ltbb 

@@ -1,0 +1,18 @@
+--- libclasp/src/parser.cpp	2015-12-10 03:14:58.000000000 -0800
++++ libclasp/src/parser.cpp	2016-06-21 01:43:49.000000000 -0700
+@@ -28,6 +28,7 @@
+ #include <stdlib.h>
+ #include <limits.h>
+ #include <stdarg.h>
++#include <exst/extended_stats_calculator.h>
+ #ifdef _WIN32
+ #pragma warning (disable : 4996)
+ #endif
+@@ -246,6 +247,7 @@ bool LparseParser::parseBody(uint32 lits
+ 	for (uint32 i = 0; i != lits; ++i) {
+ 		active_->addToBody(parseAtom(), i >= neg, 1);
+ 	}
++	exst::StatsCalculator::getInstance().parseRule(active()->body, active()->heads);
+ 	if (readWeights) {
+ 		for (uint32 i = 0; i < lits; ++i) {
+ 			active_->body[i].second = input()->parseInt(0, INT_MAX, "Weight Rule: bad or missing weight!");

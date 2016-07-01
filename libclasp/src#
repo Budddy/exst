@@ -1,0 +1,73 @@
+--- libclasp/src/clasp_output.cpp	2015-12-10 03:14:58.000000000 -0800
++++ libclasp/src/clasp_output.cpp	2016-06-21 01:41:57.000000000 -0700
+@@ -28,6 +28,8 @@
+ #include <climits>
+ #include <string>
+ #include <cstdlib>
++#include <exst/extended_stats_calculator.h>
++
+ #if !defined(_WIN32)
+ #include <signal.h>
+ #elif !defined(SIGALRM)
+@@ -190,6 +192,8 @@ void StatsVisitor::visitStats(const Shar
+ 		if (ctx.hasSolver(1)) { visitThreads(ctx); }
+ 		if (ctx.sccGraph.get() && ctx.sccGraph->numNonHcfs()) { visitHccs(ctx); }
+ 	}
++	exst::StatsCalculator::getInstance().setSymbolTable(ctx.symbolTable());
++	exst::StatsCalculator::getInstance().printExtendedStats();
+ }
+ void StatsVisitor::visitProblemStats(const Clasp::ProblemStats& stats, const Clasp::Asp::LpStats* lp) {
+ 	if (lp) { visitLogicProgramStats(*lp); }
+@@ -813,6 +817,10 @@ void TextOutput::printModel(const Symbol
+ void TextOutput::printNames(const Clasp::SymbolTable& sym, const Clasp::Model& m) {
+ 	bool first = true;
+ 	for (SymbolTable::const_iterator it = sym.begin(); it != sym.end(); ++it) {
++		if(!m.isTrue(it->second.lit)){
++			exst::StatsCalculator::getInstance().graphStatsCalculator.incidenceGraphStats.addAtomReduct(
++					it->second.lit);
++		}
+ 		if (m.isTrue(it->second.lit) && doPrint(it->second)) {
+ 			if (!first) { printSep(cat_value); }
+ 			printf(format[cat_atom], it->second.name.c_str());
+--- libclasp/src/logic_program_types.cpp	2015-12-10 03:14:58.000000000 -0800
++++ libclasp/src/logic_program_types.cpp	2016-06-21 01:43:00.000000000 -0700
+@@ -28,6 +28,7 @@
+ #include <clasp/util/misc_types.h>
+ 
+ #include <deque>
++#include <exst/extended_stats_calculator.h>
+ 
+ namespace Clasp { namespace Asp {
+ 
+@@ -593,7 +594,9 @@ void PrgHead::assignVar(LogicProgram& pr
+ 			prg.incEqs(Var_t::atom_body_var);
+ 		}
+ 		else {
+-			setLiteral(posLit(prg.ctx()->addVar(Var_t::atom_var)));
++			const Literal &x = posLit(prg.ctx()->addVar(Var_t::atom_var));
++			setLiteral(x);
++			exst::StatsCalculator::getInstance().addId(id_,x.var());
+ 		}
+ 	}
+ }
+--- libclasp/src/solve_algorithms.cpp	2015-12-10 03:14:58.000000000 -0800
++++ libclasp/src/solve_algorithms.cpp	2016-06-21 01:44:55.000000000 -0700
+@@ -23,6 +23,7 @@
+ #include <clasp/minimize_constraint.h>
+ #include <clasp/util/timer.h>
+ #include <clasp/util/atomic.h>
++#include <exst/extended_stats_calculator.h>
+ namespace Clasp { 
+ /////////////////////////////////////////////////////////////////////////////////////////
+ // Basic solve
+@@ -312,8 +313,10 @@ bool SequentialSolve::doSolve(SharedCont
+ 	// Add assumptions - if this fails, the problem is unsat 
+ 	// under the current assumptions but not necessarily unsat.
+ 	for (ValueRep res; more; solve.reset()) {
++		exst::StatsCalculator::getInstance().graphStatsCalculator.incidenceGraphStats.resetAssignment();
+ 		while ((res = solve.solve()) == value_true && (!enumerator().commitModel(s) || reportModel(s))) {
+ 			enumerator().update(s);
++			exst::StatsCalculator::getInstance().graphStatsCalculator.incidenceGraphStats.resetAssignment();
+ 		}
+ 		if      (res != value_false)           { more = (res == value_free || moreModels(s)); break; }
+ 		else if ((stop=interrupted()) == true) { break; }
