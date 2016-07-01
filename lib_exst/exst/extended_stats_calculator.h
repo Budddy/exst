@@ -141,6 +141,7 @@ namespace exst
         {
         };
         bool isConstraint(std::list<lit_type> head, std::list<lit_type> body);
+        void removeHelpers();
     };
 }
 #endif //CLASP_EXTENDED_STATS_CALCULATOR_H

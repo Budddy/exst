@@ -105,6 +105,7 @@ namespace exst
             //number of variables that occur in positive/negative literals
             parseVariableLiteral(body, head);
         }
+        removeHelpers();
     }
 
     void StatsCalculator::countAtomOccurences(std::list<lit_type> body, std::list<lit_type> head)
@@ -238,11 +239,15 @@ namespace exst
     void StatsCalculator::setSymbolTable(std::unordered_map<uint32_t, const char *> &table)
     {
         this->sTable = &table;
+    }
+
+    void StatsCalculator::removeHelpers()
+    {
         std::list<unsigned int> rem;
         std::unordered_map<unsigned int, bool>::iterator it;
         for (it = variablePositiveWithoutHelper.begin(); it != variablePositiveWithoutHelper.end(); it++)
         {
-            if (table.count(it->first) == 0)
+            if (sTable->count(it->first) == 0)
             {
                 rem.push_back((*it).first);
             }
@@ -254,7 +259,7 @@ namespace exst
         }
         for (it = variableNegativeWithoutHelper.begin(); it != variableNegativeWithoutHelper.end(); it++)
         {
-            if (table.count((*it).first) == 0)
+            if (sTable->count((*it).first) == 0)
             {
                 rem.push_back((*it).first);
             }

@@ -35,6 +35,8 @@ namespace exst
     //datatype for internal exst graph representation
     typedef std::unordered_map<uint32_t, std::unordered_map<uint32_t, EdgeType>> MyGraph;
 
+    uint32_t edgeCount(MyGraph &graph);
+
     /*
      * returns a copy of the given graph
      */

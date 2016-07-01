@@ -60,7 +60,7 @@ namespace exst
         selectedAtoms.clear();
         nodecountReduct = nodecount;
         edgecountReduct = edgecount;
-        ruleBodyMapReduct.insert(ruleBodyMap.begin(),ruleBodyMap.end());
+        ruleBodyMapReduct.insert(ruleBodyMap.begin(), ruleBodyMap.end());
         incidenceGraphReduct = copyMyGraph(incidenceGraph);
     }
 

@@ -2,6 +2,21 @@
 
 namespace exst
 {
+    uint32_t edgeCount(MyGraph &graph)
+    {
+        uint32_t edges = 0;
+        std::unordered_map<unsigned int, std::unordered_map<unsigned int, exst::EdgeType>>::iterator a;
+        for (a = graph.begin(); a != graph.end(); a++)
+        {
+            std::unordered_map<unsigned int, exst::EdgeType>::iterator b;
+            for (b = a->second.begin(); b != a->second.end(); b++)
+            {
+                edges++;
+            }
+        }
+        return edges / 2;
+    }
+
     MyGraph copyMyGraph(MyGraph graph)
     {
         MyGraph newGraph;
