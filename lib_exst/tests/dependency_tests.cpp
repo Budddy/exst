@@ -19,7 +19,8 @@ namespace exst
             AbstractExstTest::tearDown();
         }
 
-        void testCreateGraph(){
+        void testCreateGraph()
+        {
 
             std::list<lit_type> body;
             std::list<lit_type> head;
