@@ -1,8 +1,9 @@
 SHELL        ?= /bin/sh
 AR           ?= ar
 CXX          ?= g++
-BUILD_DIR    ?= .
 ROOT_DIR     ?= .
+TARGET_DIR   ?= $(ROOT_DIR)/lib
+BUILD_DIR    ?= $(ROOT_DIR)/lib
 CXXFLAGS     ?= -O3 -DNDEBUG
 FLAGS        ?=
 ifneq ($(FLAGS),)
@@ -10,7 +11,7 @@ ifneq ($(FLAGS),)
 endif
 INCLUDE      := -I $(ROOT_DIR)
 ALL_CXXFLAGS := -std=c++11 -W -Wall $(INCLUDE) $(CXXFLAGS)
-TARGET       := $(BUILD_DIR)/lib/exst.a
+TARGET       := $(TARGET_DIR)/exst.a
 SOURCES      := $(patsubst $(ROOT_DIR)/src/%.cpp,%.cpp,$(wildcard $(ROOT_DIR)/src/*.cpp))
 DEPS         := $(patsubst %.cpp,$(BUILD_DIR)/%.dep, $(SOURCES))
 OBJECTS      := $(patsubst %.cpp,$(BUILD_DIR)/%.o, $(SOURCES))
