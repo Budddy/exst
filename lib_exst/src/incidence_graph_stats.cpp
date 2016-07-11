@@ -89,6 +89,7 @@ namespace exst
                 }
             }
         }
+        reds.push_back(1.0F*edgecountReduct/edgecount);
         printIGraphReduct();
     }
 

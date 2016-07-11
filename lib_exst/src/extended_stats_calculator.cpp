@@ -192,6 +192,11 @@ namespace exst
         //maximum number of negative occurrences of an atom
         std::cout << "  [\"maximum number of negative occurrences of an atom\" , " << maxValue(atomOccurencesNegative) << "]\n";
 
+        std::list<float>::iterator it;
+        for(it=graphStatsCalculator.incidenceGraphStats.reds.begin(); it != graphStatsCalculator.incidenceGraphStats.reds.end(); it++){
+            std::cout << "  [\"reduct size\" , " << std::to_string(*it) << "]\n";
+        }
+
         //maximum weight of the minimal model TODO
         //std::cout << "  [\"maximum weight of the minimal model\" , " << maxWeightMinModel << "],\n";
 

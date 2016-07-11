@@ -80,6 +80,9 @@ namespace exst
 
         //map for the selected atoms
         std::unordered_map<uint32_t, bool> &selectedAtoms;
+
+        //list of size reductions incidence graph
+        std::list<float> reds;
     };
 }
 
