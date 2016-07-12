@@ -192,11 +192,6 @@ namespace exst
 
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count Reduct", (uint32_t) 14, incidenceGraphStats->edgecountReduct);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count Reduct", (uint32_t) 21, incidenceGraphStats->nodecountReduct);
-
-            std::list<float>::iterator it;
-            for(it=incidenceGraphStats->reds.begin(); it != incidenceGraphStats->reds.end(); it++){
-                std::cout << "  [\"reduct size\" , " << std::to_string(*it) << "]\n";
-            }
         }
     };
 
