@@ -1,0 +1,8 @@
+clasp version 3.1.1
+Reading from ./instances/35-knight_tour-35-0.asp
+UNSATISFIABLE
+
+Models       : 0     
+Calls        : 1
+Time         : 0.347s (Solving: 0.00s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 0.340s

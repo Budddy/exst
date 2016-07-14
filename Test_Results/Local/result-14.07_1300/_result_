@@ -1,0 +1,174 @@
+
+instance(1/16): 000046_combined_configuration_problem-0-0.asp
+  program: default_clasp
+    execution time: 0.0671331882477      CPU Time     : 0.010s
+    execution time: 0.126290082932      CPU Time     : 0.010s
+  program: default_claspfolio
+    execution time: 2.71177887917      CPU Time     : 0.050s
+    execution time: 1.88806796074      CPU Time     : 0.050s
+  program: patched_claspfolio
+    execution time: 1.68309903145      CPU Time     : 0.040s
+    execution time: 1.58831906319      CPU Time     : 0.040s
+
+instance(2/16): 0001-visitall-14-1.asp
+  program: default_clasp
+    execution time: 0.167294979095      CPU Time     : 0.100s
+    execution time: 0.173165082932      CPU Time     : 0.090s
+  program: default_claspfolio
+    execution time: 2.85180211067      CPU Time     : 0.020s
+    execution time: 2.59345579147      CPU Time     : 0.020s
+  program: patched_claspfolio
+    execution time: 1.68724608421      CPU Time     : 0.010s
+    execution time: 1.63311386108      CPU Time     : 0.010s
+
+instance(3/16): 000102_combined_configuration_problem-0-0.asp
+  program: default_clasp
+    execution time: 15.7379219532      CPU Time     : 15.610s
+    execution time: 15.9887080193      CPU Time     : 15.880s
+  program: default_claspfolio
+    execution time: 17.2917261124      CPU Time     : 14.510s
+    execution time: 17.1305480003      CPU Time     : 14.360s
+  program: patched_claspfolio
+    execution time: 22.0475709438      CPU Time     : 0.260s
+    execution time: 21.4840388298      CPU Time     : 0.260s
+
+instance(4/16): 000206_combined_configuration_problem-0-0.asp
+  program: default_clasp
+    execution time: 499.502663851      CPU Time     : 498.160s
+    execution time: 510.473788023      CPU Time     : 509.390s
+  program: default_claspfolio
+    could not solve instance within time limit
+  program: patched_claspfolio
+    execution time: 615.363101959      CPU Time     : 12.900s
+    execution time: 596.428147078      CPU Time     : 11.810s
+
+instance(5/16): 0003-graph_colouring-125-0.asp
+  program: default_clasp
+    execution time: 0.469019174576      CPU Time     : 0.370s
+    execution time: 0.421719789505      CPU Time     : 0.360s
+  program: default_claspfolio
+    execution time: 3.09101009369      CPU Time     : 0.460s
+    execution time: 2.94198298454      CPU Time     : 0.460s
+  program: patched_claspfolio
+    execution time: 2.08637595177      CPU Time     : 0.140s
+    execution time: 2.08316493034      CPU Time     : 0.140s
+
+instance(6/16): 0004-graph_colouring-125-0.asp
+  program: default_clasp
+    execution time: 13.5395269394      CPU Time     : 13.450s
+    execution time: 13.5012249947      CPU Time     : 13.380s
+  program: default_claspfolio
+    execution time: 25.2429969311      CPU Time     : 22.590s
+    execution time: 25.4915399551      CPU Time     : 22.820s
+  program: patched_claspfolio
+    execution time: 28.0060830116      CPU Time     : 7.980s
+    execution time: 27.9548490047      CPU Time     : 7.960s
+
+instance(7/16): 0009-visitall-36-1.asp
+  program: default_clasp
+    execution time: 12.1163551807      CPU Time     : 11.950s
+    execution time: 12.2695939541      CPU Time     : 11.940s
+  program: default_claspfolio
+    execution time: 36.3326020241      CPU Time     : 33.570s
+    execution time: 35.3727190495      CPU Time     : 32.490s
+  program: patched_claspfolio
+    execution time: 29.5490708351      CPU Time     : 11.650s
+    execution time: 29.4766039848      CPU Time     : 11.540s
+
+instance(8/16): 0014-visitall-50-1.asp
+  program: default_clasp
+    execution time: 154.714099884      CPU Time     : 154.310s
+    execution time: 166.616325855      CPU Time     : 166.050s
+  program: default_claspfolio
+    execution time: 1610.00657916      CPU Time     : 1602.850s
+    execution time: 1642.33285594      CPU Time     : 1635.190s
+  program: patched_claspfolio
+    execution time: 380.040445089      CPU Time     : 182.350s
+    execution time: 363.190646172      CPU Time     : 163.780s
+
+instance(9/16): 0018-graph_colouring-130-0.asp
+  program: default_clasp
+    execution time: 873.605685949      CPU Time     : 871.400s
+    execution time: 828.979216814      CPU Time     : 826.940s
+  program: default_claspfolio
+    execution time: 93.2523927689      CPU Time     : 90.430s
+    execution time: 93.8670260906      CPU Time     : 91.030s
+  program: patched_claspfolio
+    could not solve instance within time limit
+
+instance(10/16): 0087-labyrinth-12-0.asp
+  program: default_clasp
+    execution time: 1.09907984734      CPU Time     : 0.970s
+    execution time: 1.12716913223      CPU Time     : 1.060s
+  program: default_claspfolio
+    execution time: 6.33435106277      CPU Time     : 3.060s
+    execution time: 6.22989797592      CPU Time     : 2.890s
+  program: patched_claspfolio
+    execution time: 21.324105978      CPU Time     : 17.270s
+    execution time: 21.2929599285      CPU Time     : 17.230s
+
+instance(11/16): 0089-labyrinth-20-0.asp
+  program: default_clasp
+    execution time: 291.968102932      CPU Time     : 291.160s
+    execution time: 270.412585974      CPU Time     : 269.360s
+  program: default_claspfolio
+    execution time: 10.7805869579      CPU Time     : 5.570s
+    execution time: 10.3116869926      CPU Time     : 5.270s
+  program: patched_claspfolio
+    execution time: 403.369368076      CPU Time     : 87.370s
+    execution time: 381.183647871      CPU Time     : 80.870s
+
+instance(12/16): 0091-labyrinth-12-0.asp
+  program: default_clasp
+    execution time: 15.8839659691      CPU Time     : 15.740s
+    execution time: 16.4332230091      CPU Time     : 16.270s
+  program: default_claspfolio
+    execution time: 223.699455976      CPU Time     : 219.990s
+    execution time: 238.863431931      CPU Time     : 235.150s
+  program: patched_claspfolio
+    execution time: 154.627066135      CPU Time     : 132.100s
+    execution time: 157.37129879      CPU Time     : 134.960s
+
+instance(13/16): 103-knight_tour-55-0.asp
+  program: default_clasp
+    execution time: 0.977285146713      CPU Time     : 0.870s
+    execution time: 1.02551794052      CPU Time     : 0.910s
+  program: default_claspfolio
+    execution time: 3.75281000137      CPU Time     : 0.790s
+    execution time: 3.79881691933      CPU Time     : 0.780s
+  program: patched_claspfolio
+    execution time: 8.44286394119      CPU Time     : 0.730s
+    execution time: 8.68936920166      CPU Time     : 0.790s
+
+instance(14/16): 35-knight_tour-35-0.asp
+  program: default_clasp
+    execution time: 0.47208404541      CPU Time     : 0.360s
+    execution time: 0.420196056366      CPU Time     : 0.340s
+  program: default_claspfolio
+    execution time: 2.58958816528      CPU Time     : 0.280s
+    execution time: 2.53828001022      CPU Time     : 0.280s
+  program: patched_claspfolio
+    execution time: 4.15360593796      CPU Time     : 0.280s
+    execution time: 4.11306905746      CPU Time     : 0.280s
+
+instance(15/16): 44-knight_tour-40-0.asp
+  program: default_clasp
+    execution time: 10.753567934      CPU Time     : 10.570s
+    execution time: 9.94262599945      CPU Time     : 9.770s
+  program: default_claspfolio
+    execution time: 15.023360014      CPU Time     : 11.890s
+    execution time: 15.0994679928      CPU Time     : 11.820s
+  program: patched_claspfolio
+    execution time: 24.9758460522      CPU Time     : 2.560s
+    execution time: 24.9989302158      CPU Time     : 2.590s
+
+instance(16/16): 80-knight_tour-45-0.asp
+  program: default_clasp
+    execution time: 35.8617250919      CPU Time     : 35.630s
+    execution time: 35.2902789116      CPU Time     : 35.120s
+  program: default_claspfolio
+    execution time: 6.38566207886      CPU Time     : 3.150s
+    execution time: 6.39314293861      CPU Time     : 3.130s
+  program: patched_claspfolio
+    execution time: 81.7248799801      CPU Time     : 2.560s
+    execution time: 87.7747738361      CPU Time     : 2.760s

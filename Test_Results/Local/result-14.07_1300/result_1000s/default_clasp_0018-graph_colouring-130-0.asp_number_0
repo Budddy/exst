@@ -1,0 +1,9 @@
+clasp version 3.1.1
+Reading from ...stances/0018-graph_colouring-130-0.asp
+Solving...
+UNSATISFIABLE
+
+Models       : 0     
+Calls        : 1
+Time         : 873.537s (Solving: 873.52s 1st Model: 0.00s Unsat: 873.52s)
+CPU Time     : 871.400s
