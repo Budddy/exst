@@ -1,22 +1,27 @@
 #include "test.h"
 
-namespace exst {
-    class IncidenceTests : public AbstractExstTest {
+namespace exst
+{
+    class IncidenceTests : public AbstractExstTest
+    {
     CPPUNIT_TEST_SUITE(IncidenceTests);
             CPPUNIT_TEST(testSmallGraph);
             CPPUNIT_TEST(testIncidenceGraph);
         CPPUNIT_TEST_SUITE_END();
     private:
     public:
-        void setUp() {
+        void setUp()
+        {
             AbstractExstTest::setUp();
         }
 
-        void tearDown() {
+        void tearDown()
+        {
             AbstractExstTest::tearDown();
         }
 
-        void testSmallGraph() {
+        void testSmallGraph()
+        {
             std::list<lit_type> body;
             std::list<lit_type> head;
             body.push_back(*new lit_type(2, NEGATIVE));
@@ -73,19 +78,24 @@ namespace exst {
             (*atomIds)[(uint32_t) 8] = (uint32_t) 8;
             (*atomIds)[(uint32_t) 9] = (uint32_t) 9;
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count Reduct", (size_t) 9, incidenceGraphStats->iGraphReduct.edgeCount());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count Reduct", (size_t) 13, incidenceGraphStats->iGraphReduct.vertexCount());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count Reduct", (size_t) 9,
+                                         incidenceGraphStats->iGraphReduct.edgeCount());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count Reduct", (size_t) 13,
+                                         incidenceGraphStats->iGraphReduct.vertexCount());
 
             lit_type l;
             l.id = 5;
             l.s = NEGATIVE;
             incidenceGraphStats->reduceGraph(l);
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count Reduct", (size_t) 5, incidenceGraphStats->iGraphReduct.edgeCount());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count Reduct", (size_t) 13, incidenceGraphStats->iGraphReduct.vertexCount());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count Reduct", (size_t) 5,
+                                         incidenceGraphStats->iGraphReduct.edgeCount());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count Reduct", (size_t) 13,
+                                         incidenceGraphStats->iGraphReduct.vertexCount());
         }
 
-        void testIncidenceGraph() {
+        void testIncidenceGraph()
+        {
             std::list<lit_type> body;
             std::list<lit_type> head;
             body.push_back(*new lit_type(2, NEGATIVE));

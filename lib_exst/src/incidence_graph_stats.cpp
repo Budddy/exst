@@ -26,7 +26,7 @@ namespace exst
             myGraph[avmap[dId]][rule_Vertex] = neg ? NEG : POS;
             myGraph[rule_Vertex][avmap[dId]] = neg ? NEG : POS;
 
-            iGraph.addEdge(avmap[dId],rule_Vertex);
+            iGraph.addEdge(avmap[dId], rule_Vertex);
             edgecount++;
         }
 
@@ -42,7 +42,7 @@ namespace exst
             }
             myGraph[avmap[hId]][rule_Vertex] = HEAD;
             myGraph[rule_Vertex][avmap[hId]] = HEAD;
-            iGraph.addEdge(avmap[hId],rule_Vertex);
+            iGraph.addEdge(avmap[hId], rule_Vertex);
             edgecount++;
         }
     }
@@ -83,15 +83,14 @@ namespace exst
                         igraph[bodyIt->first].erase(it->first);
                         ruleBodyMapReduct[it->first].erase(bodyIt->first);
                         igraph[it->first].erase(bodyIt->first);
-                        iGraphReduct.removeEdge(bodyIt->first,it->first);
-                        iGraphReduct.removeEdge(it->first,bodyIt->first);
+                        iGraphReduct.removeEdge(bodyIt->first, it->first);
+                        iGraphReduct.removeEdge(it->first, bodyIt->first);
                         edgecountReduct--;
                     }
                 }
             }
         }
-        reds.push_back(1.0F * iGraphReduct.edgeCount());
-        reds.push_back(1.0F * edgecountReduct * 100);
+        reds.push_back(1.0F * iGraphReduct.edgeCount() / iGraph.edgeCount());
     }
 
     void exst::IncidenceGraphStats::printIGraphReduct()
@@ -106,7 +105,8 @@ namespace exst
     }
 
 
-    int exst::IncidenceGraphStats::getTreewidth(htd::Hypergraph &graph){
+    int exst::IncidenceGraphStats::getTreewidth(htd::Hypergraph &graph)
+    {
         return 0;
     }
 }

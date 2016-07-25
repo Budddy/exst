@@ -1,5 +1,4 @@
 #include <exst/dependency_graph_stats.h>
-#include <iostream>
 
 namespace exst
 {

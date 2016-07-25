@@ -1,6 +1,4 @@
 #include <exst/extended_stats_calculator.h>
-#include <iostream>
-#include <fstream>
 
 namespace exst
 {
@@ -73,13 +71,15 @@ namespace exst
 
             if (isConstraint(head, body))
             {
-                maxPositiveRuleSizeConstraint = (uint32_t) (maxPositiveRuleSizeConstraint < positive ? positive : maxPositiveRuleSizeConstraint);
+                maxPositiveRuleSizeConstraint = (uint32_t) (maxPositiveRuleSizeConstraint < positive ? positive
+                                                                                                     : maxPositiveRuleSizeConstraint);
                 numConstraints++;
                 atomOccurencesConstraint += head.size();
                 atomOccurencesConstraint += body.size();
             } else
             {
-                maxPositiveRuleSizeNonConstraint = (uint32_t) (maxPositiveRuleSizeNonConstraint < positive ? positive : maxPositiveRuleSizeNonConstraint);
+                maxPositiveRuleSizeNonConstraint = (uint32_t) (maxPositiveRuleSizeNonConstraint < positive ? positive
+                                                                                                           : maxPositiveRuleSizeNonConstraint);
                 atomOccurencesNonConstraint += head.size();
                 atomOccurencesNonConstraint += body.size();
             }
@@ -94,7 +94,9 @@ namespace exst
             //clause size
             maxClauseSize = (maxClauseSize < body.size() + head.size() ? body.size() + head.size() : maxClauseSize);
             //positive clause size
-            maxClauseSizePositive = (maxClauseSizePositive < body.size() - negative + head.size() ? body.size() - negative + head.size()
+            maxClauseSizePositive = (maxClauseSizePositive < body.size() - negative + head.size() ? body.size() -
+                                                                                                    negative +
+                                                                                                    head.size()
                                                                                                   : maxClauseSizePositive);
             //negative clause size
             maxClauseSizeNegative = maxClauseSizeNegative < negative ? negative : maxClauseSizeNegative;
@@ -149,14 +151,16 @@ namespace exst
         std::cout << "\n########## Extended Stats ##########\n\n{\n \"Extended Stats\" : [\n";
 
         //dependency graph
-        std::cout << "  [\"Dependency Graph Nodes\" , " << graphStatsCalculator.dependencyGraphStats.nodecount << "],\n";
-        std::cout << "  [\"Dependency Graph Edges\" , " << graphStatsCalculator.dependencyGraphStats.edgecount << "],\n";
+        std::cout << "  [\"Dependency Graph Nodes\" , " << graphStatsCalculator.dependencyGraphStats.nodecount <<
+        "],\n";
+        std::cout << "  [\"Dependency Graph Edges\" , " << graphStatsCalculator.dependencyGraphStats.edgecount <<
+        "],\n";
 
         //incidence graph
-        std::cout << "  [\"Incidence Graph Nodes\" , " << graphStatsCalculator.incidenceGraphStats.incidenceGraph.size() << "],\n";
-        std::cout << "  [\"Incidence Graph Edges\" , " << graphStatsCalculator.incidenceGraphStats.edgecount << "],\n";
-        std::cout << "  [\"htd Incidence Graph Nodes\" , " << graphStatsCalculator.incidenceGraphStats.iGraph.vertexCount() << "],\n";
-        std::cout << "  [\"htd Incidence Graph Edges\" , " << graphStatsCalculator.incidenceGraphStats.iGraph.edgeCount() << "],\n";
+        std::cout << "  [\"Incidence Graph Nodes\" , " <<
+        graphStatsCalculator.incidenceGraphStats.iGraph.vertexCount() << "],\n";
+        std::cout << "  [\"Incidence Graph Edges\" , " <<
+        graphStatsCalculator.incidenceGraphStats.iGraph.edgeCount() << "],\n";
 
         //number of non horn clauses
         std::cout << "  [\"Non Horn Clauses\" , " << numNonHornClauses << "],\n";
@@ -172,30 +176,40 @@ namespace exst
         std::cout << "  [\"max negative clause size\" , " << maxClauseSizeNegative << "],\n";
 
         //number of variables that occur as positive/negative literals
-        std::cout << "  [\"number of variables that occur as positive literals with helpers\" , " << variablePositive.size() << "],\n";
-        std::cout << "  [\"number of variables that occur as positive literals without helpers\" , " << variablePositiveWithoutHelper.size() << "],\n";
-        std::cout << "  [\"number of variables that occur as negative literals with helpers\" , " << variableNegative.size() << "],\n";
-        std::cout << "  [\"number of variables that occur as negative literals without helpers\" , " << variableNegativeWithoutHelper.size() << "],\n";
+        std::cout << "  [\"number of variables that occur as positive literals with helpers\" , " <<
+        variablePositive.size() << "],\n";
+        std::cout << "  [\"number of variables that occur as positive literals without helpers\" , " <<
+        variablePositiveWithoutHelper.size() << "],\n";
+        std::cout << "  [\"number of variables that occur as negative literals with helpers\" , " <<
+        variableNegative.size() << "],\n";
+        std::cout << "  [\"number of variables that occur as negative literals without helpers\" , " <<
+        variableNegativeWithoutHelper.size() << "],\n";
 
         //maximum positive rule size (constraint/non-constraint)
         std::cout << "  [\"maximum positive rule size constraint\" , " << maxPositiveRuleSizeConstraint << "],\n";
-        std::cout << "  [\"maximum positive rule size non-constraint\" , " << maxPositiveRuleSizeNonConstraint << "],\n";
+        std::cout << "  [\"maximum positive rule size non-constraint\" , " << maxPositiveRuleSizeNonConstraint <<
+        "],\n";
 
         //total number of atom occurrences in the program (constraints/non-constraint)
         std::cout << "  [\"total number of atom occurrences constraint\" , " << atomOccurencesConstraint << "],\n";
-        std::cout << "  [\"total number of atom occurrences non-constraint\" , " << atomOccurencesNonConstraint << "],\n";
+        std::cout << "  [\"total number of atom occurrences non-constraint\" , " << atomOccurencesNonConstraint <<
+        "],\n";
 
         //maximum number of occurrences of an atom
         std::cout << "  [\"maximum number of occurrences of an atom\" , " << maxValue(atomOccurences) << "],\n";
 
         //maximum number of positive occurrences of an atom
-        std::cout << "  [\"maximum number of positive occurrences of an atom\" , " << maxValue(atomOccurencesPositive) << "],\n";
+        std::cout << "  [\"maximum number of positive occurrences of an atom\" , " <<
+        maxValue(atomOccurencesPositive) << "],\n";
 
         //maximum number of negative occurrences of an atom
-        std::cout << "  [\"maximum number of negative occurrences of an atom\" , " << maxValue(atomOccurencesNegative) << "]\n";
+        std::cout << "  [\"maximum number of negative occurrences of an atom\" , " <<
+        maxValue(atomOccurencesNegative) << "]\n";
 
         std::list<float>::iterator it;
-        for(it=graphStatsCalculator.incidenceGraphStats.reds.begin(); it != graphStatsCalculator.incidenceGraphStats.reds.end(); it++){
+        for (it = graphStatsCalculator.incidenceGraphStats.reds.begin();
+             it != graphStatsCalculator.incidenceGraphStats.reds.end(); it++)
+        {
             std::cout << "  [\"reduct size\" , " << std::to_string(*it) << "]\n";
         }
 

@@ -47,22 +47,36 @@ namespace exst
 
             statsCalculator->calculateStats();
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", (uint32_t) 1, statsCalculator->numNonHornClauses);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Dual Horn Clauses", (uint32_t) 0, statsCalculator->numNonDualHornClauses);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", (uint32_t) 1,
+                                         statsCalculator->numNonHornClauses);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Dual Horn Clauses", (uint32_t) 0,
+                                         statsCalculator->numNonDualHornClauses);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size", (uint64_t) 3, statsCalculator->maxClauseSize);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Positive", (uint64_t) 2, statsCalculator->maxClauseSizePositive);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Negative", (uint32_t) 1, statsCalculator->maxClauseSizeNegative);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Positive", (uint64_t) 2,
+                                         statsCalculator->maxClauseSizePositive);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Negative", (uint32_t) 1,
+                                         statsCalculator->maxClauseSizeNegative);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences", (std::size_t) 3, statsCalculator->atomOccurences.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Positive", (std::size_t) 2, statsCalculator->atomOccurencesPositive.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Negative", (std::size_t) 1, statsCalculator->atomOccurencesNegative.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Negative Variables", (std::size_t) 1, statsCalculator->variableNegative.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Positive Variables", (std::size_t) 2, statsCalculator->variablePositive.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without Helpers", (std::size_t) 1, statsCalculator->variableNegativeWithoutHelper.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without Helpers", (std::size_t) 2, statsCalculator->variablePositiveWithoutHelper.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Constraint", (uint32_t) 2, statsCalculator->maxPositiveRuleSizeConstraint);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Non Constraint", (uint32_t) 0, statsCalculator->maxPositiveRuleSizeNonConstraint);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Constraint", (uint32_t) 3, statsCalculator->atomOccurencesConstraint);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Non Constraint", (uint32_t) 0, statsCalculator->atomOccurencesNonConstraint);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Positive", (std::size_t) 2,
+                                         statsCalculator->atomOccurencesPositive.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Negative", (std::size_t) 1,
+                                         statsCalculator->atomOccurencesNegative.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Negative Variables", (std::size_t) 1,
+                                         statsCalculator->variableNegative.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Positive Variables", (std::size_t) 2,
+                                         statsCalculator->variablePositive.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without Helpers", (std::size_t) 1,
+                                         statsCalculator->variableNegativeWithoutHelper.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without Helpers", (std::size_t) 2,
+                                         statsCalculator->variablePositiveWithoutHelper.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Constraint", (uint32_t) 2,
+                                         statsCalculator->maxPositiveRuleSizeConstraint);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Non Constraint", (uint32_t) 0,
+                                         statsCalculator->maxPositiveRuleSizeNonConstraint);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Constraint", (uint32_t) 3,
+                                         statsCalculator->atomOccurencesConstraint);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Non Constraint", (uint32_t) 0,
+                                         statsCalculator->atomOccurencesNonConstraint);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Constraint", (uint32_t) 1, statsCalculator->numConstraints);
         }
 
@@ -92,22 +106,36 @@ namespace exst
 
             statsCalculator->calculateStats();
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", (uint32_t) 1, statsCalculator->numNonHornClauses);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Dual Horn Clauses", (uint32_t) 0, statsCalculator->numNonDualHornClauses);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", (uint32_t) 1,
+                                         statsCalculator->numNonHornClauses);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Dual Horn Clauses", (uint32_t) 0,
+                                         statsCalculator->numNonDualHornClauses);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size", (uint64_t) 2, statsCalculator->maxClauseSize);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Positive", (uint64_t) 1, statsCalculator->maxClauseSizePositive);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Negative", (uint32_t) 2, statsCalculator->maxClauseSizeNegative);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Positive", (uint64_t) 1,
+                                         statsCalculator->maxClauseSizePositive);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Negative", (uint32_t) 2,
+                                         statsCalculator->maxClauseSizeNegative);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences", (std::size_t) 3, statsCalculator->atomOccurences.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Positive", (std::size_t) 1, statsCalculator->atomOccurencesPositive.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Negative", (std::size_t) 2, statsCalculator->atomOccurencesNegative.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Negative Variables", (std::size_t) 2, statsCalculator->variableNegative.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Positive Variables", (std::size_t) 0, statsCalculator->variablePositive.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without Helpers", (std::size_t) 2, statsCalculator->variableNegativeWithoutHelper.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without Helpers", (std::size_t) 0, statsCalculator->variablePositiveWithoutHelper.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Constraint", (uint32_t) 0, statsCalculator->maxPositiveRuleSizeConstraint);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Non Constraint", (uint32_t) 1, statsCalculator->maxPositiveRuleSizeNonConstraint);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Constraint", (uint32_t) 2, statsCalculator->atomOccurencesConstraint);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Non Constraint", (uint32_t) 1, statsCalculator->atomOccurencesNonConstraint);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Positive", (std::size_t) 1,
+                                         statsCalculator->atomOccurencesPositive.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Negative", (std::size_t) 2,
+                                         statsCalculator->atomOccurencesNegative.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Negative Variables", (std::size_t) 2,
+                                         statsCalculator->variableNegative.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Positive Variables", (std::size_t) 0,
+                                         statsCalculator->variablePositive.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without Helpers", (std::size_t) 2,
+                                         statsCalculator->variableNegativeWithoutHelper.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without Helpers", (std::size_t) 0,
+                                         statsCalculator->variablePositiveWithoutHelper.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Constraint", (uint32_t) 0,
+                                         statsCalculator->maxPositiveRuleSizeConstraint);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Non Constraint", (uint32_t) 1,
+                                         statsCalculator->maxPositiveRuleSizeNonConstraint);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Constraint", (uint32_t) 2,
+                                         statsCalculator->atomOccurencesConstraint);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Non Constraint", (uint32_t) 1,
+                                         statsCalculator->atomOccurencesNonConstraint);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Constraint", (uint32_t) 1, statsCalculator->numConstraints);
         }
 
@@ -171,22 +199,37 @@ namespace exst
 
             statsCalculator->calculateStats();
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", (uint32_t) 2, statsCalculator->numNonHornClauses);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Dual Horn Clauses", (uint32_t) 2, statsCalculator->numNonDualHornClauses);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", (uint32_t) 2,
+                                         statsCalculator->numNonHornClauses);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Dual Horn Clauses", (uint32_t) 2,
+                                         statsCalculator->numNonDualHornClauses);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size", (uint64_t) 3, statsCalculator->maxClauseSize);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Positive", (uint64_t) 3, statsCalculator->maxClauseSizePositive);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Negative", (uint32_t) 2, statsCalculator->maxClauseSizeNegative);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Number Atom Occurences", (uint32_t) 3, maxValue(statsCalculator->atomOccurences));
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Number Atom Occurences Positive", (uint32_t) 3, maxValue(statsCalculator->atomOccurencesPositive));
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Number Atom Occurences Negative", (uint32_t) 3, maxValue(statsCalculator->atomOccurencesNegative));
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Negative Variables", (std::size_t) 3, statsCalculator->variableNegative.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Positive Variables", (std::size_t) 5, statsCalculator->variablePositive.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without Helpers", (std::size_t) 3, statsCalculator->variableNegativeWithoutHelper.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without Helpers", (std::size_t) 5, statsCalculator->variablePositiveWithoutHelper.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Constraint", (uint32_t) 3, statsCalculator->maxPositiveRuleSizeConstraint);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Non Constraint", (uint32_t) 0, statsCalculator->maxPositiveRuleSizeNonConstraint);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Constraint", (uint32_t) 14, statsCalculator->atomOccurencesConstraint);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Non Constraint", (uint32_t) 0, statsCalculator->atomOccurencesNonConstraint);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Positive", (uint64_t) 3,
+                                         statsCalculator->maxClauseSizePositive);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Negative", (uint32_t) 2,
+                                         statsCalculator->maxClauseSizeNegative);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Number Atom Occurences", (uint32_t) 3,
+                                         maxValue(statsCalculator->atomOccurences));
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Number Atom Occurences Positive", (uint32_t) 3,
+                                         maxValue(statsCalculator->atomOccurencesPositive));
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Number Atom Occurences Negative", (uint32_t) 3,
+                                         maxValue(statsCalculator->atomOccurencesNegative));
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Negative Variables", (std::size_t) 3,
+                                         statsCalculator->variableNegative.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Positive Variables", (std::size_t) 5,
+                                         statsCalculator->variablePositive.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without Helpers", (std::size_t) 3,
+                                         statsCalculator->variableNegativeWithoutHelper.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without Helpers", (std::size_t) 5,
+                                         statsCalculator->variablePositiveWithoutHelper.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Constraint", (uint32_t) 3,
+                                         statsCalculator->maxPositiveRuleSizeConstraint);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Non Constraint", (uint32_t) 0,
+                                         statsCalculator->maxPositiveRuleSizeNonConstraint);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Constraint", (uint32_t) 14,
+                                         statsCalculator->atomOccurencesConstraint);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Non Constraint", (uint32_t) 0,
+                                         statsCalculator->atomOccurencesNonConstraint);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Constraint", (uint32_t) 6, statsCalculator->numConstraints);
         }
 
@@ -218,22 +261,37 @@ namespace exst
 
             statsCalculator->calculateStats();
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", (uint32_t) 0, statsCalculator->numNonHornClauses);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Dual Horn Clauses", (uint32_t) 0, statsCalculator->numNonDualHornClauses);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", (uint32_t) 0,
+                                         statsCalculator->numNonHornClauses);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Dual Horn Clauses", (uint32_t) 0,
+                                         statsCalculator->numNonDualHornClauses);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size", (uint64_t) 1, statsCalculator->maxClauseSize);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Positive", (uint64_t) 1, statsCalculator->maxClauseSizePositive);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Negative", (uint32_t) 1, statsCalculator->maxClauseSizeNegative);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Number Atom Occurences", (uint32_t) 2, maxValue(statsCalculator->atomOccurences));
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Number Atom Occurences Positive", (uint32_t) 1, maxValue(statsCalculator->atomOccurencesPositive));
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Number Atom Occurences Negative", (uint32_t) 2, maxValue(statsCalculator->atomOccurencesNegative));
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Negative Variables", (std::size_t) 0, statsCalculator->variableNegative.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Positive Variables", (std::size_t) 0, statsCalculator->variablePositive.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without Helpers", (std::size_t) 0, statsCalculator->variableNegativeWithoutHelper.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without Helpers", (std::size_t) 0, statsCalculator->variablePositiveWithoutHelper.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Constraint", (uint32_t) 0, statsCalculator->maxPositiveRuleSizeConstraint);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Non Constraint", (uint32_t) 1, statsCalculator->maxPositiveRuleSizeNonConstraint);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Constraint", (uint32_t) 0, statsCalculator->atomOccurencesConstraint);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Non Constraint", (uint32_t) 3, statsCalculator->atomOccurencesNonConstraint);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Positive", (uint64_t) 1,
+                                         statsCalculator->maxClauseSizePositive);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Negative", (uint32_t) 1,
+                                         statsCalculator->maxClauseSizeNegative);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Number Atom Occurences", (uint32_t) 2,
+                                         maxValue(statsCalculator->atomOccurences));
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Number Atom Occurences Positive", (uint32_t) 1,
+                                         maxValue(statsCalculator->atomOccurencesPositive));
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Number Atom Occurences Negative", (uint32_t) 2,
+                                         maxValue(statsCalculator->atomOccurencesNegative));
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Negative Variables", (std::size_t) 0,
+                                         statsCalculator->variableNegative.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Positive Variables", (std::size_t) 0,
+                                         statsCalculator->variablePositive.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without Helpers", (std::size_t) 0,
+                                         statsCalculator->variableNegativeWithoutHelper.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without Helpers", (std::size_t) 0,
+                                         statsCalculator->variablePositiveWithoutHelper.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Constraint", (uint32_t) 0,
+                                         statsCalculator->maxPositiveRuleSizeConstraint);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Non Constraint", (uint32_t) 1,
+                                         statsCalculator->maxPositiveRuleSizeNonConstraint);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Constraint", (uint32_t) 0,
+                                         statsCalculator->atomOccurencesConstraint);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Non Constraint", (uint32_t) 3,
+                                         statsCalculator->atomOccurencesNonConstraint);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Constraint", (uint32_t) 0, statsCalculator->numConstraints);
         }
 
@@ -291,22 +349,37 @@ namespace exst
 
             statsCalculator->calculateStats();
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", (uint32_t) 1, statsCalculator->numNonHornClauses);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Dual Horn Clauses", (uint32_t) 1, statsCalculator->numNonDualHornClauses);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", (uint32_t) 1,
+                                         statsCalculator->numNonHornClauses);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Dual Horn Clauses", (uint32_t) 1,
+                                         statsCalculator->numNonDualHornClauses);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size", (uint64_t) 3, statsCalculator->maxClauseSize);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Positive", (uint64_t) 3, statsCalculator->maxClauseSizePositive);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Negative", (uint32_t) 2, statsCalculator->maxClauseSizeNegative);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Number Atom Occurences", (uint32_t) 2, maxValue(statsCalculator->atomOccurences));
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Number Atom Occurences Positive", (uint32_t) 2, maxValue(statsCalculator->atomOccurencesPositive));
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Number Atom Occurences Negative", (uint32_t) 1, maxValue(statsCalculator->atomOccurencesNegative));
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Negative Variables", (std::size_t) 3, statsCalculator->variableNegative.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Positive Variables", (std::size_t) 3, statsCalculator->variablePositive.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without Helpers", (std::size_t) 3, statsCalculator->variableNegativeWithoutHelper.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without Helpers", (std::size_t) 3, statsCalculator->variablePositiveWithoutHelper.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Constraint", (uint32_t) 3, statsCalculator->maxPositiveRuleSizeConstraint);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Non Constraint", (uint32_t) 1, statsCalculator->maxPositiveRuleSizeNonConstraint);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Constraint", (uint32_t) 7, statsCalculator->atomOccurencesConstraint);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Non Constraint", (uint32_t) 2, statsCalculator->atomOccurencesNonConstraint);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Positive", (uint64_t) 3,
+                                         statsCalculator->maxClauseSizePositive);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Negative", (uint32_t) 2,
+                                         statsCalculator->maxClauseSizeNegative);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Number Atom Occurences", (uint32_t) 2,
+                                         maxValue(statsCalculator->atomOccurences));
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Number Atom Occurences Positive", (uint32_t) 2,
+                                         maxValue(statsCalculator->atomOccurencesPositive));
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Number Atom Occurences Negative", (uint32_t) 1,
+                                         maxValue(statsCalculator->atomOccurencesNegative));
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Negative Variables", (std::size_t) 3,
+                                         statsCalculator->variableNegative.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Positive Variables", (std::size_t) 3,
+                                         statsCalculator->variablePositive.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without Helpers", (std::size_t) 3,
+                                         statsCalculator->variableNegativeWithoutHelper.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without Helpers", (std::size_t) 3,
+                                         statsCalculator->variablePositiveWithoutHelper.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Constraint", (uint32_t) 3,
+                                         statsCalculator->maxPositiveRuleSizeConstraint);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Non Constraint", (uint32_t) 1,
+                                         statsCalculator->maxPositiveRuleSizeNonConstraint);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Constraint", (uint32_t) 7,
+                                         statsCalculator->atomOccurencesConstraint);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Non Constraint", (uint32_t) 2,
+                                         statsCalculator->atomOccurencesNonConstraint);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Constraint", (uint32_t) 3, statsCalculator->numConstraints);
         }
 
@@ -360,22 +433,37 @@ namespace exst
             statsCalculator->setSymbolTable(table);
             statsCalculator->calculateStats();
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", (uint32_t) 1, statsCalculator->numNonHornClauses);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Dual Horn Clauses", (uint32_t) 1, statsCalculator->numNonDualHornClauses);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", (uint32_t) 1,
+                                         statsCalculator->numNonHornClauses);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Dual Horn Clauses", (uint32_t) 1,
+                                         statsCalculator->numNonDualHornClauses);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size", (uint64_t) 3, statsCalculator->maxClauseSize);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Positive", (uint64_t) 3, statsCalculator->maxClauseSizePositive);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Negative", (uint32_t) 2, statsCalculator->maxClauseSizeNegative);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Number Atom Occurences", (uint32_t) 2, maxValue(statsCalculator->atomOccurences));
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Number Atom Occurences Positive", (uint32_t) 2, maxValue(statsCalculator->atomOccurencesPositive));
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Number Atom Occurences Negative", (uint32_t) 1, maxValue(statsCalculator->atomOccurencesNegative));
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Negative Variables", (std::size_t) 3, statsCalculator->variableNegative.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Positive Variables", (std::size_t) 3, statsCalculator->variablePositive.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without Helpers", (std::size_t) 1, statsCalculator->variableNegativeWithoutHelper.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without Helpers", (std::size_t) 3, statsCalculator->variablePositiveWithoutHelper.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Constraint", (uint32_t) 3, statsCalculator->maxPositiveRuleSizeConstraint);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Non Constraint", (uint32_t) 1, statsCalculator->maxPositiveRuleSizeNonConstraint);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Constraint", (uint32_t) 7, statsCalculator->atomOccurencesConstraint);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Non Constraint", (uint32_t) 2, statsCalculator->atomOccurencesNonConstraint);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Positive", (uint64_t) 3,
+                                         statsCalculator->maxClauseSizePositive);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Negative", (uint32_t) 2,
+                                         statsCalculator->maxClauseSizeNegative);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Number Atom Occurences", (uint32_t) 2,
+                                         maxValue(statsCalculator->atomOccurences));
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Number Atom Occurences Positive", (uint32_t) 2,
+                                         maxValue(statsCalculator->atomOccurencesPositive));
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Number Atom Occurences Negative", (uint32_t) 1,
+                                         maxValue(statsCalculator->atomOccurencesNegative));
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Negative Variables", (std::size_t) 3,
+                                         statsCalculator->variableNegative.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Positive Variables", (std::size_t) 3,
+                                         statsCalculator->variablePositive.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without Helpers", (std::size_t) 1,
+                                         statsCalculator->variableNegativeWithoutHelper.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without Helpers", (std::size_t) 3,
+                                         statsCalculator->variablePositiveWithoutHelper.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Constraint", (uint32_t) 3,
+                                         statsCalculator->maxPositiveRuleSizeConstraint);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Non Constraint", (uint32_t) 1,
+                                         statsCalculator->maxPositiveRuleSizeNonConstraint);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Constraint", (uint32_t) 7,
+                                         statsCalculator->atomOccurencesConstraint);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Non Constraint", (uint32_t) 2,
+                                         statsCalculator->atomOccurencesNonConstraint);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Constraint", (uint32_t) 3, statsCalculator->numConstraints);
         }
     };

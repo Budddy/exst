@@ -140,7 +140,9 @@ namespace exst
         StatsCalculator() : graphStatsCalculator(atomIdsNewOld, selectedAtoms)
         {
         };
+
         bool isConstraint(std::list<lit_type> head, std::list<lit_type> body);
+
         void removeHelpers();
     };
 }

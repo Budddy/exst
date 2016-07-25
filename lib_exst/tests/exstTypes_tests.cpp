@@ -30,7 +30,8 @@ namespace exst
             graph[1] = node1;
             graph[2] = node2;
             graphCopy = copyMyGraph(graph);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Assert size of copied graph is equal to original", graph.size(), graphCopy.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Assert size of copied graph is equal to original", graph.size(),
+                                         graphCopy.size());
         }
     };
 
