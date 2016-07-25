@@ -1,35 +1,30 @@
 #include "test.h"
 
-namespace exst
-{
-    class IncidenceTests : public AbstractExstTest
-    {
+namespace exst {
+    class IncidenceTests : public AbstractExstTest {
     CPPUNIT_TEST_SUITE(IncidenceTests);
             CPPUNIT_TEST(testSmallGraph);
             CPPUNIT_TEST(testIncidenceGraph);
         CPPUNIT_TEST_SUITE_END();
     private:
     public:
-        void setUp()
-        {
+        void setUp() {
             AbstractExstTest::setUp();
         }
 
-        void tearDown()
-        {
+        void tearDown() {
             AbstractExstTest::tearDown();
         }
 
-        void testSmallGraph()
-        {
+        void testSmallGraph() {
             std::list<lit_type> body;
             std::list<lit_type> head;
             body.push_back(*new lit_type(2, NEGATIVE));
             body.push_back(*new lit_type(3, NEGATIVE));
             incidenceGraphStats->addRuleIncidenceGraph(body, head);
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (uint32_t) 2, incidenceGraphStats->edgecount);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (uint32_t) 3, incidenceGraphStats->nodecount);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (size_t) 2, incidenceGraphStats->iGraph.edgeCount());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (size_t) 3, incidenceGraphStats->iGraph.vertexCount());
 
             head.clear();
             body.clear();
@@ -37,8 +32,8 @@ namespace exst
             body.push_back(*new lit_type(5, POSITIVE));
             incidenceGraphStats->addRuleIncidenceGraph(body, head);
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (uint32_t) 4, incidenceGraphStats->edgecount);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (uint32_t) 6, incidenceGraphStats->nodecount);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (size_t) 4, incidenceGraphStats->iGraph.edgeCount());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (size_t) 6, incidenceGraphStats->iGraph.vertexCount());
 
             head.clear();
             body.clear();
@@ -47,24 +42,24 @@ namespace exst
             head.push_back(*new lit_type(7, POSITIVE));
             incidenceGraphStats->addRuleIncidenceGraph(body, head);
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (uint32_t) 7, incidenceGraphStats->edgecount);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (uint32_t) 9, incidenceGraphStats->nodecount);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (size_t) 7, incidenceGraphStats->iGraph.edgeCount());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (size_t) 9, incidenceGraphStats->iGraph.vertexCount());
 
             head.clear();
             body.clear();
             head.push_back(*new lit_type(8, POSITIVE));
             incidenceGraphStats->addRuleIncidenceGraph(body, head);
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (uint32_t) 8, incidenceGraphStats->edgecount);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (uint32_t) 11, incidenceGraphStats->nodecount);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (size_t) 8, incidenceGraphStats->iGraph.edgeCount());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (size_t) 11, incidenceGraphStats->iGraph.vertexCount());
 
             head.clear();
             body.clear();
             head.push_back(*new lit_type(9, NEGATIVE));
             incidenceGraphStats->addRuleIncidenceGraph(body, head);
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (uint32_t) 9, incidenceGraphStats->edgecount);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (uint32_t) 13, incidenceGraphStats->nodecount);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (size_t) 9, incidenceGraphStats->iGraph.edgeCount());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (size_t) 13, incidenceGraphStats->iGraph.vertexCount());
 
             incidenceGraphStats->resetAssignment();
 
@@ -78,20 +73,19 @@ namespace exst
             (*atomIds)[(uint32_t) 8] = (uint32_t) 8;
             (*atomIds)[(uint32_t) 9] = (uint32_t) 9;
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count Reduct", (uint32_t) 9, incidenceGraphStats->edgecountReduct);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count Reduct", (uint32_t) 13, incidenceGraphStats->nodecountReduct);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count Reduct", (size_t) 9, incidenceGraphStats->iGraphReduct.edgeCount());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count Reduct", (size_t) 13, incidenceGraphStats->iGraphReduct.vertexCount());
 
             lit_type l;
             l.id = 5;
             l.s = NEGATIVE;
             incidenceGraphStats->reduceGraph(l);
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count Reduct", (uint32_t) 5, incidenceGraphStats->edgecountReduct);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count Reduct", (uint32_t) 13, incidenceGraphStats->nodecountReduct);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count Reduct", (size_t) 5, incidenceGraphStats->iGraphReduct.edgeCount());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count Reduct", (size_t) 13, incidenceGraphStats->iGraphReduct.vertexCount());
         }
 
-        void testIncidenceGraph()
-        {
+        void testIncidenceGraph() {
             std::list<lit_type> body;
             std::list<lit_type> head;
             body.push_back(*new lit_type(2, NEGATIVE));
@@ -154,8 +148,8 @@ namespace exst
             body.push_back(*new lit_type(9, POSITIVE));
             incidenceGraphStats->addRuleIncidenceGraph(body, head);
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (uint32_t) 22, incidenceGraphStats->edgecount);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (uint32_t) 21, incidenceGraphStats->nodecount);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (size_t) 22, incidenceGraphStats->iGraph.edgeCount());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (size_t) 21, incidenceGraphStats->iGraph.vertexCount());
 
             incidenceGraphStats->resetAssignment();
 
@@ -175,23 +169,29 @@ namespace exst
             (*atomIds)[(uint32_t) 14] = (uint32_t) 14;
             (*atomIds)[(uint32_t) 15] = (uint32_t) 15;
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count Reduct", (uint32_t) 22, incidenceGraphStats->edgecountReduct);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count Reduct", (uint32_t) 21, incidenceGraphStats->nodecountReduct);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count Reduct", (size_t) 22,
+                                         incidenceGraphStats->iGraphReduct.edgeCount());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count Reduct", (size_t) 21,
+                                         incidenceGraphStats->iGraphReduct.vertexCount());
 
             lit_type l;
             l.id = 5;
             l.s = NEGATIVE;
             incidenceGraphStats->reduceGraph(l);
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count Reduct", (uint32_t) 16, incidenceGraphStats->edgecountReduct);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count Reduct", (uint32_t) 21, incidenceGraphStats->nodecountReduct);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count Reduct", (size_t) 16,
+                                         incidenceGraphStats->iGraphReduct.edgeCount());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count Reduct", (size_t) 21,
+                                         incidenceGraphStats->iGraphReduct.vertexCount());
 
             l.id = 3;
             l.s = POSITIVE;
             incidenceGraphStats->reduceGraph(l);
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count Reduct", (uint32_t) 14, incidenceGraphStats->edgecountReduct);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count Reduct", (uint32_t) 21, incidenceGraphStats->nodecountReduct);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count Reduct", (size_t) 14,
+                                         incidenceGraphStats->iGraphReduct.edgeCount());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count Reduct", (size_t) 21,
+                                         incidenceGraphStats->iGraphReduct.vertexCount());
         }
     };
 

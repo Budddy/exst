@@ -1,18 +1,15 @@
 #include <exst/incidence_graph_stats.h>
-#include <iostream>
 
 namespace exst
 {
     void exst::IncidenceGraphStats::addRuleIncidenceGraph(std::list<lit_type> bodies, std::list<lit_type> heads)
     {
-
-        std::unordered_map<uint32_t, std::unordered_map<uint32_t, EdgeType>> &igraph = incidenceGraph;
+        std::unordered_map<uint32_t, std::unordered_map<uint32_t, EdgeType>> &myGraph = incidenceGraph;
         std::unordered_map<uint32_t, uint32_t> &avmap = atomVertexMap;
         std::unordered_map<uint32_t, std::unordered_map<uint32_t, EdgeType>> &rbmap = ruleBodyMap;
 
-        uint32_t rule_Vertex = nodecount;
-        nodecount++;
-        igraph[rule_Vertex];
+        uint32_t rule_Vertex = iGraph.addVertex();
+        myGraph[rule_Vertex];
 
         // add body atoms
         std::list<exst::lit_type>::iterator it;
@@ -21,29 +18,31 @@ namespace exst
             uint32_t dId = it->id;
             if (avmap.count(dId) == 0)
             {
-                avmap[dId] = nodecount;
-                nodecount++;
-                igraph[avmap[dId]];
+                avmap[dId] = iGraph.addVertex();
+                myGraph[avmap[dId]];
             }
             bool neg = it->s == NEGATIVE;
-            rbmap[rule_Vertex][dId] = neg ? NEG : POS;
-            igraph[avmap[dId]][rule_Vertex] = neg ? NEG : POS;
-            igraph[rule_Vertex][avmap[dId]] = neg ? NEG : POS;
+            rbmap[rule_Vertex][avmap[dId]] = neg ? NEG : POS;
+            myGraph[avmap[dId]][rule_Vertex] = neg ? NEG : POS;
+            myGraph[rule_Vertex][avmap[dId]] = neg ? NEG : POS;
+
+            iGraph.addEdge(avmap[dId],rule_Vertex);
             edgecount++;
         }
 
         // add head atoms
-        for (it = heads.begin(); it != heads.end(); it++)
+        std::list<exst::lit_type>::iterator it_;
+        for (it_ = heads.begin(); it_ != heads.end(); it_++)
         {
-            uint32_t hId = it->id;
+            uint32_t hId = it_->id;
             if (avmap.count(hId) == 0)
             {
-                avmap[hId] = nodecount;
-                nodecount++;
-                igraph[avmap[hId]];
+                avmap[hId] = iGraph.addVertex();
+                myGraph[avmap[hId]];
             }
-            igraph[avmap[hId]][rule_Vertex] = HEAD;
-            igraph[rule_Vertex][avmap[hId]] = HEAD;
+            myGraph[avmap[hId]][rule_Vertex] = HEAD;
+            myGraph[rule_Vertex][avmap[hId]] = HEAD;
+            iGraph.addEdge(avmap[hId],rule_Vertex);
             edgecount++;
         }
     }
@@ -58,10 +57,10 @@ namespace exst
     void exst::IncidenceGraphStats::resetAssignment()
     {
         selectedAtoms.clear();
-        nodecountReduct = nodecount;
-        edgecountReduct = edgecount;
         ruleBodyMapReduct.insert(ruleBodyMap.begin(), ruleBodyMap.end());
+        edgecountReduct = edgecount;
         incidenceGraphReduct = copyMyGraph(incidenceGraph);
+        iGraphReduct = iGraph;
     }
 
     void exst::IncidenceGraphStats::reduceGraph(lit_type lit)
@@ -84,30 +83,30 @@ namespace exst
                         igraph[bodyIt->first].erase(it->first);
                         ruleBodyMapReduct[it->first].erase(bodyIt->first);
                         igraph[it->first].erase(bodyIt->first);
+                        iGraphReduct.removeEdge(bodyIt->first,it->first);
+                        iGraphReduct.removeEdge(it->first,bodyIt->first);
                         edgecountReduct--;
                     }
                 }
             }
         }
-        reds.push_back(1.0F*edgecountReduct/edgecount);
-        printIGraphReduct();
+        reds.push_back(1.0F * iGraphReduct.edgeCount());
+        reds.push_back(1.0F * edgecountReduct * 100);
     }
 
     void exst::IncidenceGraphStats::printIGraphReduct()
     {
         std::cout << "{\"_Incidence Graph Reduct_\": [ \n  [\"Nodes\", ";
-        std::cout << nodecountReduct;
+        std::cout << iGraphReduct.vertexCount();
         std::cout << "],\n  [\"Edges\", ";
-        std::cout << edgecountReduct;
+        std::cout << iGraphReduct.edgeCount();
+        //std::cout << "],\n  [\"Treewidth\", ";
+        //std::cout << getTreewidth(iGraphReduct);
         std::cout << "]\n}\n";
     }
 
-    void exst::IncidenceGraphStats::printIncidenceGraph()
-    {
-        std::cout << "_Incidence Graph_ \nNodes: ";
-        std::cout << nodecount;
-        std::cout << "\nEdges: ";
-        std::cout << edgecount;
-        std::cout << "\n";
+
+    int exst::IncidenceGraphStats::getTreewidth(htd::Hypergraph &graph){
+        return 0;
     }
 }

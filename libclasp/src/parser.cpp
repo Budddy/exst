@@ -261,7 +261,7 @@ bool LparseParser::parseBody(uint32 lits, uint32 neg, bool readWeights) {
 		exst::lit_type l;
 		l.id = (*i);
 		l.s=exst::POSITIVE;
-		bodies.push_back(l);
+		heads.push_back(l);
 	}
 	exst::StatsCalculator::getInstance().parseRule(bodies,heads);
 	if (readWeights) {

@@ -4,18 +4,17 @@
 #include <unordered_map>
 #include <exst/ExstTypes.h>
 #include <list>
+#include <htd/main.hpp>
 
 /*
  * class used for calculating and saving stats of the incidence graph and the incidence graph
  */
-namespace exst
-{
-    class IncidenceGraphStats
-    {
+namespace exst {
+    class IncidenceGraphStats {
     public:
-        IncidenceGraphStats(std::unordered_map<uint32_t, uint32_t> &atomIds, std::unordered_map<uint32_t, bool> &selectedAtoms) :
-                atomIds(atomIds), selectedAtoms(selectedAtoms)
-        {
+        IncidenceGraphStats(std::unordered_map<uint32_t, uint32_t> &atomIds,
+                            std::unordered_map<uint32_t, bool> &selectedAtoms) :
+                atomIds(atomIds), selectedAtoms(selectedAtoms) {
         }
 
         /*
@@ -54,6 +53,9 @@ namespace exst
         //incidence graph of reduct
         MyGraph incidenceGraphReduct;
 
+        htd::Hypergraph iGraph;
+        htd::Hypergraph iGraphReduct;
+
         //mapping from atoms to vertices in the incidence graph
         std::unordered_map<uint32_t, uint32_t> atomVertexMap;
 
@@ -83,6 +85,10 @@ namespace exst
 
         //list of size reductions incidence graph
         std::list<float> reds;
+
+        int getTreewidth(htd::Hypergraph &graph);
+
+        std::unordered_map<uint32_t, uint32_t> rvmap;
     };
 }
 

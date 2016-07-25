@@ -1,7 +1,7 @@
 file(GLOB APP_SRC *.cpp)
 include_directories(${CMAKE_SOURCE_DIR}/libclasp ${CMAKE_SOURCE_DIR}/libprogram_opts ${CMAKE_SOURCE_DIR}/lib_exst)
 add_executable(exst ${APP_SRC})
-target_link_libraries(exst libclasp libprogram_opts lib_exst)
+target_link_libraries(exst libclasp libprogram_opts lib_exst htd)
 if (TBB_FOUND)
     MESSAGE(STATUS "TBB found. Building with threads.")
     target_link_libraries(exst tbb)

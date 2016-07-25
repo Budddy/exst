@@ -1072,6 +1072,7 @@ public:
 		l.id=selected.var();
 		l.s=selected.sign() ? exst::POSITIVE : exst::NEGATIVE;
 		exst::StatsCalculator::getInstance().graphStatsCalculator.incidenceGraphStats.reduceGraph(l);
+		exst::StatsCalculator::getInstance().graphStatsCalculator.incidenceGraphStats.printIGraphReduct();
 		return selected;
 	}
 private:
