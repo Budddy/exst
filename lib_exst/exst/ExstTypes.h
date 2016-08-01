@@ -43,9 +43,14 @@ namespace exst
     MyGraph copyMyGraph(MyGraph graph);
 
     /*
-     * prints the dependency graph as edge list
+     * returns the string representation of the graph in DIMACS format
      */
-    std::string getDIMACS(MyGraph &graph, uint32_t edgecount);
+    std::string getDIMACS(MyGraph &graph);
+
+    /*
+     * returns the string representation of the graph in Gr format
+     */
+    std::string getGrFormat(MyGraph &graph);
 
     uint32_t maxValue(std::unordered_map<uint32_t, uint32_t> values);
 }

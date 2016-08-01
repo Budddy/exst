@@ -41,23 +41,15 @@ namespace exst
         void reduceGraph(lit_type lit);
 
         /*
-         * prints the incidence graoh of the reduct
+         * prints the incidence graph of the reduct
          */
         void printIGraphReduct();
-
-        /*
-         * prints the incidence graph of the program
-         */
-        void printIncidenceGraph();
 
         //complete incidence graph
         MyGraph incidenceGraph;
 
         //incidence graph of reduct
         MyGraph incidenceGraphReduct;
-
-        htd::Hypergraph iGraph;
-        htd::Hypergraph iGraphReduct;
 
         //mapping from atoms to vertices in the incidence graph
         std::unordered_map<uint32_t, uint32_t> atomVertexMap;
@@ -68,18 +60,6 @@ namespace exst
         //maps the rules to the bodies
         MyGraph ruleBodyMap;
 
-        //numer of edges in the incidence graph
-        uint32_t edgecount = 0;
-
-        //numer of nodes in the incidence graph
-        uint32_t nodecount = 0;
-
-        //numer of edges in the reduct of the incidence graph
-        uint32_t edgecountReduct = 0;
-
-        //numer of nodes in the reduct of the incidence graph
-        uint32_t nodecountReduct = 0;
-
         //maps atoms and ids
         std::unordered_map<uint32_t, uint32_t> &atomIds;
 
@@ -89,9 +69,9 @@ namespace exst
         //list of size reductions incidence graph
         std::list<float> reds;
 
-        int getTreewidth(htd::Hypergraph &graph);
+        int getTreewidth(MyGraph &graph);
 
-        std::unordered_map<uint32_t, uint32_t> rvmap;
+        uint32_t edgecount=0;
     };
 }
 

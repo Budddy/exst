@@ -158,9 +158,9 @@ namespace exst
 
         //incidence graph
         std::cout << "  [\"Incidence Graph Nodes\" , " <<
-        graphStatsCalculator.incidenceGraphStats.iGraph.vertexCount() << "],\n";
+        graphStatsCalculator.incidenceGraphStats.incidenceGraph.size() << "],\n";
         std::cout << "  [\"Incidence Graph Edges\" , " <<
-        graphStatsCalculator.incidenceGraphStats.iGraph.edgeCount() << "],\n";
+        edgeCount(graphStatsCalculator.incidenceGraphStats.incidenceGraph) << "],\n";
 
         //number of non horn clauses
         std::cout << "  [\"Non Horn Clauses\" , " << numNonHornClauses << "],\n";
