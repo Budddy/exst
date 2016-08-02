@@ -8,7 +8,7 @@ namespace exst
         std::unordered_map<uint32_t, uint32_t> &avmap = atomVertexMap;
         std::unordered_map<uint32_t, std::unordered_map<uint32_t, EdgeType>> &rbmap = ruleBodyMap;
 
-        uint32_t rule_Vertex = (uint32_t) myGraph.size();
+        uint32_t rule_Vertex = iGraph->addVertex();
         myGraph[rule_Vertex];
 
         // add body atoms
@@ -18,13 +18,14 @@ namespace exst
             uint32_t dId = it->id;
             if (avmap.count(dId) == 0)
             {
-                avmap[dId] = (uint32_t) myGraph.size();
+                avmap[dId] = iGraph->addVertex();
                 myGraph[avmap[dId]];
             }
             bool neg = it->s == NEGATIVE;
             rbmap[rule_Vertex][avmap[dId]] = neg ? NEG : POS;
             myGraph[avmap[dId]][rule_Vertex] = neg ? NEG : POS;
             myGraph[rule_Vertex][avmap[dId]] = neg ? NEG : POS;
+            iGraph->addEdge(avmap[dId], rule_Vertex);
             edgecount++;
         }
 
@@ -35,11 +36,12 @@ namespace exst
             uint32_t hId = it_->id;
             if (avmap.count(hId) == 0)
             {
-                avmap[hId] = (uint32_t) myGraph.size();
+                avmap[hId] = iGraph->addVertex();
                 myGraph[avmap[hId]];
             }
             myGraph[avmap[hId]][rule_Vertex] = HEAD;
             myGraph[rule_Vertex][avmap[hId]] = HEAD;
+            iGraph->addEdge(avmap[hId], rule_Vertex);
             edgecount++;
         }
     }
@@ -53,6 +55,7 @@ namespace exst
 
     void exst::IncidenceGraphStats::resetAssignment()
     {
+        iGraphReduct = iGraph->clone();
         selectedAtoms.clear();
         ruleBodyMapReduct.insert(ruleBodyMap.begin(), ruleBodyMap.end());
         incidenceGraphReduct = copyMyGraph(incidenceGraph);
@@ -78,12 +81,13 @@ namespace exst
                         igraph[bodyIt->first].erase(it->first);
                         igraph[it->first].erase(bodyIt->first);
                         ruleBodyMapReduct[it->first].erase(bodyIt->first);
+                        iGraphReduct->removeEdge(*iGraphReduct->associatedEdgeIds(bodyIt->first, it->first).begin());
                     }
                 }
             }
         }
         std::cout << "get Treewidth: ";
-        reds.push_back(getTreewidth(igraph));
+        reds.push_back(getTreewidth(iGraphReduct));
         std::cout << reds.back() << "\n";
     }
 
@@ -98,18 +102,50 @@ namespace exst
         std::cout << "]\n}\n";
     }
 
-
-    int exst::IncidenceGraphStats::getTreewidth(MyGraph &graph)
+    /**
+ *  Implementation of the htd::ITreeDecompositionFitnessFunction interface which prefers decompositions of minimal width.
+ */
+    class WidthMinimizingFitnessFunction : public htd::ITreeDecompositionFitnessFunction
     {
-        FILE *file = fopen("test.txt", "w");
-        fputs(getGrFormat(graph).c_str(), file);
-        fclose(file);
-        const char *str = "htd_main --output width --opt width < test.txt";
-        //std::cout << str;
-        FILE *stream = popen(str, "r");
-        char buffer[50];
-        fgets(buffer,50,stream);
-        //remove("test.txt");
-        return atoi(buffer);
+    public:
+        /**
+         *  Constructor of class WidthMinimizingFitnessFunction.
+         */
+        WidthMinimizingFitnessFunction(void)
+        {
+
+        }
+
+        /**
+         *  Destructor of class WidthMinimizingFitnessFunction.
+         */
+        virtual ~WidthMinimizingFitnessFunction()
+        {
+
+        }
+
+        htd::FitnessEvaluation *
+        fitness(const htd::IMultiHypergraph &graph, const htd::ITreeDecomposition &decomposition) const HTD_OVERRIDE
+        {
+            HTD_UNUSED(graph)
+
+            return new htd::FitnessEvaluation(1, -(double) (decomposition.maximumBagSize()));
+        }
+
+        WidthMinimizingFitnessFunction *clone(void) const HTD_OVERRIDE
+        {
+            return new WidthMinimizingFitnessFunction();
+        }
+    };
+
+    size_t exst::IncidenceGraphStats::getTreewidth(htd::IMutableMultiGraph *graph)
+    {
+        htd::IterativeImprovementTreeDecompositionAlgorithm algorithm(libraryInstance,
+                                                                      libraryInstance->treeDecompositionAlgorithmFactory().getTreeDecompositionAlgorithm(
+                                                                              libraryInstance),
+                                                                      WidthMinimizingFitnessFunction());
+
+        htd::ITreeDecomposition *decomposition = algorithm.computeDecomposition(*graph);
+        return decomposition != nullptr ? decomposition->maximumBagSize() : 0;
     }
 }

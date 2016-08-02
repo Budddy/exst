@@ -5,6 +5,7 @@
 #include <exst/ExstTypes.h>
 #include <list>
 #include <htd/main.hpp>
+#include <htd/MultiGraphFactory.hpp>
 
 /*
  * class used for calculating and saving stats of the incidence graph and the incidence graph
@@ -18,7 +19,12 @@ namespace exst
                             std::unordered_map<uint32_t, bool> &selectedAtoms) :
                 atomIds(atomIds), selectedAtoms(selectedAtoms)
         {
+            libraryInstance = htd::createManagementInstance(htd::Id::FIRST);
+            htd::MultiGraphFactory &factory = libraryInstance->multiGraphFactory();
+            iGraph = factory.getMultiGraph();
         }
+
+        htd::LibraryInstance *libraryInstance;
 
         /*
          * adds a rule to the incidence graph
@@ -47,9 +53,11 @@ namespace exst
 
         //complete incidence graph
         MyGraph incidenceGraph;
+        htd::IMutableMultiGraph *iGraph;
 
         //incidence graph of reduct
         MyGraph incidenceGraphReduct;
+        htd::IMutableMultiGraph *iGraphReduct;
 
         //mapping from atoms to vertices in the incidence graph
         std::unordered_map<uint32_t, uint32_t> atomVertexMap;
@@ -69,9 +77,9 @@ namespace exst
         //list of size reductions incidence graph
         std::list<float> reds;
 
-        int getTreewidth(MyGraph &graph);
+        size_t getTreewidth(htd::IMutableMultiGraph *graph);
 
-        uint32_t edgecount=0;
+        uint32_t edgecount = 0;
     };
 }
 
