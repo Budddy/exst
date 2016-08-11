@@ -11,20 +11,19 @@ namespace exst
         std::cout << "\n";
     }
 
-    void DependencyGraphStats::addRuleDependencyGraph(std::list<lit_type> bodies, std::list<lit_type> heads)
+    void DependencyGraphStats::addRuleDependencyGraph(std::list<lit_type> body, std::list<lit_type> heads)
     {
         std::unordered_map<uint32_t, uint32_t> &vertexNodeMap = atomVertexMap;
         std::unordered_map<uint32_t, std::unordered_map<uint32_t, EdgeType>> &graph = dependencyGraph;
 
         // add body atoms to graph if they are not in it
         std::list<exst::lit_type>::iterator it;
-        for (it = bodies.begin(); it != bodies.end(); it++)
+        for (it = body.begin(); it != body.end(); it++)
         {
             uint32_t id = it->id;
             if (vertexNodeMap.count(id) == 0)
             {
-                vertexNodeMap[id] = nodecount;
-                nodecount++;
+                vertexNodeMap[id] = graph.size();
                 graph[vertexNodeMap[id]];
             }
         }
@@ -35,17 +34,17 @@ namespace exst
             uint32_t id = it->id;
             if (vertexNodeMap.count(id) == 0)
             {
-                vertexNodeMap[id] = nodecount;
-                nodecount++;
-                vertexNodeMap[id];
+                vertexNodeMap[id] = graph.size();
+                graph[vertexNodeMap[id]];
             }
         }
 
+        //add dependency edges
         std::list<exst::lit_type>::iterator a;
         for (a = heads.begin(); a != heads.end(); a++)
         {
             std::list<exst::lit_type>::iterator b;
-            for (b = bodies.begin(); b != bodies.end(); b++)
+            for (b = body.begin(); b != body.end(); b++)
             {
                 uint32_t id = b->id;
                 if ((a->id) > 1 && edgeMap[a->id].count(id) == 0)
@@ -56,13 +55,14 @@ namespace exst
             }
         }
 
+        /*
         if (heads.size() == 0 || heads.front().id == 1)
         {
-            for (a = bodies.begin(); a != bodies.end(); a++)
+            for (a = body.begin(); a != body.end(); a++)
             {
                 uint32_t ida = a->id;
                 std::list<exst::lit_type>::iterator b;
-                for (b = bodies.begin(); b != bodies.end(); b++)
+                for (b = body.begin(); b != body.end(); b++)
                 {
                     uint32_t idb = b->id;
                     if ((ida) != (idb) && edgeMap[ida].count(idb) == 0)
@@ -71,6 +71,6 @@ namespace exst
                     };
                 }
             }
-        }
+        }*/
     }
 }

@@ -30,7 +30,7 @@ namespace exst
 
     std::string getDIMACS(MyGraph &graph)
     {
-        std::__cxx11::string dimacsString;
+        std::string dimacsString;
         dimacsString += "p edge " + std::to_string(graph.size()) + " " + std::to_string(edgeCount(graph));
 
         std::unordered_map<unsigned int, std::unordered_map<unsigned int, exst::EdgeType>>::iterator it;
@@ -51,7 +51,7 @@ namespace exst
 
     std::string getGrFormat(MyGraph &graph)
     {
-        std::__cxx11::string grString;
+        std::string grString;
         grString += "p tw " + std::to_string(graph.size()) + " " + std::to_string(edgeCount(graph));
 
         std::unordered_map<unsigned int, std::unordered_map<unsigned int, exst::EdgeType>>::iterator it;
@@ -62,8 +62,8 @@ namespace exst
             {
                 if (it->first < it2->first)
                 {
-                    grString += "\n" + std::to_string(it->first+1);
-                    grString += " " + std::to_string(it2->first+1);
+                    grString += "\n" + std::to_string(it->first + 1);
+                    grString += " " + std::to_string(it2->first + 1);
                 }
             }
         }
@@ -79,5 +79,16 @@ namespace exst
             maxValue = it->second > maxValue ? it->second : maxValue;
         }
         return maxValue;
+    }
+
+    uint32_t minValue(std::unordered_map<uint32_t, uint32_t> values)
+    {
+        uint32_t minValue = UINT32_MAX;
+        std::unordered_map<unsigned int, unsigned int>::iterator it;
+        for (it = values.begin(); it != values.end(); it++)
+        {
+            minValue = it->second < minValue ? it->second : minValue;
+        }
+        return minValue;
     }
 }

@@ -1035,7 +1035,16 @@ public:
 	 * \post
 	 * If true is returned, the heuristic has asserted a literal.
 	 */
-	bool select(Solver& s) { return s.numFreeVars() != 0 && s.assume(doSelect(s)); }
+	bool select(Solver& s) {
+        bool ret = s.numFreeVars() != 0 && s.assume(doSelect(s));
+        std::list<exst::lit_type> as;
+        const Literal *a;
+        for(a = s.assignment().trail.begin(); a != s.assignment().trail.end(); a++){
+            as.push_back(exst::lit_type(a->var(),a->sign() ? exst::POSITIVE : exst::NEGATIVE));
+        }
+        exst::StatsCalculator::getInstance().graphStatsCalculator.incidenceGraphStats.updateAssignment(as);
+        return ret; 
+    }
 
 	//! Implements the actual selection process.
 	/*!
@@ -1071,8 +1080,6 @@ public:
 		exst::lit_type l;
 		l.id=selected.var();
 		l.s=selected.sign() ? exst::POSITIVE : exst::NEGATIVE;
-		exst::StatsCalculator::getInstance().graphStatsCalculator.incidenceGraphStats.reduceGraph(l);
-		//exst::StatsCalculator::getInstance().graphStatsCalculator.incidenceGraphStats.printIGraphReduct();
 		return selected;
 	}
 private:

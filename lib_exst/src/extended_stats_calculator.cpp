@@ -34,7 +34,7 @@ namespace exst
 
     void StatsCalculator::calculateStats()
     {
-        std::list<std::pair<std::__cxx11::list<exst::lit_type>, std::__cxx11::list<exst::lit_type>>>::iterator it;
+        std::list<std::pair<std::list<exst::lit_type>, std::list<exst::lit_type>>>::iterator it;
         for (it = rules.begin(); it != rules.end(); it++)
         {
             std::list<lit_type> &head = it->first;
@@ -107,7 +107,7 @@ namespace exst
             //number of variables that occur in positive/negative literals
             parseVariableLiteral(body, head);
         }
-        removeHelpers();
+        calculateVariables();
     }
 
     void StatsCalculator::countAtomOccurences(std::list<lit_type> body, std::list<lit_type> head)
@@ -151,16 +151,18 @@ namespace exst
         std::cout << "\n########## Extended Stats ##########\n\n{\n \"Extended Stats\" : [\n";
 
         //dependency graph
-        std::cout << "  [\"Dependency Graph Nodes\" , " << graphStatsCalculator.dependencyGraphStats.nodecount <<
-        "],\n";
-        std::cout << "  [\"Dependency Graph Edges\" , " << graphStatsCalculator.dependencyGraphStats.edgecount <<
-        "],\n";
+        std::cout << "  [\"Dependency Graph Nodes\" , "
+                  << graphStatsCalculator.dependencyGraphStats.getDependencyGraph().size() <<
+                  "],\n";
+        std::cout << "  [\"Dependency Graph Edges\" , "
+                  << edgeCount(graphStatsCalculator.dependencyGraphStats.getDependencyGraph()) <<
+                  "],\n";
 
         //incidence graph
         std::cout << "  [\"Incidence Graph Nodes\" , " <<
-        graphStatsCalculator.incidenceGraphStats.incidenceGraph.size() << "],\n";
+                  graphStatsCalculator.incidenceGraphStats.getIncidenceGraph().size() << "],\n";
         std::cout << "  [\"Incidence Graph Edges\" , " <<
-        edgeCount(graphStatsCalculator.incidenceGraphStats.incidenceGraph) << "],\n";
+                  edgeCount(graphStatsCalculator.incidenceGraphStats.getIncidenceGraph()) << "],\n";
 
         //number of non horn clauses
         std::cout << "  [\"Non Horn Clauses\" , " << numNonHornClauses << "],\n";
@@ -177,44 +179,41 @@ namespace exst
 
         //number of variables that occur as positive/negative literals
         std::cout << "  [\"number of variables that occur as positive literals with helpers\" , " <<
-        variablePositive.size() << "],\n";
+                  variablePositive.size() << "],\n";
         std::cout << "  [\"number of variables that occur as positive literals without helpers\" , " <<
-        variablePositiveWithoutHelper.size() << "],\n";
+                  variablePositiveWithoutHelper.size() << "],\n";
         std::cout << "  [\"number of variables that occur as negative literals with helpers\" , " <<
-        variableNegative.size() << "],\n";
+                  variableNegative.size() << "],\n";
         std::cout << "  [\"number of variables that occur as negative literals without helpers\" , " <<
-        variableNegativeWithoutHelper.size() << "],\n";
+                  variableNegativeWithoutHelper.size() << "],\n";
 
         //maximum positive rule size (constraint/non-constraint)
         std::cout << "  [\"maximum positive rule size constraint\" , " << maxPositiveRuleSizeConstraint << "],\n";
         std::cout << "  [\"maximum positive rule size non-constraint\" , " << maxPositiveRuleSizeNonConstraint <<
-        "],\n";
+                  "],\n";
 
         //total number of atom occurrences in the program (constraints/non-constraint)
         std::cout << "  [\"total number of atom occurrences constraint\" , " << atomOccurencesConstraint << "],\n";
         std::cout << "  [\"total number of atom occurrences non-constraint\" , " << atomOccurencesNonConstraint <<
-        "],\n";
+                  "],\n";
 
         //maximum number of occurrences of an atom
         std::cout << "  [\"maximum number of occurrences of an atom\" , " << maxValue(atomOccurences) << "],\n";
 
         //maximum number of positive occurrences of an atom
         std::cout << "  [\"maximum number of positive occurrences of an atom\" , " <<
-        maxValue(atomOccurencesPositive) << "],\n";
+                  maxValue(atomOccurencesPositive) << "],\n";
 
         //maximum number of negative occurrences of an atom
         std::cout << "  [\"maximum number of negative occurrences of an atom\" , " <<
-        maxValue(atomOccurencesNegative) << "]\n";
+                  maxValue(atomOccurencesNegative) << "]\n";
 
         std::list<float>::iterator it;
-        for (it = graphStatsCalculator.incidenceGraphStats.reds.begin();
-             it != graphStatsCalculator.incidenceGraphStats.reds.end(); it++)
+        for (it = graphStatsCalculator.incidenceGraphStats.getWidths()->begin();
+             it != graphStatsCalculator.incidenceGraphStats.getWidths()->end(); it++)
         {
-            std::cout << "  [\"reduct size\" , " << std::to_string(*it) << "]\n";
+            std::cout << "  [\"reduct width\" , " << (*it) << "]\n";
         }
-
-        //maximum weight of the minimal model TODO
-        //std::cout << "  [\"maximum weight of the minimal model\" , " << maxWeightMinModel << "],\n";
 
         std::cout << " ]\n}";
         std::flush(std::cout);
@@ -262,7 +261,7 @@ namespace exst
         this->sTable = &table;
     }
 
-    void StatsCalculator::removeHelpers()
+    void StatsCalculator::calculateVariables()
     {
         std::list<unsigned int> rem;
         std::unordered_map<unsigned int, bool>::iterator it;

@@ -2,32 +2,46 @@
 #define CLASP_DEPENDENCY_GRAPH_STATS_H
 
 #include <unordered_map>
-#include <exst/ExstTypes.h>
-#include <unordered_map>
-#include <exst/incidence_graph_stats.h>
-#include <exst/dependency_graph_stats.h>
-#include <exst/ExstTypes.h>
 #include <list>
-
-/*
- * class used for calculating and saving stats of the dependency graph and the actual dependency graph
- */
+#include <iostream>
+#include <exst/ExstTypes.h>
+#include <exst/dependency_graph_stats.h>
 
 namespace exst
 {
+    /**
+     * class used for calculating and saving stats of the dependency graph and the actual dependency graph
+     */
     class DependencyGraphStats
     {
     public:
-        /*
+        /**
          * adds a rule to the dependency graph
+         * @param body body of the rule
+         * @param head head of the rule
          */
-        void addRuleDependencyGraph(std::list<lit_type> bodies, std::list<lit_type> head);
+        void addRuleDependencyGraph(std::list<lit_type> body, std::list<lit_type> head);
 
-        /*
-         * prints the dependency graph
+        /**
+         * prints the number of edges and nodes in the dependency graph
          */
         void printDepGraph();
 
+        /**
+         * Getter for the Dependency Graph.
+         * @return the dependency graph
+         */
+        MyGraph &getDependencyGraph()
+        {
+            return dependencyGraph;
+        }
+
+        uint32_t getEdgeCount()
+        {
+            return edgecount;
+        }
+
+    private:
         //dependency graph
         MyGraph dependencyGraph;
         //mapping from graph vertices to literals

@@ -822,12 +822,6 @@ void TextOutput::printModel(const SymbolTable& sym, const Model& m, PrintLevel x
 void TextOutput::printNames(const Clasp::SymbolTable& sym, const Clasp::Model& m) {
 	bool first = true;
 	for (SymbolTable::const_iterator it = sym.begin(); it != sym.end(); ++it) {
-		if(!m.isTrue(it->second.lit)){
-			exst::lit_type l;
-			l.s = it->second.lit.sign() ? exst::NEGATIVE : exst::POSITIVE;
-			l.id=it->second.lit.var();
-			exst::StatsCalculator::getInstance().graphStatsCalculator.incidenceGraphStats.addAtomReduct(l);
-		}
 		if (m.isTrue(it->second.lit) && doPrint(it->second)) {
 			if (!first) { printSep(cat_value); }
 			printf(format[cat_atom], it->second.name.c_str());
