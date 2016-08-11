@@ -23,19 +23,17 @@ namespace exst
             dependencyGraphStats = new DependencyGraphStats();
             statsCalculator = new StatsCalculator();
             atomIds = new std::unordered_map<uint32_t, uint32_t>();
-            selectedAtoms = new std::unordered_map<uint32_t, bool>();
-            graphStatsCalculator = new GraphStatsCalculator(*atomIds, *selectedAtoms);
-            incidenceGraphStats = new IncidenceGraphStats(*atomIds, *selectedAtoms);
+            graphStatsCalculator = new GraphStatsCalculator(*atomIds);
+            incidenceGraphStats = new IncidenceGraphStats(*atomIds);
         }
 
         void tearDown()
         {
             delete dependencyGraphStats;
-            delete statsCalculator;
             delete graphStatsCalculator;
             delete incidenceGraphStats;
             delete atomIds;
-            delete selectedAtoms;
+            delete statsCalculator;
         }
 
     protected:
@@ -44,7 +42,6 @@ namespace exst
         GraphStatsCalculator *graphStatsCalculator;
         IncidenceGraphStats *incidenceGraphStats;
         std::unordered_map<uint32_t, uint32_t> *atomIds;
-        std::unordered_map<uint32_t, bool> *selectedAtoms;
     };
 };
 

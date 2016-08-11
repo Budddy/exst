@@ -28,8 +28,9 @@ namespace exst
             body.push_back(*new lit_type(3, NEGATIVE));
             dependencyGraphStats->addRuleDependencyGraph(body, head);
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (uint32_t) 0, dependencyGraphStats->edgecount);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (uint32_t) 2, dependencyGraphStats->nodecount);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (uint32_t) 0,
+                                         dependencyGraphStats->getEdgeCount());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (size_t) 2, dependencyGraphStats->getDependencyGraph().size());
 
             head.clear();
             body.clear();
@@ -37,8 +38,9 @@ namespace exst
             body.push_back(*new lit_type(5, POSITIVE));
             dependencyGraphStats->addRuleDependencyGraph(body, head);
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (uint32_t) 0, dependencyGraphStats->edgecount);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (uint32_t) 4, dependencyGraphStats->nodecount);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (uint32_t) 0,
+                                         dependencyGraphStats->getEdgeCount());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (size_t) 4, dependencyGraphStats->getDependencyGraph().size());
 
             head.clear();
             body.clear();
@@ -47,24 +49,27 @@ namespace exst
             head.push_back(*new lit_type(7, POSITIVE));
             dependencyGraphStats->addRuleDependencyGraph(body, head);
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (uint32_t) 2, dependencyGraphStats->edgecount);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (uint32_t) 6, dependencyGraphStats->nodecount);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (uint32_t) 2,
+                                         dependencyGraphStats->getEdgeCount());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (size_t) 6, dependencyGraphStats->getDependencyGraph().size());
 
             head.clear();
             body.clear();
             head.push_back(*new lit_type(8, POSITIVE));
             dependencyGraphStats->addRuleDependencyGraph(body, head);
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (uint32_t) 2, dependencyGraphStats->edgecount);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (uint32_t) 7, dependencyGraphStats->nodecount);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (uint32_t) 2,
+                                         dependencyGraphStats->getEdgeCount());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (size_t) 7, dependencyGraphStats->getDependencyGraph().size());
 
             head.clear();
             body.clear();
             head.push_back(*new lit_type(9, NEGATIVE));
             dependencyGraphStats->addRuleDependencyGraph(body, head);
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (uint32_t) 2, dependencyGraphStats->edgecount);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (uint32_t) 8, dependencyGraphStats->nodecount);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (uint32_t) 2,
+                                         dependencyGraphStats->getEdgeCount());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (size_t) 8, dependencyGraphStats->getDependencyGraph().size());
 
             head.clear();
             body.clear();
@@ -72,8 +77,9 @@ namespace exst
             head.push_back(*new lit_type(7, POSITIVE));
             dependencyGraphStats->addRuleDependencyGraph(body, head);
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (uint32_t) 3, dependencyGraphStats->edgecount);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (uint32_t) 8, dependencyGraphStats->nodecount);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (uint32_t) 3,
+                                         dependencyGraphStats->getEdgeCount());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (size_t) 8, dependencyGraphStats->getDependencyGraph().size());
 
             head.clear();
             body.clear();
@@ -82,8 +88,9 @@ namespace exst
             head.push_back(*new lit_type(3, POSITIVE));
             dependencyGraphStats->addRuleDependencyGraph(body, head);
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (uint32_t) 5, dependencyGraphStats->edgecount);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (uint32_t) 8, dependencyGraphStats->nodecount);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (uint32_t) 5,
+                                         dependencyGraphStats->getEdgeCount());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (size_t) 8, dependencyGraphStats->getDependencyGraph().size());
         }
     };
 

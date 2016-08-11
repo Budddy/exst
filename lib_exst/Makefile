@@ -17,6 +17,8 @@ DEPS         := $(patsubst %.cpp,$(BUILD_DIR)/%.dep, $(SOURCES))
 OBJECTS      := $(patsubst %.cpp,$(BUILD_DIR)/%.o, $(SOURCES))
 vpath %.cpp $(ROOT_DIR)/src
 vpath %.h   $(ROOT_DIR)/exst
+HTD_INCLUDE:=/usr/local/include/htd
+HTD_LIB:= /usr/local/lib/libhtd.so
 
 $(TARGET):	$(FLAGS) $(DEPS) $(OBJECTS)
 	$(AR)  cvrs $(TARGET) $(OBJECTS)
@@ -27,10 +29,10 @@ ifneq ($(MAKECMDGOALS),clean)
 endif
 
 $(BUILD_DIR)/%.dep: %.cpp $(FLAGS)
-	$(CXX) $(ALL_CXXFLAGS) -MT $(BUILD_DIR)/$*.o -MM $< > $@
+	$(CXX) $(ALL_CXXFLAGS) -MT $(BUILD_DIR)/$*.o  -I $(HTD_INCLUDE) -MM $< > $@
 
 $(BUILD_DIR)/%.o: %.cpp $(FLAGS)
-	$(CXX) $(ALL_CXXFLAGS) -c $< -o $@
+	$(CXX) $(ALL_CXXFLAGS)  -I $(HTD_INCLUDE) -c $< -o $@
 
 
 .PHONY:	clean

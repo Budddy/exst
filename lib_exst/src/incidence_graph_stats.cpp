@@ -48,6 +48,10 @@ namespace exst
 
     void IncidenceGraphStats::resetAssignment()
     {
+        if (iGraphReduct == nullptr || iGraph == nullptr)
+        {
+            return;
+        }
         //reset htd reduct graph
         iGraphReduct = iGraph->clone();
         //selectedAtoms.clear();
@@ -58,6 +62,10 @@ namespace exst
 
     void IncidenceGraphStats::reduceGraph(lit_type lit)
     {
+        if (iGraphReduct == nullptr || iGraph == nullptr)
+        {
+            return;
+        }
         uint32_t nodeIdBody = atomVertexMap[atomIds[lit.id]];
         MyGraph &igraph = incidenceGraphReduct;
         //get all bodies the literal is in
@@ -93,6 +101,10 @@ namespace exst
 
     void IncidenceGraphStats::printIGraphReduct()
     {
+        if (iGraphReduct == nullptr)
+        {
+            return;
+        }
         std::cout << "{\"_Incidence Graph Reduct_\": [ \n  [\"Nodes\", ";
         std::cout << iGraphReduct->vertexCount();
         std::cout << "],\n  [\"Edges\", ";
@@ -143,6 +155,10 @@ namespace exst
 
     size_t getTreewidth(htd::IMutableMultiGraph *graph, htd::LibraryInstance *libraryInstance)
     {
+        if (graph == nullptr || libraryInstance == nullptr)
+        {
+            return 0;
+        }
         //initialize algorithm for decomposition
         htd::IterativeImprovementTreeDecompositionAlgorithm algorithm(libraryInstance,
                                                                       libraryInstance->treeDecompositionAlgorithmFactory().getTreeDecompositionAlgorithm(
