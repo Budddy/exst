@@ -1037,12 +1037,7 @@ public:
 	 */
 	bool select(Solver& s) {
         bool ret = s.numFreeVars() != 0 && s.assume(doSelect(s));
-        std::list<exst::lit_type> as;
-        const Literal *a;
-        for(a = s.assignment().trail.begin(); a != s.assignment().trail.end(); a++){
-            as.push_back(exst::lit_type(a->var(),a->sign() ? exst::POSITIVE : exst::NEGATIVE));
-        }
-        exst::StatsCalculator::getInstance().graphStatsCalculator.incidenceGraphStats.updateAssignment(as);
+        exst::StatsCalculator::getInstance().graphStatsCalculator.incidenceGraphStats.updateAssignment(s.assignment().trail);
         return ret; 
     }
 

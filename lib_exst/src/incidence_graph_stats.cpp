@@ -1,9 +1,14 @@
 #include <exst/incidence_graph_stats.h>
+#include <exst/extended_stats_calculator.h>
 
 namespace exst
 {
     void IncidenceGraphStats::addRuleIncidenceGraph(std::list<lit_type> body, std::list<lit_type> heads)
     {
+        if (body.size() == 0)
+        {
+            return;
+        }
         std::unordered_map<uint32_t, std::unordered_map<uint32_t, EdgeType>> &myGraph = incidenceGraph;
         std::unordered_map<uint32_t, uint32_t> &avmap = atomVertexMap;
         std::unordered_map<uint32_t, std::unordered_map<uint32_t, EdgeType>> &rbmap = ruleBodyMap;
@@ -48,11 +53,8 @@ namespace exst
 
     void IncidenceGraphStats::resetAssignment()
     {
-        if (iGraphReduct == nullptr || iGraph == nullptr)
-        {
-            return;
-        }
         //reset htd reduct graph
+        delete iGraphReduct;
         iGraphReduct = iGraph->clone();
         //selectedAtoms.clear();
         ruleBodyMapReduct.insert(ruleBodyMap.begin(), ruleBodyMap.end());
@@ -62,14 +64,9 @@ namespace exst
 
     void IncidenceGraphStats::reduceGraph(lit_type lit)
     {
-        if (iGraphReduct == nullptr || iGraph == nullptr)
-        {
-            return;
-        }
         uint32_t nodeIdBody = atomVertexMap[atomIds[lit.id]];
-        MyGraph &igraph = incidenceGraphReduct;
         //get all bodies the literal is in
-        std::unordered_map<uint32_t, EdgeType> edges = igraph[nodeIdBody];
+        std::unordered_map<uint32_t, EdgeType> edges = incidenceGraphReduct[nodeIdBody];
 
         std::unordered_map<unsigned int, EdgeType>::iterator it;
         //iterate over all bodies the literal is in
@@ -86,87 +83,68 @@ namespace exst
                     //remove only body edges
                     if (bodyIt->second == POS || bodyIt->second == NEG)
                     {
-                        igraph[bodyIt->first].erase(it->first);
-                        igraph[it->first].erase(bodyIt->first);
+                        incidenceGraphReduct[bodyIt->first].erase(it->first);
+                        incidenceGraphReduct[it->first].erase(bodyIt->first);
                         ruleBodyMapReduct[it->first].erase(bodyIt->first);
                         iGraphReduct->removeEdge(*iGraphReduct->associatedEdgeIds(bodyIt->first, it->first).begin());
                     }
                 }
             }
         }
-        float w = getTreewidth(iGraphReduct, libraryInstance);
-        //calculate and save the Treewidth of the reduct graph
-        widths.push_back(w);
     }
 
-    void IncidenceGraphStats::printIGraphReduct()
+    void IncidenceGraphStats::updateAssignment(const Clasp::LitVec new_assignment)
     {
-        if (iGraphReduct == nullptr)
+        if (new_assignment.size() > current_assignment.size())
         {
-            return;
-        }
-        std::cout << "{\"_Incidence Graph Reduct_\": [ \n  [\"Nodes\", ";
-        std::cout << iGraphReduct->vertexCount();
-        std::cout << "],\n  [\"Edges\", ";
-        std::cout << iGraphReduct->edgeCount();
-        std::cout << "],\n  [\"Treewidth\", ";
-        std::cout << widths.back();
-        std::cout << "]\n}\n";
-    }
-
-    void IncidenceGraphStats::updateAssignment(std::list<lit_type> new_assignment)
-    {
-        const std::list<lit_type>::iterator &pos = std::search(new_assignment.begin(), new_assignment.end(),
-                                                               current_assignment.begin(),
-                                                               current_assignment.end());
-
-        if (pos == new_assignment.end())
-        {
-            //current assignment is not contained in new assignment
-            resetAssignment();
-            std::list<lit_type>::iterator it;
-            for (it = new_assignment.begin(); it != new_assignment.end(); it++)
+            if (numAssignments != 0 && numWidth != 0)
             {
-                reduceGraph(*it);
-            }
-        } else
-        {
-
-            if (new_assignment.size() == current_assignment.size())
-            {
-                //current assignment = new assignment
-                return;
+                widthCalcInterval = numAssignments / numWidth;
             } else
             {
-                //current assignment is contained in new assignment
-                std::list<lit_type>::iterator it = new_assignment.begin();
-                for (int i = 0; i < current_assignment.size(); i++)
+                widthCalcInterval = (iGraph->edgeCount() + iGraph->vertexCount()) * 30;
+            }
+            assignmentCount += new_assignment.size() - current_assignment.size();
+        } else
+        {
+            uint32_t pos = 0, i = 0;
+            for (pos = 0; (pos + 1) < new_assignment.size() && (pos + 1) < current_assignment.size(); pos++)
+            {
+                if (new_assignment.at(pos) != current_assignment.at(pos))
                 {
-                    ++it;
-                }
-                for (; it != new_assignment.end(); it++)
-                {
-                    reduceGraph(*it);
+                    break;
                 }
             }
+            assignmentCount += new_assignment.size() - (pos + 1);
+        }
+        if (assignmentCount >= widthCalcInterval)
+        {
+            assignmentCount -= widthCalcInterval;
+            resetAssignment();
+            for (int i = 0; i < new_assignment.size(); i++)
+            {
+                reduceGraph(exst::lit_type(new_assignment.at(i).var(),
+                                           new_assignment.at(i).sign() ? exst::POSITIVE : exst::NEGATIVE));
+            }
+            //calculate and save the Treewidth of the reduct graph
+            widths.push_back(getTreewidth(iGraphReduct, libraryInstance));
         }
         current_assignment = new_assignment;
     }
 
     size_t getTreewidth(htd::IMutableMultiGraph *graph, htd::LibraryInstance *libraryInstance)
     {
-        if (graph == nullptr || libraryInstance == nullptr)
-        {
-            return 0;
-        }
         //initialize algorithm for decomposition
         htd::IterativeImprovementTreeDecompositionAlgorithm algorithm(libraryInstance,
                                                                       libraryInstance->treeDecompositionAlgorithmFactory().getTreeDecompositionAlgorithm(
                                                                               libraryInstance),
                                                                       WidthMinimizingFitnessFunction());
+        algorithm.setIterationCount(10);
         // compute decomposition of graph
         htd::ITreeDecomposition *decomposition = algorithm.computeDecomposition(*graph);
         // if there is no decomposition return 0
-        return decomposition != nullptr ? decomposition->maximumBagSize() : 0;
+        size_t size = decomposition != nullptr ? decomposition->maximumBagSize() : 0;
+        delete decomposition;
+        return size;
     }
 }

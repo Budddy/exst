@@ -152,6 +152,7 @@ namespace exst
          * calculates the variable occurrences with and without helpers
          */
         void calculateVariables();
+
     };
 }
 #endif //CLASP_EXTENDED_STATS_CALCULATOR_H

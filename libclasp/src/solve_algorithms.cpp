@@ -313,10 +313,8 @@ bool SequentialSolve::doSolve(SharedContext& ctx, const LitVec& gp) {
 	// Add assumptions - if this fails, the problem is unsat 
 	// under the current assumptions but not necessarily unsat.
 	for (ValueRep res; more; solve.reset()) {
-		exst::StatsCalculator::getInstance().graphStatsCalculator.incidenceGraphStats.resetAssignment();
 		while ((res = solve.solve()) == value_true && (!enumerator().commitModel(s) || reportModel(s))) {
 			enumerator().update(s);
-			exst::StatsCalculator::getInstance().graphStatsCalculator.incidenceGraphStats.resetAssignment();
 		}
 		if      (res != value_false)           { more = (res == value_free || moreModels(s)); break; }
 		else if ((stop=interrupted()) == true) { break; }

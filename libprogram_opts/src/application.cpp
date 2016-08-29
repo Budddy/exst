@@ -24,6 +24,7 @@
 #include <cctype>
 #include <limits.h>
 #include <cstring>
+#include <exst/extended_stats_calculator.h>
 #ifdef _MSC_VER
 #pragma warning (disable : 4996)
 #endif
@@ -207,6 +208,8 @@ bool Application::getOptions(int argc, char** argv) {
 			("verbose,V"   , storeTo(verbose_ = 0)->implicit("-1")->arg("<n>"), "Set verbosity level to %A")
 			("time-limit"  , storeTo(timeout_ = 0)->arg("<n>"), "Set time limit to %A seconds (0=no limit)")
 			("fast-exit,@1", flag(fastExit_   = false)        , "Force fast exit (do not call dtors)")
+			("num-width"   , storeTo(exst::StatsCalculator::getInstance().graphStatsCalculator.incidenceGraphStats.numWidth = 0)->arg("<n>"), "number of width calculations")
+			("num-assignments", storeTo(exst::StatsCalculator::getInstance().graphStatsCalculator.incidenceGraphStats.numAssignments = 0)->arg("<n>"), "number of assignments")
 		;
 		allOpts.add(basic);
 		initOptions(allOpts);

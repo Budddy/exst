@@ -5,6 +5,7 @@
 #include <list>
 #include <htd/MultiGraphFactory.hpp>
 #include <exst/ExstTypes.h>
+#include <clasp/literal.h>
 
 /**
  * class used for calculating and saving stats of the incidence graph and the incidence graph
@@ -19,12 +20,12 @@ namespace exst
          * @param atomIds used to math atom ids before and after preprocessing
          * @return a new instance of the incidence graph stat calculator
          */
-        IncidenceGraphStats(std::unordered_map<uint32_t, uint32_t> &atomIds) :
-                atomIds(atomIds)
+        IncidenceGraphStats(std::unordered_map<uint32_t, uint32_t> &atomIds) : atomIds(atomIds)
         {
             libraryInstance = htd::createManagementInstance(htd::Id::FIRST);
             htd::MultiGraphFactory &factory = libraryInstance->multiGraphFactory();
             iGraph = factory.getMultiGraph();
+            minIGraph = factory.getMultiGraph();
         }
 
         /**
@@ -54,7 +55,7 @@ namespace exst
          * Updates the current assignment.
          * @param new_assignment list of literals in the new assignment
          */
-        void updateAssignment(std::list<lit_type> new_assignment);
+        void updateAssignment(Clasp::LitVec new_assignment);
 
         /**
          * Getter for the HTD incidence graph.
@@ -101,6 +102,11 @@ namespace exst
             return &widths;
         }
 
+        unsigned long long assignmentCount = 0;
+        unsigned long long widthCalcInterval = 0;
+        unsigned long long numAssignments = 0;
+        unsigned long long numWidth = 0;
+
     private:
 
         htd::LibraryInstance *libraryInstance;
@@ -108,6 +114,7 @@ namespace exst
         //complete incidence graph
         MyGraph incidenceGraph;
         htd::IMutableMultiGraph *iGraph;
+        htd::IMutableMultiGraph *minIGraph;
 
         //incidence graph of reduct
         MyGraph incidenceGraphReduct;
@@ -129,7 +136,8 @@ namespace exst
         std::list<float> widths;
 
         //the literals that are currently assigned to the solution
-        std::list<lit_type> current_assignment;
+        Clasp::LitVec current_assignment;
+
     };
 
     /**
@@ -151,7 +159,6 @@ namespace exst
          */
         WidthMinimizingFitnessFunction(void)
         {
-
         }
 
         /*
@@ -159,7 +166,6 @@ namespace exst
          */
         virtual ~WidthMinimizingFitnessFunction()
         {
-
         }
 
         htd::FitnessEvaluation *

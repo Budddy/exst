@@ -29,7 +29,7 @@ namespace exst
         std::pair<std::list<lit_type>, std::list<lit_type>> rule;
         rule.first = head;
         rule.second = body;
-        rules.push_back(rule);
+        //rules.push_back(rule);
     }
 
     void StatsCalculator::calculateStats()
@@ -148,7 +148,7 @@ namespace exst
     void StatsCalculator::printExtendedStats()
     {
         calculateStats();
-        std::cout << "\n########## Extended Stats ##########\n\n{\n \"Extended Stats\" : [\n";
+        std::cout << "\n,\n\n \"Extended Stats\" : [\n";
 
         //dependency graph
         std::cout << "  [\"Dependency Graph Nodes\" , "
@@ -212,10 +212,10 @@ namespace exst
         for (it = graphStatsCalculator.incidenceGraphStats.getWidths()->begin();
              it != graphStatsCalculator.incidenceGraphStats.getWidths()->end(); it++)
         {
-            std::cout << "  [\"reduct width\" , " << (*it) << "]\n";
+            std::cout << "  ,[\"reduct width\" , " << (*it) << "]\n";
         }
 
-        std::cout << " ]\n}";
+        std::cout << " ]\n";
         std::flush(std::cout);
     }
 
