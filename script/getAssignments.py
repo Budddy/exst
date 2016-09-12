@@ -9,18 +9,15 @@ from os.path import isfile, join
 import json
 
 # maxTime - maximum runtime in Seconds per program Execution
-maxTime = 700
+maxTime = 1000
 
 # programs to test (path to program / name)
-programs = [("clasp.exe --stats=2 --time-limit=620 --outf=2 -V ", "exst")]
-
+programs = [("exst_assignments.exe --stats=2 --time-limit=800 --outf=2 -V ", "exst")]
 # path to the folder with the ground test data files
-testData = "./Ground/Times"
+testData = "./Ground/Assignments"
 
 # directory for the result
-resultDir = "./Result"
-
-splitDir = "./Ground/Split"
+resultDir = "./Result/result_assignments"
 
 # separate result into multiple folders
 separate = 1
@@ -81,6 +78,14 @@ if not isfile(resultDir + "/_result_"):
 else:
     result = open(resultDir + "/_result_", 'a')
 
+if not isfile("./_assignments_"):
+    assignments = open("./_assignments_", 'w')
+    assignments.write('{\n')
+    assignments.flush()
+
+assJson = open("./_assignments_", 'r').read()
+assJson = json.loads(assJson)
+
 numElements = len(listdir(testData))
 countElements = 0
 
@@ -97,52 +102,22 @@ for a in listdir(testData):
             result.flush()
             for count in range(0, runs):
                 # only run if file doesn't already exist
-                if not (isfile(resultDir + "/result_1s/" + a) or isfile(resultDir + "/result_10s/" + a) or isfile(
-                            resultDir + "/result_100s/" + a) or isfile(resultDir + "/result_1000s/" + a) or isfile(
-                            resultDir + "/result_else/" + a) or isfile(
-                            resultDir + "/result_10000s/" + a) or isfile(
-                            resultDir + "/result_assignments/" + a) or isfile(splitDir + "/1s/" + a) or isfile(
-                            splitDir + "/10s/" + a) or isfile(
-                            splitDir + "/100s/" + a) or isfile(splitDir + "/1000s/" + a) or isfile(
-                            splitDir + "/10000s/" + a)):
+                if not (isfile(resultDir + "/" + a)) and not (a in assJson):
                     com = i[0] + os.path.dirname(f) + "/" + os.path.basename(f)
                     c = Command(com)
                     ret = c.run(timeout=maxTime)
                     # if program takes too long, don't start more runs of the program for this test instance
-                    if ret[4] == 0:
-                        print ("    could not solve instance within time limit")
-                        fi = open(resultDir + i[1] + "_failed_" + a, 'w')
-                        fi.write(str(ret[1]))
-                        fi.close()
-                        result.write("    could not solve instance within time limit" + "\n")
-                        result.flush()
-                        break
-                    else:
-                        j = json.loads(ret[1])
-                        s = j['Time']['CPU']
-                        print ("    execution time: " + str(ret[3]) + " CPU Time:" + str(s))
-                        result.write("    execution time: " + str(ret[3]) + " CPU Time:" + str(s) + "\n")
-                        result.flush()
-                        if s <= 1:
-                            fi = open(
-                                resultDir + "/result_1s/" + a,
-                                'w')
-                        elif s <= 10:
-                            fi = open(
-                                resultDir + "/result_10s/" + a,
-                                'w')
-                        elif s <= 100:
-                            fi = open(
-                                resultDir + "/result_100s/" + a,
-                                'w')
-                        elif s <= 600:
-                            fi = open(
-                                resultDir + "/result_1000s/" + a,
-                                'w')
-                        else:
-                            fi = open(
-                                resultDir + "/result_else/" + a, 'w')
-                        fi.write(str(ret[1]))
-                        fi.flush()
-                        fi.close()
+                    j = json.loads(ret[1])
+                    s = j['Time']['CPU']
+                    assign = j['Stats']['numAssignments']
+                    assignments = open("./_assignments_", 'a')
+                    assignments.write(' ,\"' + a + '\": ' + str(assign) + '\n')
+                    assignments.flush()
+                    print ("    execution time: " + str(ret[3]))
+                    result.write("    execution time: " + str(ret[3]) + "\n")
+                    result.flush()
+                    fi = open(resultDir + "/" + a, 'w')
+                    fi.write(str(ret[1]))
+                    fi.flush()
+                    fi.close()
 result.close()

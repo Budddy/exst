@@ -1,22 +1,22 @@
 import os
-import threading
+import signal
 import subprocess
+import threading
+import time
 import traceback
 from os import listdir
 from os.path import isfile, join
-import time
-
-import signal
 
 # maxTime in Seconds to run the test program
-maxTime = 300
+maxTime = 60
+
 # path to the folder with the test data
-dirs = ["/mnt/hgfs/Bachelor/instances/CombinedConfiguration",
-        "/mnt/hgfs/Bachelor/instances/GraphColouring",
-        "/mnt/hgfs/Bachelor/instances/KnightTourWithHoles",
-        "/mnt/hgfs/Bachelor/instances/Labyrinth",
-        "/mnt/hgfs/Bachelor/instances/StableMarriage",
-        "/mnt/hgfs/Bachelor/instances/Visit-all"]
+dirs = "./Programs/"
+
+# path for the ground programs
+resultdir = "./Ground/All/"
+
+failed = "./Ground/Failed/"
 
 class Command(object):
     """
@@ -63,18 +63,31 @@ class Command(object):
             stop = 1
         return self.status, self.output, self.error, end - start, stop
 
-for d in dirs:
-    for a in listdir(d):
-        f = join(d, a)
-        if isfile(f) & (not isfile(d + "/ground/" + a)):
-            print ("\ninstance: " + a)
-            com = "gringo " + os.path.dirname(f) + "/" + os.path.basename(f) + " " + os.path.dirname(f) + "/" + "encoding.asp"
+numElements = 0
+countElements = 0
+for tdir in listdir(dirs):
+    numElements += len(listdir(join(dirs, tdir)))
+
+for d in listdir(dirs):
+    for a in listdir(dirs + d):
+        countElements += 1
+        f = join(dirs + d, a)
+        print ("\ninstance(" + str(countElements) + "/" + str(numElements) + "): " + a)
+        if isfile(f) and not (isfile(resultdir + a) or isfile(failed + a)) and (a != "encoding.asp"):
+            com = "./gringo.exe " + os.path.dirname(f) + "/" + os.path.basename(f) + " " + os.path.dirname(
+                f) + "/" + "encoding.asp"
             c = Command(com)
             ret = c.run(timeout=maxTime)
-            if(not ret[4]):
+            if (len(str(ret[1])) > 10000000):
+                print (" - too big")
+                fi = open(failed + a, 'w')
+                fi.close()
+            elif (not ret[4]):
                 print (" - ground")
-                fi = open(d + "/ground/" + a, 'w')
+                fi = open(resultdir + a, 'w')
                 fi.write(str(ret[1]))
                 fi.close()
             else:
                 print (" - fail")
+                fi = open(failed + a, 'w')
+                fi.close()
