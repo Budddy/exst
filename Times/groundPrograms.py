@@ -14,8 +14,9 @@ maxTime = 60
 dirs = "./Programs/"
 
 # path for the ground programs
-resultdir = "./Ground/"
+resultdir = "./Ground/All/"
 
+failed = "./Ground/Failed/"
 
 class Command(object):
     """
@@ -62,18 +63,25 @@ class Command(object):
             stop = 1
         return self.status, self.output, self.error, end - start, stop
 
+numElements = 0
+countElements = 0
+for tdir in listdir(dirs):
+    numElements += len(listdir(join(dirs, tdir)))
 
 for d in listdir(dirs):
     for a in listdir(dirs + d):
+        countElements += 1
         f = join(dirs + d, a)
-        if isfile(f) & (not isfile(resultdir + a)) & (a != "encoding.asp"):
-            print ("\ninstance: " + a)
-            com = "./gringo " + os.path.dirname(f) + "/" + os.path.basename(f) + " " + os.path.dirname(
+        print ("\ninstance(" + str(countElements) + "/" + str(numElements) + "): " + a)
+        if isfile(f) and not (isfile(resultdir + a) or isfile(failed + a)) and (a != "encoding.asp"):
+            com = "./gringo.exe " + os.path.dirname(f) + "/" + os.path.basename(f) + " " + os.path.dirname(
                 f) + "/" + "encoding.asp"
             c = Command(com)
             ret = c.run(timeout=maxTime)
             if (len(str(ret[1])) > 10000000):
                 print (" - too big")
+                fi = open(failed + a, 'w')
+                fi.close()
             elif (not ret[4]):
                 print (" - ground")
                 fi = open(resultdir + a, 'w')
@@ -81,3 +89,5 @@ for d in listdir(dirs):
                 fi.close()
             else:
                 print (" - fail")
+                fi = open(failed + a, 'w')
+                fi.close()

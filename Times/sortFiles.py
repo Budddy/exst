@@ -4,27 +4,36 @@ import json
 import shutil
 
 # path to the folder with the ground test data files
-testData = "./"
+testData = ["./Result/result_1s", "./Result/result_10s", "./Result/result_100s", "./Result/result_1000s"]
 
 # directory for the result
-resultDir = "../Separated"
-numElements = len(listdir(testData))
+numElements = 0
+for tdir in testData:
+    numElements += len(listdir(tdir))
+
+resultDir = "./Ground/Split"
+dataDir = "./Ground/All"
 countElements = 0
 
-for name in listdir(testData):
-    countElements += 1
-    path = join(testData, name)
-    if isfile(path):
-        print ("\ninstance(" + str(countElements) + "/" + str(numElements) + "): " + name)
-        f = open(path, 'r')
-        data = f.read()
-        j = json.loads(data)
-        s = j['Time']['CPU']
-        if (s <= 1):
-            shutil.copyfile(path, join(join(resultDir, '1s'), name[6:-9]))
-        elif s <= 10:
-            shutil.copyfile(path, join(join(resultDir, '10s'), name[6:-9]))
-        elif s <= 100:
-            shutil.copyfile(path, join(join(resultDir, '100s'), name[6:-9]))
-        elif s <= 600:
-            shutil.copyfile(path, join(join(resultDir, '600s'), name[6:-9]))
+for tdir in testData:
+    for name in listdir(tdir):
+        countElements += 1
+        path = join(tdir, name)
+        if isfile(path) and isfile(join(dataDir, name)):
+            print ("\ninstance(" + str(countElements) + "/" + str(numElements) + "): " + name)
+            f = open(path, 'r')
+            data = f.read()
+            j = json.loads(data)
+            r = j['Result']
+            if r != 'UNSATISFIABLE' and r != 'UNKNOWN' and not (
+                        (isfile(join(join(resultDir, '1s'), name))) or (isfile(join(join(resultDir, '10s'), name))) or (
+                isfile(join(join(resultDir, '100s'), name))) or (isfile(join(join(resultDir, '1000s'), name)))):
+                s = j['Time']['CPU']
+                if s <= 1:
+                    shutil.copyfile(join(dataDir, name), join(join(resultDir, '1s'), name))
+                elif s <= 10:
+                    shutil.copyfile(join(dataDir, name), join(join(resultDir, '10s'), name))
+                elif s <= 100:
+                    shutil.copyfile(join(dataDir, name), join(join(resultDir, '100s'), name))
+                elif s <= 1000:
+                    shutil.copyfile(join(dataDir, name), join(join(resultDir, '1000s'), name))

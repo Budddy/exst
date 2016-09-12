@@ -9,16 +9,19 @@ from os.path import isfile, join
 import json
 
 # maxTime - maximum runtime in Seconds per program Execution
-maxTime = 1900
+maxTime = 2000
 
 # programs to test (path to program / name)
-programs = [("exst.exe --stats=2 --num-width=10 --time-limit=1800 --outf=2 -V ", "exst")]
+programs = [("exst.exe --stats=2 --time-limit=1900 --outf=2 -V ", "exst")]
 
 # path to the folder with the ground test data files
-testData = "./Ground"
+testData = "./Ground/Stats"
 
 # directory for the result
-resultDir = "./Result"
+resultDir = "./Result/stats"
+
+# directory for the result
+failedDir = "./Result/stats_failed"
 
 # separate result into multiple folders
 separate = 1
@@ -46,6 +49,7 @@ class Command(object):
 
         def target(**kwargs):
             try:
+                # self.process = subprocess.Popen(self.command, shell=True, preexec_fn=os.setsid, **kwargs)
                 self.process = subprocess.Popen(self.command, shell=True, **kwargs)
                 self.output, self.error = self.process.communicate()
                 self.status = self.process.returncode
@@ -79,7 +83,7 @@ if not isfile(resultDir + "/_result_"):
 else:
     result = open(resultDir + "/_result_", 'a')
 
-assignments = json.loads(open(testData + "/_assignments_", 'r').read())
+assignments = json.loads(open("./_assignments_", 'r').read())
 
 numElements = len(listdir(testData))
 countElements = 0
@@ -97,10 +101,9 @@ for a in listdir(testData):
             result.flush()
             for count in range(0, runs):
                 # only run if file doesn't already exist
-                if not (isfile(resultDir + "/result_1s/" + a) | isfile(resultDir + "/result_10s/" + a) | isfile(
-                                resultDir + "/result_100s/" + a) | isfile(resultDir + "/result_1000s/" + a) | isfile(
-                                resultDir + "/result_else/" + a)):
-                    com = i[0] + os.path.dirname(f) + "/" + os.path.basename(f) + " --num-assignments=" + str(assignments[a])
+                if not (isfile(resultDir + "/" + a) or isfile(failedDir + "/" + a)):
+                    com = i[0] + os.path.dirname(f) + "/" + os.path.basename(f) + " --width-intervall=" + str(
+                        assignments[a] / 10)
                     c = Command(com)
                     ret = c.run(timeout=maxTime)
                     # if program takes too long, don't start more runs of the program for this test instance
@@ -113,33 +116,13 @@ for a in listdir(testData):
                         result.flush()
                         break
                     else:
-                        j = json.loads(ret[1])
-                        s = j['Time']['CPU']
-                        print ("    execution time: " + str(ret[3]) + " CPU Time:" + str(s))
-                        result.write("    execution time: " + str(ret[3]) + " CPU Time:" + str(s) + "\n")
+                        print ("    execution time: " + str(ret[3]))
+                        result.write("    execution time: " + str(ret[3]) + "\n")
                         result.flush()
-                        if separate:
-                            if s <= 1:
-                                fi = open(
-                                    resultDir + "/result_1s/" + a,
-                                    'w')
-                            elif s <= 10:
-                                fi = open(
-                                    resultDir + "/result_10s/" + a,
-                                    'w')
-                            elif s <= 100:
-                                fi = open(
-                                    resultDir + "/result_100s/" + a,
-                                    'w')
-                            elif s <= 700:
-                                fi = open(
-                                    resultDir + "/result_1000s/" + a,
-                                    'w')
-                            else:
-                                fi = open(
-                                    resultDir + "/result_else/" + a, 'w')
+                        if str(ret[3]) > 1800:
+                            fi = open(failedDir + "/" + a, 'w')
                         else:
-                            fi = open(resultDir + "/" + i[1] + "_" + a + "_number_" + str(count), 'w')
+                            fi = open(resultDir + "/" + a, 'w')
                         fi.write(str(ret[1]))
                         fi.flush()
                         fi.close()
