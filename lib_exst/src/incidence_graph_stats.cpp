@@ -1,5 +1,6 @@
 #include <exst/incidence_graph_stats.h>
 #include <exst/extended_stats_calculator.h>
+#include <fstream>
 
 namespace exst
 {
@@ -97,13 +98,6 @@ namespace exst
     {
         if (new_assignment.size() > current_assignment.size())
         {
-            if (numAssignments != 0 && numWidth != 0)
-            {
-                widthCalcInterval = numAssignments / numWidth;
-            } else
-            {
-                widthCalcInterval = (iGraph->edgeCount() + iGraph->vertexCount()) * 30;
-            }
             assignmentCount += new_assignment.size() - current_assignment.size();
         } else
         {
@@ -119,6 +113,7 @@ namespace exst
         }
         if (assignmentCount >= widthCalcInterval)
         {
+            numReducts++;
             assignmentCount -= widthCalcInterval;
             resetAssignment();
             for (int i = 0; i < new_assignment.size(); i++)
@@ -127,7 +122,17 @@ namespace exst
                                            new_assignment.at(i).sign() ? exst::POSITIVE : exst::NEGATIVE));
             }
             //calculate and save the Treewidth of the reduct graph
-            widths.push_back(getTreewidth(iGraphReduct, libraryInstance));
+            if (this->calculateTreeWidth)
+            {
+                widths.push_back(getTreewidth(iGraphReduct, libraryInstance));
+            }
+            if (this->rGraphPath.length() != 0)
+            {
+                std::ofstream fileStream;
+                fileStream.open((rGraphPath + "_") + std::to_string(numReducts), std::ofstream::out);
+                fileStream << getGrFormat(incidenceGraphReduct);
+                fileStream.close();
+            }
         }
         current_assignment = new_assignment;
     }

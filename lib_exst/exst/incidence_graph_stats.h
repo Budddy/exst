@@ -103,9 +103,10 @@ namespace exst
         }
 
         unsigned long long assignmentCount = 0;
-        unsigned long long widthCalcInterval = 0;
-        unsigned long long numAssignments = 0;
-        unsigned long long numWidth = 0;
+        unsigned long long widthCalcInterval = 1000;
+        bool calculateTreeWidth = false;
+        std::string iGraphPath = "";
+        std::string rGraphPath = "";
 
     private:
 
@@ -138,6 +139,8 @@ namespace exst
         //the literals that are currently assigned to the solution
         Clasp::LitVec current_assignment;
 
+        //the literals that are currently assigned to the solution
+        int numReducts = 0;
     };
 
     /**

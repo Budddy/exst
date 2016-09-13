@@ -4,13 +4,13 @@ namespace exst
 {
     class ExstTests : public AbstractExstTest
     {
-    CPPUNIT_TEST_SUITE(ExstTests);
-            CPPUNIT_TEST(testOneConstraint);
-            CPPUNIT_TEST(testOneConstraintAndOneFact);
-            CPPUNIT_TEST(testMultipleConstraints);
-            CPPUNIT_TEST(testMultipleFacts);
-            CPPUNIT_TEST(testMultipleConstraintsAndNonConstraints);
-            CPPUNIT_TEST(testMultipleConstraintsAndNonConstraintsWithHelpers);
+        CPPUNIT_TEST_SUITE(ExstTests);
+        CPPUNIT_TEST(testOneConstraint);
+        CPPUNIT_TEST(testOneConstraintAndOneFact);
+        CPPUNIT_TEST(testMultipleConstraints);
+        CPPUNIT_TEST(testMultipleFacts);
+        CPPUNIT_TEST(testMultipleConstraintsAndNonConstraints);
+        CPPUNIT_TEST(testMultipleConstraintsAndNonConstraintsWithHelpers);
         CPPUNIT_TEST_SUITE_END();
     private:
     public:

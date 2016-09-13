@@ -41,6 +41,8 @@ namespace exst
             return edgecount;
         }
 
+        std::string dGraphPath;
+
     private:
         //dependency graph
         MyGraph dependencyGraph;

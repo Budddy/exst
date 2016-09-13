@@ -208,8 +208,11 @@ bool Application::getOptions(int argc, char** argv) {
 			("verbose,V"   , storeTo(verbose_ = 0)->implicit("-1")->arg("<n>"), "Set verbosity level to %A")
 			("time-limit"  , storeTo(timeout_ = 0)->arg("<n>"), "Set time limit to %A seconds (0=no limit)")
 			("fast-exit,@1", flag(fastExit_   = false)        , "Force fast exit (do not call dtors)")
-			("num-width"   , storeTo(exst::StatsCalculator::getInstance().graphStatsCalculator.incidenceGraphStats.numWidth = 0)->arg("<n>"), "number of width calculations")
-			("num-assignments", storeTo(exst::StatsCalculator::getInstance().graphStatsCalculator.incidenceGraphStats.numAssignments = 0)->arg("<n>"), "number of assignments")
+			("width-intervall"   , storeTo(exst::StatsCalculator::getInstance().graphStatsCalculator.incidenceGraphStats.widthCalcInterval = 0)->arg("<n>"), "number of assignments between interval calculation")
+			("calcTWidth"   , flag(exst::StatsCalculator::getInstance().graphStatsCalculator.incidenceGraphStats.calculateTreeWidth = false), "calculate the Tree Width")
+			("printDgraph"   , storeTo(exst::StatsCalculator::getInstance().graphStatsCalculator.dependencyGraphStats.dGraphPath = "")->arg("<s>"), "Print the dependency graph")
+			("printIgraph"   , storeTo(exst::StatsCalculator::getInstance().graphStatsCalculator.incidenceGraphStats.iGraphPath = "")->arg("<s>"), "Print the incidence graph")
+			("printRgraph"   , storeTo(exst::StatsCalculator::getInstance().graphStatsCalculator.incidenceGraphStats.rGraphPath= "")->arg("<s>"), "Print the reduct graph")
 		;
 		allOpts.add(basic);
 		initOptions(allOpts);

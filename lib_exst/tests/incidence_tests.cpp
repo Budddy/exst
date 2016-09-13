@@ -4,9 +4,9 @@ namespace exst
 {
     class IncidenceTests : public AbstractExstTest
     {
-    CPPUNIT_TEST_SUITE(IncidenceTests);
-            CPPUNIT_TEST(testSmallGraph);
-            CPPUNIT_TEST(testIncidenceGraph);
+        CPPUNIT_TEST_SUITE(IncidenceTests);
+        CPPUNIT_TEST(testSmallGraph);
+        CPPUNIT_TEST(testIncidenceGraph);
         CPPUNIT_TEST_SUITE_END();
     private:
     public:
