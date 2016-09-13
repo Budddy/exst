@@ -61,9 +61,9 @@ namespace exst
             head.push_back(*new lit_type(8, POSITIVE));
             incidenceGraphStats->addRuleIncidenceGraph(body, head);
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (size_t) 8,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (size_t) 7,
                                          incidenceGraphStats->getHTDIncidenceGraph()->edgeCount());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (size_t) 11,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (size_t) 9,
                                          incidenceGraphStats->getHTDIncidenceGraph()->vertexCount());
 
             head.clear();
@@ -71,9 +71,9 @@ namespace exst
             head.push_back(*new lit_type(9, NEGATIVE));
             incidenceGraphStats->addRuleIncidenceGraph(body, head);
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (size_t) 9,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (size_t) 7,
                                          incidenceGraphStats->getHTDIncidenceGraph()->edgeCount());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (size_t) 13,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (size_t) 9,
                                          incidenceGraphStats->getHTDIncidenceGraph()->vertexCount());
 
             incidenceGraphStats->resetAssignment();
@@ -88,9 +88,9 @@ namespace exst
             (*atomIds)[(uint32_t) 8] = (uint32_t) 8;
             (*atomIds)[(uint32_t) 9] = (uint32_t) 9;
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count Reduct", (size_t) 9,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count Reduct", (size_t) 7,
                                          incidenceGraphStats->getHTDIncidenceGraph()->edgeCount());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count Reduct", (size_t) 13,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count Reduct", (size_t) 9,
                                          incidenceGraphStats->getHTDIncidenceGraph()->vertexCount());
 
             lit_type l;
@@ -98,9 +98,9 @@ namespace exst
             l.s = NEGATIVE;
             incidenceGraphStats->reduceGraph(l);
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count Reduct", (size_t) 5,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count Reduct", (size_t) 3,
                                          (incidenceGraphStats->getHTDIncidenceGraphReduct()->edgeCount()));
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count Reduct", (size_t) 13,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count Reduct", (size_t) 9,
                                          incidenceGraphStats->getHTDIncidenceGraphReduct()->vertexCount());
         }
 
@@ -168,9 +168,9 @@ namespace exst
             body.push_back(*new lit_type(9, POSITIVE));
             incidenceGraphStats->addRuleIncidenceGraph(body, head);
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (size_t) 22,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count", (size_t) 20,
                                          incidenceGraphStats->getHTDIncidenceGraph()->edgeCount());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (size_t) 21,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (size_t) 18,
                                          incidenceGraphStats->getHTDIncidenceGraph()->vertexCount());
 
             incidenceGraphStats->resetAssignment();
@@ -191,9 +191,9 @@ namespace exst
             (*atomIds)[(uint32_t) 14] = (uint32_t) 14;
             (*atomIds)[(uint32_t) 15] = (uint32_t) 15;
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count Reduct", (size_t) 22,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count Reduct", (size_t) 20,
                                          incidenceGraphStats->getHTDIncidenceGraph()->edgeCount());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count Reduct", (size_t) 21,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count Reduct", (size_t) 18,
                                          incidenceGraphStats->getHTDIncidenceGraph()->vertexCount());
 
             lit_type l;
@@ -201,18 +201,18 @@ namespace exst
             l.s = NEGATIVE;
             incidenceGraphStats->reduceGraph(l);
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count Reduct", (size_t) 16,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count Reduct", (size_t) 14,
                                          incidenceGraphStats->getHTDIncidenceGraphReduct()->edgeCount());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count Reduct", (size_t) 21,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count Reduct", (size_t) 18,
                                          incidenceGraphStats->getHTDIncidenceGraphReduct()->vertexCount());
 
             l.id = 3;
             l.s = POSITIVE;
             incidenceGraphStats->reduceGraph(l);
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count Reduct", (size_t) 14,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Edge Count Reduct", (size_t) 12,
                                          incidenceGraphStats->getHTDIncidenceGraphReduct()->edgeCount());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count Reduct", (size_t) 21,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count Reduct", (size_t) 18,
                                          incidenceGraphStats->getHTDIncidenceGraphReduct()->vertexCount());
         }
     };
