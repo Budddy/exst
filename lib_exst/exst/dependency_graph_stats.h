@@ -42,6 +42,7 @@ namespace exst
         }
 
         std::string dGraphPath;
+        GraphFormat graphFormat = NONE;
 
     private:
         //dependency graph
@@ -54,6 +55,7 @@ namespace exst
         uint32_t edgecount = 0;
         //number of nodes in the dependency graph
         uint32_t nodecount = 0;
+
     };
 }
 

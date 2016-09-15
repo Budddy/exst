@@ -4,8 +4,8 @@ namespace exst
 {
     class DependencyTests : public AbstractExstTest
     {
-        CPPUNIT_TEST_SUITE(DependencyTests);
-        CPPUNIT_TEST(testCreateGraph);
+    CPPUNIT_TEST_SUITE(DependencyTests);
+            CPPUNIT_TEST(testCreateGraph);
         CPPUNIT_TEST_SUITE_END();
     private:
     public:

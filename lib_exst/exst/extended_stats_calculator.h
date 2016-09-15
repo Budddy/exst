@@ -153,5 +153,7 @@ namespace exst
          */
         void calculateVariables();
     };
+
+    bool parseParameter(StatsCalculator *this_, const std::string &name, const std::string &value);
 }
 #endif //CLASP_EXTENDED_STATS_CALCULATOR_H

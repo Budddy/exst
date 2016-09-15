@@ -27,6 +27,14 @@ namespace exst
     };
 
     /**
+     * enum to represent the sign of a literal
+     */
+    enum GraphFormat
+    {
+        DIMACS = 0, GR = 1, GML = 2, NONE = 3
+    };
+
+    /**
      * type to represent a literal in exst
      */
     struct lit_type
@@ -101,7 +109,7 @@ namespace exst
      * @param graph the graph to get the DIMACS format from
      * @return the graph in DIMACS format
      */
-    std::string getDIMACS(MyGraph &graph);
+    std::string getDIMACSFormat(MyGraph &graph);
 
     /**
      * Generates the string representation of the graph in Gr format.
@@ -109,6 +117,10 @@ namespace exst
      * @return the graph in Gr Format
      */
     std::string getGrFormat(MyGraph &graph);
+
+    std::string getGraphFormat(GraphFormat f, MyGraph &graph);
+
+    GraphFormat getFormat(int f);
 }
 
 #endif //CLASP_EXSTTYPES_H

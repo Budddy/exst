@@ -126,12 +126,22 @@ namespace exst
             {
                 widths.push_back(getTreewidth(iGraphReduct, libraryInstance));
             }
-            if (this->rGraphPath.length() != 0)
+
+            if (rGraphFormat != NONE)
             {
-                std::ofstream fileStream;
-                fileStream.open((rGraphPath + "_") + std::to_string(numReducts), std::ofstream::out);
-                fileStream << getGrFormat(incidenceGraphReduct);
-                fileStream.close();
+
+                if (rGraphPath.length() != 0)
+                {
+                    std::ofstream fileStream;
+                    fileStream.open((rGraphPath + "_") + std::to_string(numReducts), std::ofstream::out);
+                    fileStream << getGraphFormat(rGraphFormat,
+                                                 incidenceGraphReduct);
+                    fileStream.close();
+                } else
+                {
+                    rGraphs.push_back(getGraphFormat(rGraphFormat,
+                                                     incidenceGraphReduct));
+                }
             }
         }
         current_assignment = new_assignment;

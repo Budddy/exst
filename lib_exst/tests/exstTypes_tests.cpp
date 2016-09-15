@@ -5,8 +5,8 @@ namespace exst
 {
     class ExstTypesTests : public AbstractExstTest
     {
-        CPPUNIT_TEST_SUITE(ExstTypesTests);
-        CPPUNIT_TEST(testCopyGraph);
+    CPPUNIT_TEST_SUITE(ExstTypesTests);
+            CPPUNIT_TEST(testCopyGraph);
         CPPUNIT_TEST_SUITE_END();
     private:
     public:

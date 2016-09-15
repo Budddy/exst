@@ -102,11 +102,18 @@ namespace exst
             return &widths;
         }
 
+        std::list<std::string> *getRGraphs()
+        {
+            return &rGraphs;
+        }
+
         unsigned long long assignmentCount = 0;
         unsigned long long widthCalcInterval = 1000;
         bool calculateTreeWidth = false;
         std::string iGraphPath = "";
         std::string rGraphPath = "";
+        GraphFormat iGraphFormat = NONE;
+        GraphFormat rGraphFormat = NONE;
 
     private:
 
@@ -141,6 +148,7 @@ namespace exst
 
         //the literals that are currently assigned to the solution
         int numReducts = 0;
+        std::list<std::string> rGraphs;
     };
 
     /**

@@ -215,23 +215,55 @@ namespace exst
         }
 
         std::cout << " ]\n";
+
+        if (graphStatsCalculator.incidenceGraphStats.rGraphFormat != NONE)
+        {
+            if (graphStatsCalculator.incidenceGraphStats.rGraphPath.length() == 0)
+            {
+                std::list<std::string>::iterator it_;
+                for (it_ = graphStatsCalculator.incidenceGraphStats.getRGraphs()->begin();
+                     it_ != graphStatsCalculator.incidenceGraphStats.getRGraphs()->end(); it_++)
+                {
+                    std::cout << "  ,[\"reduct width\" , " << (*it) << "]\n";
+                }
+            }
+        }
+
+        if (graphStatsCalculator.incidenceGraphStats.iGraphFormat != NONE)
+        {
+
+            if (graphStatsCalculator.incidenceGraphStats.iGraphPath.length() != 0)
+            {
+                std::ofstream fileStream;
+                fileStream.open(graphStatsCalculator.incidenceGraphStats.iGraphPath, std::ofstream::out);
+                fileStream << getGraphFormat(graphStatsCalculator.incidenceGraphStats.iGraphFormat,
+                                             graphStatsCalculator.incidenceGraphStats.getIncidenceGraph());
+                fileStream.close();
+            } else
+            {
+                std::cout << "\n,\n\n \"Incidence Graph\" : [\n"
+                          << getGraphFormat(graphStatsCalculator.incidenceGraphStats.iGraphFormat,
+                                            graphStatsCalculator.incidenceGraphStats.getIncidenceGraph()) << "]";
+            }
+        }
+        if (graphStatsCalculator.dependencyGraphStats.graphFormat != NONE)
+        {
+
+            if (graphStatsCalculator.dependencyGraphStats.dGraphPath.length() != 0)
+            {
+                std::ofstream fileStream;
+                fileStream.open(graphStatsCalculator.dependencyGraphStats.dGraphPath, std::ofstream::out);
+                fileStream << getGraphFormat(graphStatsCalculator.dependencyGraphStats.graphFormat,
+                                             graphStatsCalculator.dependencyGraphStats.getDependencyGraph());
+                fileStream.close();
+            } else
+            {
+                std::cout << "\n,\n\n \"Dependency Graph\" : [\n"
+                          << getGraphFormat(graphStatsCalculator.dependencyGraphStats.graphFormat,
+                                            graphStatsCalculator.dependencyGraphStats.getDependencyGraph()) << "]";
+            }
+        }
         std::flush(std::cout);
-
-        if (graphStatsCalculator.incidenceGraphStats.iGraphPath.length() != 0)
-        {
-            std::ofstream fileStream;
-            fileStream.open(graphStatsCalculator.incidenceGraphStats.iGraphPath, std::ofstream::out);
-            fileStream << getGrFormat(graphStatsCalculator.incidenceGraphStats.getIncidenceGraph());
-            fileStream.close();
-        }
-
-        if (graphStatsCalculator.dependencyGraphStats.dGraphPath.length() != 0)
-        {
-            std::ofstream fileStream;
-            fileStream.open(graphStatsCalculator.dependencyGraphStats.dGraphPath, std::ofstream::out);
-            fileStream << getGrFormat(graphStatsCalculator.dependencyGraphStats.getDependencyGraph());
-            fileStream.close();
-        }
     }
 
     void StatsCalculator::parseVariableLiteral(std::list<lit_type> body, std::list<lit_type> head)
@@ -304,5 +336,56 @@ namespace exst
             variableNegativeWithoutHelper.erase(rem.front());
             rem.pop_front();
         }
+    }
+
+    bool parseParameter(StatsCalculator *this_, const std::string &name, const std::string &value)
+    {
+        GraphFormat format;
+        bool file = false;
+        std::string path;
+
+        if (value.length() == 0)
+        {
+            return false;
+        }
+        try
+        {
+            format = getFormat(std::stoi(value.substr(0, 1), nullptr));
+            if (value.length() > 1)
+            {
+                path = value.substr(2);
+                file = true;
+            }
+        } catch (int e)
+        {
+            return false;
+        }
+
+        if (name.compare("printDgraph") == 0)
+        {
+            this_->graphStatsCalculator.dependencyGraphStats.graphFormat = format;
+            if (file)
+            {
+                this_->graphStatsCalculator.dependencyGraphStats.dGraphPath = path;
+            }
+        } else if (name.compare("printIgraph") == 0)
+        {
+            this_->graphStatsCalculator.incidenceGraphStats.iGraphFormat = format;
+            if (file)
+            {
+                this_->graphStatsCalculator.incidenceGraphStats.iGraphPath = path;
+            }
+        } else if (name.compare("printRgraph") == 0)
+        {
+            this_->graphStatsCalculator.incidenceGraphStats.rGraphFormat = format;
+            if (file)
+            {
+                this_->graphStatsCalculator.incidenceGraphStats.rGraphPath = path;
+            }
+        } else
+        {
+            return false;
+        }
+        return true;
     }
 }
