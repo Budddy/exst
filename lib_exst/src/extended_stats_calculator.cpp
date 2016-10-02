@@ -220,12 +220,18 @@ namespace exst
         {
             if (graphStatsCalculator.incidenceGraphStats.rGraphPath.length() == 0)
             {
+                std::cout << "\n,\n\n \"Reduct Graph\" : [\n  ";
                 std::list<std::string>::iterator it_;
                 for (it_ = graphStatsCalculator.incidenceGraphStats.getRGraphs()->begin();
                      it_ != graphStatsCalculator.incidenceGraphStats.getRGraphs()->end(); it_++)
                 {
-                    std::cout << "  ,[\"reduct width\" , " << (*it) << "]\n";
+                    if (it_ != graphStatsCalculator.incidenceGraphStats.getRGraphs()->begin())
+                    {
+                        std::cout << "  ,";
+                    }
+                    std::cout << "[" << (*it_) << "]\n";
                 }
+                std::cout << "]\n";
             }
         }
 
@@ -236,14 +242,14 @@ namespace exst
             {
                 std::ofstream fileStream;
                 fileStream.open(graphStatsCalculator.incidenceGraphStats.iGraphPath, std::ofstream::out);
-                fileStream << getGraphFormat(graphStatsCalculator.incidenceGraphStats.iGraphFormat,
-                                             graphStatsCalculator.incidenceGraphStats.getIncidenceGraph());
+                fileStream << getFormatedGraph(graphStatsCalculator.incidenceGraphStats.iGraphFormat,
+                                               graphStatsCalculator.incidenceGraphStats.getIncidenceGraph());
                 fileStream.close();
             } else
             {
-                std::cout << "\n,\n\n \"Incidence Graph\" : [\n"
-                          << getGraphFormat(graphStatsCalculator.incidenceGraphStats.iGraphFormat,
-                                            graphStatsCalculator.incidenceGraphStats.getIncidenceGraph()) << "]";
+                std::cout << "\n,\n\n \"Incidence Graph\" : \n["
+                          << getFormatedGraph(graphStatsCalculator.incidenceGraphStats.iGraphFormat,
+                                              graphStatsCalculator.incidenceGraphStats.getIncidenceGraph()) << "]";
             }
         }
         if (graphStatsCalculator.dependencyGraphStats.graphFormat != NONE)
@@ -253,14 +259,14 @@ namespace exst
             {
                 std::ofstream fileStream;
                 fileStream.open(graphStatsCalculator.dependencyGraphStats.dGraphPath, std::ofstream::out);
-                fileStream << getGraphFormat(graphStatsCalculator.dependencyGraphStats.graphFormat,
-                                             graphStatsCalculator.dependencyGraphStats.getDependencyGraph());
+                fileStream << getFormatedGraph(graphStatsCalculator.dependencyGraphStats.graphFormat,
+                                               graphStatsCalculator.dependencyGraphStats.getDependencyGraph());
                 fileStream.close();
             } else
             {
-                std::cout << "\n,\n\n \"Dependency Graph\" : [\n"
-                          << getGraphFormat(graphStatsCalculator.dependencyGraphStats.graphFormat,
-                                            graphStatsCalculator.dependencyGraphStats.getDependencyGraph()) << "]";
+                std::cout << "\n,\n\n \"Dependency Graph\" : \n["
+                          << getFormatedGraph(graphStatsCalculator.dependencyGraphStats.graphFormat,
+                                              graphStatsCalculator.dependencyGraphStats.getDependencyGraph()) << "]";
             }
         }
         std::flush(std::cout);
@@ -350,7 +356,17 @@ namespace exst
         }
         try
         {
-            format = getFormat(std::stoi(value.substr(0, 1), nullptr));
+            switch (std::stoi(value.substr(0, 1), nullptr))
+            {
+                case 0 :
+                    format = DIMACS;
+                case 1 :
+                    format = GR;
+                case 2 :
+                    format = GML;
+                default:
+                    format = NONE;
+            }
             if (value.length() > 1)
             {
                 path = value.substr(2);

@@ -134,13 +134,11 @@ namespace exst
                 {
                     std::ofstream fileStream;
                     fileStream.open((rGraphPath + "_") + std::to_string(numReducts), std::ofstream::out);
-                    fileStream << getGraphFormat(rGraphFormat,
-                                                 incidenceGraphReduct);
+                    fileStream << getFormatedGraph(rGraphFormat, incidenceGraphReduct);
                     fileStream.close();
                 } else
                 {
-                    rGraphs.push_back(getGraphFormat(rGraphFormat,
-                                                     incidenceGraphReduct));
+                    rGraphs.push_back(getFormatedGraph(rGraphFormat, incidenceGraphReduct));
                 }
             }
         }

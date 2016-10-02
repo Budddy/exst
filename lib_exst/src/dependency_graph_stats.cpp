@@ -54,23 +54,5 @@ namespace exst
                 };
             }
         }
-
-        /*
-        if (heads.size() == 0 || heads.front().id == 1)
-        {
-            for (a = body.begin(); a != body.end(); a++)
-            {
-                uint32_t ida = a->id;
-                std::list<exst::lit_type>::iterator b;
-                for (b = body.begin(); b != body.end(); b++)
-                {
-                    uint32_t idb = b->id;
-                    if ((ida) != (idb) && edgeMap[ida].count(idb) == 0)
-                    {
-                        graph[vertexNodeMap[ida]][vertexNodeMap[idb]] = BODY;
-                    };
-                }
-            }
-        }*/
     }
 }

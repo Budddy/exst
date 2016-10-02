@@ -84,13 +84,6 @@ namespace exst
     uint32_t maxValue(std::unordered_map<uint32_t, uint32_t> values);
 
     /**
-     * Returns the min value of the given values.
-     * @param values a map of values to get the min value from
-     * @return the min value in the map
-     */
-    uint32_t minValue(std::unordered_map<uint32_t, uint32_t> values);
-
-    /**
      * Calculates the number of edges in the given graph.
      * @param graph the graph to get the edgecount from
      * @return the edgecount of the grup
@@ -118,9 +111,7 @@ namespace exst
      */
     std::string getGrFormat(MyGraph &graph);
 
-    std::string getGraphFormat(GraphFormat f, MyGraph &graph);
-
-    GraphFormat getFormat(int f);
+    std::string getFormatedGraph(GraphFormat f, MyGraph &graph);
 }
 
 #endif //CLASP_EXSTTYPES_H

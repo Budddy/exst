@@ -31,7 +31,7 @@ namespace exst
     std::string getDIMACSFormat(MyGraph &graph)
     {
         std::string dimacsString;
-        dimacsString += "p edge " + std::to_string(graph.size()) + " " + std::to_string(edgeCount(graph));
+        dimacsString += "\"p edge " + std::to_string(graph.size()) + " " + std::to_string(edgeCount(graph)) + "\"";
 
         std::unordered_map<unsigned int, std::unordered_map<unsigned int, exst::EdgeType>>::iterator it;
         for (it = graph.begin(); it != graph.end(); it++)
@@ -41,8 +41,7 @@ namespace exst
             {
                 if (it->first < it2->first)
                 {
-                    dimacsString += "\ne " + std::to_string(it->first);
-                    dimacsString += " " + std::to_string(it2->first);
+                    dimacsString += "\n,\"e " + std::to_string(it->first) + " " + std::to_string(it2->first) + "\"";
                 }
             }
         }
@@ -52,7 +51,7 @@ namespace exst
     std::string getGrFormat(MyGraph &graph)
     {
         std::string grString;
-        grString += "p tw " + std::to_string(graph.size()) + " " + std::to_string(edgeCount(graph));
+        grString += "\"p tw " + std::to_string(graph.size()) + " " + std::to_string(edgeCount(graph)) + "\"";
 
         std::unordered_map<unsigned int, std::unordered_map<unsigned int, exst::EdgeType>>::iterator it;
         for (it = graph.begin(); it != graph.end(); it++)
@@ -62,8 +61,7 @@ namespace exst
             {
                 if (it->first < it2->first)
                 {
-                    grString += "\n" + std::to_string(it->first + 1);
-                    grString += " " + std::to_string(it2->first + 1);
+                    grString += "\n,\"" + std::to_string(it->first + 1) + " " + std::to_string(it2->first + 1) + "\"";
                 }
             }
         }
@@ -109,33 +107,7 @@ namespace exst
         return maxValue;
     }
 
-    uint32_t minValue(std::unordered_map<uint32_t, uint32_t> values)
-    {
-        uint32_t minValue = UINT32_MAX;
-        std::unordered_map<unsigned int, unsigned int>::iterator it;
-        for (it = values.begin(); it != values.end(); it++)
-        {
-            minValue = it->second < minValue ? it->second : minValue;
-        }
-        return minValue;
-    }
-
-    GraphFormat getFormat(int f)
-    {
-        switch (f)
-        {
-            case 0 :
-                return DIMACS;
-            case 1 :
-                return GR;
-            case 2 :
-                return GML;
-            default:
-                return NONE;
-        }
-    }
-
-    std::string getGraphFormat(GraphFormat f, MyGraph &graph)
+    std::string getFormatedGraph(GraphFormat f, MyGraph &graph)
     {
         switch (f)
         {
