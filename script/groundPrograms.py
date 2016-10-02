@@ -15,8 +15,9 @@ dirs = "./Programs/"
 
 # path for the ground programs
 resultdir = "./Ground/All/"
-
+errordir = "./Ground/Error/"
 failed = "./Ground/Failed/"
+
 
 class Command(object):
     """
@@ -37,7 +38,9 @@ class Command(object):
 
         def target(**kwargs):
             try:
-                self.process = subprocess.Popen(self.command, shell=True, preexec_fn=os.setsid, **kwargs)
+                self.process = subprocess.Popen(self.command, shell=True,
+                                                preexec_fn=os.setsid, **kwargs)
+                # self.process = subprocess.Popen(self.command, shell=True, **kwargs)
                 self.output, self.error = self.process.communicate()
                 self.status = self.process.returncode
             except:
@@ -63,31 +66,45 @@ class Command(object):
             stop = 1
         return self.status, self.output, self.error, end - start, stop
 
+
 numElements = 0
 countElements = 0
-for tdir in listdir(dirs):
-    numElements += len(listdir(join(dirs, tdir)))
+for pr in listdir(dirs):
+    for tdir in listdir(join(dirs, pr)):
+        numElements += len(listdir(join(join(dirs, pr), tdir)))
 
-for d in listdir(dirs):
-    for a in listdir(dirs + d):
-        countElements += 1
-        f = join(dirs + d, a)
-        print ("\ninstance(" + str(countElements) + "/" + str(numElements) + "): " + a)
-        if isfile(f) and not (isfile(resultdir + a) or isfile(failed + a)) and (a != "encoding.asp"):
-            com = "./gringo.exe " + os.path.dirname(f) + "/" + os.path.basename(f) + " " + os.path.dirname(
-                f) + "/" + "encoding.asp"
-            c = Command(com)
-            ret = c.run(timeout=maxTime)
-            if (len(str(ret[1])) > 10000000):
-                print (" - too big")
-                fi = open(failed + a, 'w')
-                fi.close()
-            elif (not ret[4]):
-                print (" - ground")
-                fi = open(resultdir + a, 'w')
-                fi.write(str(ret[1]))
-                fi.close()
-            else:
-                print (" - fail")
-                fi = open(failed + a, 'w')
-                fi.close()
+for year in listdir(dirs):
+    for problem in listdir(join(dirs, year)):
+        pdir = join(join(dirs, year), problem)
+        for inst in listdir(pdir):
+            ipath = join(pdir, inst)
+            countElements += 1
+            print ("\ninstance(" + str(countElements) + "/" + str(
+                numElements) + "): " + inst)
+            if isfile(ipath) and not (isfile(join(resultdir, inst)) or isfile(
+                    join(failed, inst))) and (inst != "encoding.asp"):
+                com = "./gringo " + os.path.dirname(
+                    ipath) + "/" + os.path.basename(
+                    ipath) + " " + os.path.dirname(
+                    ipath) + "/" + "encoding.asp"
+                c = Command(com)
+                ret = c.run(timeout=maxTime)
+                if len(str(ret[1])) > 10000000:
+                    print (" - too big")
+                    fi = open(failed + inst, 'w')
+                    fi.close()
+                elif len(str(ret[1])) == 0:
+                    print (" - fail")
+                    fi = open(errordir + inst, 'w')
+                    fi.write(str(ret[2]))
+                    fi.close()
+                elif not ret[4]:
+                    print (" - ground")
+                    fi = open(resultdir + inst, 'w')
+                    fi.write(str(ret[1]))
+                    fi.close()
+                else:
+                    print (" - error")
+                    fi = open(errordir + inst, 'w')
+                    fi.write(str(ret[2]))
+                    fi.close()

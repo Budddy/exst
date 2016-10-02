@@ -12,7 +12,8 @@ import json
 maxTime = 1000
 
 # programs to test (path to program / name)
-programs = [("exst_assignments.exe --stats=2 --time-limit=800 --outf=2 -V ", "exst")]
+programs = [
+    ("exst_assignments.exe --stats=2 --time-limit=800 --outf=2 -V ", "exst")]
 # path to the folder with the ground test data files
 testData = "./Ground/Assignments"
 
@@ -45,7 +46,8 @@ class Command(object):
 
         def target(**kwargs):
             try:
-                self.process = subprocess.Popen(self.command, shell=True, **kwargs)
+                self.process = subprocess.Popen(self.command, shell=True,
+                                                **kwargs)
                 self.output, self.error = self.process.communicate()
                 self.status = self.process.returncode
             except:
@@ -93,8 +95,10 @@ for a in listdir(testData):
     countElements += 1
     f = join(testData, a)
     if isfile(f):
-        print ("\ninstance(" + str(countElements) + "/" + str(numElements) + "): " + a)
-        result.write("\ninstance(" + str(countElements) + "/" + str(numElements) + "): " + a + "\n")
+        print ("\ninstance(" + str(countElements) + "/" + str(
+            numElements) + "): " + a)
+        result.write("\ninstance(" + str(countElements) + "/" + str(
+            numElements) + "): " + a + "\n")
         result.flush()
         for i in programs:
             print ("  program: " + i[1])

@@ -1,3 +1,4 @@
+import gzip
 import os
 import signal
 import subprocess
@@ -12,22 +13,16 @@ import json
 maxTime = 2000
 
 # programs to test (path to program / name)
-programs = [("exst.exe --stats=2 --time-limit=1900 --outf=2 -V ", "exst")]
+program = "./exst --printDgraph=1 --printIgraph=1 --printRgraph=1 -q 2 --stats=2 --time-limit=1900 --outf=2 -V "
 
 # path to the folder with the ground test data files
-testData = "./Ground/Stats"
+testData = "./Instances"
 
 # directory for the result
-resultDir = "./Result/stats"
+resultDir = "./Stats"
 
 # directory for the result
-failedDir = "./Result/stats_failed"
-
-# separate result into multiple folders
-separate = 1
-
-# number of runs per program/instance
-runs = 1
+failedDir = "./Stats/stats_failed"
 
 
 class Command(object):
@@ -45,12 +40,10 @@ class Command(object):
         self.command = command
 
     def run(self, timeout=None, **kwargs):
-        """ Run a command then return: (status, output, error). """
-
         def target(**kwargs):
             try:
-                # self.process = subprocess.Popen(self.command, shell=True, preexec_fn=os.setsid, **kwargs)
-                self.process = subprocess.Popen(self.command, shell=True, **kwargs)
+                self.process = subprocess.Popen(self.command, shell=True,
+                                                preexec_fn=os.setsid, **kwargs)
                 self.output, self.error = self.process.communicate()
                 self.status = self.process.returncode
             except:
@@ -59,23 +52,15 @@ class Command(object):
 
         kwargs['stdout'] = subprocess.PIPE
         kwargs['stderr'] = subprocess.PIPE
-
         start = time.time()
         thread = threading.Thread(target=target, kwargs=kwargs)
         thread.start()
         thread.join(timeout)
         end = time.time()
         if thread.is_alive():
-            # kill thread if program takes too long to finish
             os.killpg(os.getpgid(self.process.pid), signal.SIGTERM)
-            # wait for thread to be killed
             thread.join()
-            # programm took too long to solve the instance
-            runCompleted = 0
-        else:
-            # run completed in time
-            runCompleted = 1
-        return self.status, self.output, self.error, end - start, runCompleted
+        return self.status, self.output, self.error, end - start
 
 
 if not isfile(resultDir + "/_result_"):
@@ -84,7 +69,6 @@ else:
     result = open(resultDir + "/_result_", 'a')
 
 assignments = json.loads(open("./_assignments_", 'r').read())
-
 numElements = len(listdir(testData))
 countElements = 0
 
@@ -92,38 +76,32 @@ for a in listdir(testData):
     countElements += 1
     f = join(testData, a)
     if isfile(f):
-        print ("\ninstance(" + str(countElements) + "/" + str(numElements) + "): " + a)
-        result.write("\ninstance(" + str(countElements) + "/" + str(numElements) + "): " + a + "\n")
+        print ("\ninstance(" + str(countElements) + "/" + str(
+            numElements) + "): " + a)
+        result.write("\ninstance(" + str(countElements) + "/" + str(
+            numElements) + "): " + a + "\n")
         result.flush()
-        for i in programs:
-            print ("  program: " + i[1])
-            result.write("  program: " + i[1] + "\n")
+        result.write("  clasp:\n")
+        result.flush()
+        # only run if file doesn't already exist
+        if not (isfile(resultDir + "/" + a) or isfile(
+                        failedDir + "/" + a) or isfile(
+                            failedDir + "/" + a + '.gz') or isfile(
+                            resultDir + "/" + a + '.gz')):
+            com = program + os.path.dirname(f) + "/" + os.path.basename(
+                f) + " --width-intervall=" + str(assignments[a] / 10)
+            print ("  command: " + com)
+            c = Command(com)
+            ret = c.run(timeout=maxTime)
+            # if program takes too long, don't start more runs of the program for this test instance
+            print ("    execution time: " + str(ret[3]))
+            result.write("    execution time: " + str(ret[3]) + "\n")
             result.flush()
-            for count in range(0, runs):
-                # only run if file doesn't already exist
-                if not (isfile(resultDir + "/" + a) or isfile(failedDir + "/" + a)):
-                    com = i[0] + os.path.dirname(f) + "/" + os.path.basename(f) + " --width-intervall=" + str(
-                        assignments[a] / 10)
-                    c = Command(com)
-                    ret = c.run(timeout=maxTime)
-                    # if program takes too long, don't start more runs of the program for this test instance
-                    if ret[4] == 0:
-                        print ("    could not solve instance within time limit")
-                        fi = open(resultDir + i[1] + "_failed_" + a, 'w')
-                        fi.write(str(ret[1]))
-                        fi.close()
-                        result.write("    could not solve instance within time limit" + "\n")
-                        result.flush()
-                        break
-                    else:
-                        print ("    execution time: " + str(ret[3]))
-                        result.write("    execution time: " + str(ret[3]) + "\n")
-                        result.flush()
-                        if str(ret[3]) > 1800:
-                            fi = open(failedDir + "/" + a, 'w')
-                        else:
-                            fi = open(resultDir + "/" + a, 'w')
-                        fi.write(str(ret[1]))
-                        fi.flush()
-                        fi.close()
+            if ret[3] > 1800:
+                fi = gzip.open(failedDir + "/" + a + ".gz", 'w')
+            else:
+                fi = gzip.open(resultDir + "/" + a + ".gz", 'w')
+            fi.write(str(ret[1]))
+            fi.flush()
+            fi.close()
 result.close()

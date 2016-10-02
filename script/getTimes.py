@@ -12,7 +12,7 @@ import json
 maxTime = 700
 
 # programs to test (path to program / name)
-programs = [("clasp.exe --stats=2 --time-limit=620 --outf=2 -V ", "exst")]
+programs = [("clasp.exe --stats=2 --time-limit=620 --outf=2 -V ", "clasp")]
 
 # path to the folder with the ground test data files
 testData = "./Ground/Times"
@@ -48,7 +48,8 @@ class Command(object):
 
         def target(**kwargs):
             try:
-                self.process = subprocess.Popen(self.command, shell=True, **kwargs)
+                self.process = subprocess.Popen(self.command, shell=True,
+                                                **kwargs)
                 self.output, self.error = self.process.communicate()
                 self.status = self.process.returncode
             except:
@@ -88,8 +89,10 @@ for a in listdir(testData):
     countElements += 1
     f = join(testData, a)
     if isfile(f):
-        print ("\ninstance(" + str(countElements) + "/" + str(numElements) + "): " + a)
-        result.write("\ninstance(" + str(countElements) + "/" + str(numElements) + "): " + a + "\n")
+        print ("\ninstance(" + str(countElements) + "/" + str(
+            numElements) + "): " + a)
+        result.write("\ninstance(" + str(countElements) + "/" + str(
+            numElements) + "): " + a + "\n")
         result.flush()
         for i in programs:
             print ("  program: " + i[1])
@@ -97,51 +100,50 @@ for a in listdir(testData):
             result.flush()
             for count in range(0, runs):
                 # only run if file doesn't already exist
-                if not (isfile(resultDir + "/result_1s/" + a) or isfile(resultDir + "/result_10s/" + a) or isfile(
-                            resultDir + "/result_100s/" + a) or isfile(resultDir + "/result_1000s/" + a) or isfile(
+                if not (isfile(resultDir + "/result_1s/" + a) or isfile(
+                                resultDir + "/result_10s/" + a) or isfile(
+                            resultDir + "/result_100s/" + a) or isfile(
+                            resultDir + "/result_1000s/" + a) or isfile(
                             resultDir + "/result_else/" + a) or isfile(
                             resultDir + "/result_10000s/" + a) or isfile(
-                            resultDir + "/result_assignments/" + a) or isfile(splitDir + "/1s/" + a) or isfile(
+                            resultDir + "/result_assignments/" + a) or isfile(
+                            splitDir + "/1s/" + a) or isfile(
                             splitDir + "/10s/" + a) or isfile(
-                            splitDir + "/100s/" + a) or isfile(splitDir + "/1000s/" + a) or isfile(
+                            splitDir + "/100s/" + a) or isfile(
+                            splitDir + "/1000s/" + a) or isfile(
                             splitDir + "/10000s/" + a)):
                     com = i[0] + os.path.dirname(f) + "/" + os.path.basename(f)
                     c = Command(com)
                     ret = c.run(timeout=maxTime)
                     # if program takes too long, don't start more runs of the program for this test instance
                     if ret[4] == 0:
-                        print ("    could not solve instance within time limit")
+                        print (
+                            "    could not solve instance within time limit")
                         fi = open(resultDir + i[1] + "_failed_" + a, 'w')
                         fi.write(str(ret[1]))
                         fi.close()
-                        result.write("    could not solve instance within time limit" + "\n")
+                        result.write(
+                            "    could not solve instance within time limit" + "\n")
                         result.flush()
                         break
                     else:
                         j = json.loads(ret[1])
                         s = j['Time']['CPU']
-                        print ("    execution time: " + str(ret[3]) + " CPU Time:" + str(s))
-                        result.write("    execution time: " + str(ret[3]) + " CPU Time:" + str(s) + "\n")
+                        print ("    execution time: " + str(
+                            ret[3]) + " CPU Time:" + str(s))
+                        result.write("    execution time: " + str(
+                            ret[3]) + " CPU Time:" + str(s) + "\n")
                         result.flush()
                         if s <= 1:
-                            fi = open(
-                                resultDir + "/result_1s/" + a,
-                                'w')
+                            fi = open(resultDir + "/result_1s/" + a, 'w')
                         elif s <= 10:
-                            fi = open(
-                                resultDir + "/result_10s/" + a,
-                                'w')
+                            fi = open(resultDir + "/result_10s/" + a, 'w')
                         elif s <= 100:
-                            fi = open(
-                                resultDir + "/result_100s/" + a,
-                                'w')
+                            fi = open(resultDir + "/result_100s/" + a, 'w')
                         elif s <= 600:
-                            fi = open(
-                                resultDir + "/result_1000s/" + a,
-                                'w')
+                            fi = open(resultDir + "/result_1000s/" + a, 'w')
                         else:
-                            fi = open(
-                                resultDir + "/result_else/" + a, 'w')
+                            fi = open(resultDir + "/result_else/" + a, 'w')
                         fi.write(str(ret[1]))
                         fi.flush()
                         fi.close()
