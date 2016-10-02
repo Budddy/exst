@@ -21,8 +21,17 @@ add_subdirectory(lib_exst)
 add_subdirectory(app)
 
 if(tests)
+
+    # flags to generate coverage
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-arcs -ftest-coverage")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+    set(CMAKE_EXE_LINKER_FLAGS
+            "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
     include_directories(lib_exst/tests libclasp/tests)
+
+    # build exst tests
     add_subdirectory(lib_exst/tests)
+    # build clasp tests
     add_subdirectory(libclasp/tests)
 endif(tests)
 
