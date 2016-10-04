@@ -4,17 +4,19 @@ namespace exst
 {
     uint32_t edgeCount(MyGraph &graph)
     {
-        uint32_t edges = 0;
+        std::set<std::pair<uint32_t, uint32_t>> test;
         std::unordered_map<unsigned int, std::unordered_map<unsigned int, exst::EdgeType>>::iterator a;
         for (a = graph.begin(); a != graph.end(); a++)
         {
             std::unordered_map<unsigned int, exst::EdgeType>::iterator b;
             for (b = a->second.begin(); b != a->second.end(); b++)
             {
-                edges++;
+                uint32_t first = (a->first > b->first) ? b->first : a->first;
+                uint32_t second = (a->first > b->first) ? a->first : b->first;
+                test.insert(std::pair<uint32_t, uint32_t>(first, second));
             }
         }
-        return edges / 2;
+        return test.size();
     }
 
     MyGraph copyMyGraph(MyGraph graph)

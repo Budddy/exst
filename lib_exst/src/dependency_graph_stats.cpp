@@ -2,15 +2,6 @@
 
 namespace exst
 {
-    void DependencyGraphStats::printDepGraph()
-    {
-        std::cout << "\n_Dependency Graph_ \nNodes: ";
-        std::cout << nodecount;
-        std::cout << "\nEdges: ";
-        std::cout << edgecount;
-        std::cout << "\n";
-    }
-
     void DependencyGraphStats::addRuleDependencyGraph(std::list<lit_type> body, std::list<lit_type> heads)
     {
         std::unordered_map<uint32_t, uint32_t> &vertexNodeMap = atomVertexMap;

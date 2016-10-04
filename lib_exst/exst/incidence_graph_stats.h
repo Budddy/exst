@@ -25,7 +25,6 @@ namespace exst
             libraryInstance = htd::createManagementInstance(htd::Id::FIRST);
             htd::MultiGraphFactory &factory = libraryInstance->multiGraphFactory();
             iGraph = factory.getMultiGraph();
-            minIGraph = factory.getMultiGraph();
         }
 
         /**
@@ -122,7 +121,6 @@ namespace exst
         //complete incidence graph
         MyGraph incidenceGraph;
         htd::IMutableMultiGraph *iGraph;
-        htd::IMutableMultiGraph *minIGraph;
 
         //incidence graph of reduct
         MyGraph incidenceGraphReduct;

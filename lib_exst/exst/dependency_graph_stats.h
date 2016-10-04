@@ -23,11 +23,6 @@ namespace exst
         void addRuleDependencyGraph(std::list<lit_type> body, std::list<lit_type> head);
 
         /**
-         * prints the number of edges and nodes in the dependency graph
-         */
-        void printDepGraph();
-
-        /**
          * Getter for the Dependency Graph.
          * @return the dependency graph
          */

@@ -360,10 +360,13 @@ namespace exst
             {
                 case 0 :
                     format = DIMACS;
+                    break;
                 case 1 :
                     format = GR;
+                    break;
                 case 2 :
                     format = GML;
+                    break;
                 default:
                     format = NONE;
             }
