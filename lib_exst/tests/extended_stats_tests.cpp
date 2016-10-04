@@ -11,6 +11,7 @@ namespace exst
             CPPUNIT_TEST(testMultipleFacts);
             CPPUNIT_TEST(testMultipleConstraintsAndNonConstraints);
             CPPUNIT_TEST(testMultipleConstraintsAndNonConstraintsWithHelpers);
+            CPPUNIT_TEST(testParseParameter);
         CPPUNIT_TEST_SUITE_END();
     private:
     public:
@@ -465,6 +466,27 @@ namespace exst
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Non Constraint", (uint32_t) 2,
                                          statsCalculator->atomOccurencesNonConstraint);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Constraint", (uint32_t) 3, statsCalculator->numConstraints);
+        }
+
+        void testParseParameter()
+        {
+            CPPUNIT_ASSERT_MESSAGE("", parseParameter(statsCalculator, std::string("printDgraph"),
+                                                      std::string("0,./dGraph")));
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("", GraphFormat::DIMACS, statsCalculator->graphStatsCalculator.dependencyGraphStats.graphFormat);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("", std::string("./dGraph"),
+                                         statsCalculator->graphStatsCalculator.dependencyGraphStats.dGraphPath);
+
+            CPPUNIT_ASSERT_MESSAGE("", parseParameter(statsCalculator, std::string("printIgraph"),
+                                                      std::string("0,./iGraph")));
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("", GraphFormat::DIMACS, statsCalculator->graphStatsCalculator.incidenceGraphStats.iGraphFormat);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("", std::string("./iGraph"),
+                                         statsCalculator->graphStatsCalculator.incidenceGraphStats.iGraphPath);
+
+            CPPUNIT_ASSERT_MESSAGE("", parseParameter(statsCalculator, std::string("printRgraph"),
+                                                      std::string("0,./rGraph")));
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("", GraphFormat::DIMACS, statsCalculator->graphStatsCalculator.incidenceGraphStats.rGraphFormat);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("", std::string("./rGraph"),
+                                         statsCalculator->graphStatsCalculator.incidenceGraphStats.rGraphPath);
         }
     };
 
