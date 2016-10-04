@@ -41,7 +41,6 @@ namespace exst
                 if ((a->id) > 1 && edgeMap[a->id].count(id) == 0)
                 {
                     graph[vertexNodeMap[a->id]][vertexNodeMap[id]] = HEAD;
-                    edgecount++;
                 };
             }
         }

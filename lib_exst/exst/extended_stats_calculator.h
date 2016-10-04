@@ -77,10 +77,10 @@ namespace exst
         std::unordered_map<uint32_t, const char *> *sTable;
 
         ///maximal clause size
-        uint64_t maxClauseSize = 0;
+        uint32_t maxClauseSize = 0;
 
         ///maximal positive clause size
-        uint64_t maxClauseSizePositive = 0;
+        uint32_t maxClauseSizePositive = 0;
 
         ///maximal negative clause size
         uint32_t maxClauseSizeNegative = 0;
@@ -154,6 +154,6 @@ namespace exst
         void calculateVariables();
     };
 
-    bool parseParameter(StatsCalculator *this_, const std::string &name, const std::string &value);
+    bool parseParameter(StatsCalculator *inst, const std::string &name, const std::string &value);
 }
 #endif //CLASP_EXTENDED_STATS_CALCULATOR_H

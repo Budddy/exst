@@ -52,8 +52,8 @@ namespace exst
                                          statsCalculator->numNonHornClauses);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Dual Horn Clauses", (uint32_t) 0,
                                          statsCalculator->numNonDualHornClauses);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size", (uint64_t) 3, statsCalculator->maxClauseSize);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Positive", (uint64_t) 2,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size", (uint32_t) 3, statsCalculator->maxClauseSize);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Positive", (uint32_t) 2,
                                          statsCalculator->maxClauseSizePositive);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Negative", (uint32_t) 1,
                                          statsCalculator->maxClauseSizeNegative);
@@ -111,8 +111,8 @@ namespace exst
                                          statsCalculator->numNonHornClauses);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Dual Horn Clauses", (uint32_t) 0,
                                          statsCalculator->numNonDualHornClauses);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size", (uint64_t) 2, statsCalculator->maxClauseSize);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Positive", (uint64_t) 1,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size", (uint32_t) 2, statsCalculator->maxClauseSize);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Positive", (uint32_t) 1,
                                          statsCalculator->maxClauseSizePositive);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Negative", (uint32_t) 2,
                                          statsCalculator->maxClauseSizeNegative);
@@ -204,8 +204,8 @@ namespace exst
                                          statsCalculator->numNonHornClauses);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Dual Horn Clauses", (uint32_t) 2,
                                          statsCalculator->numNonDualHornClauses);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size", (uint64_t) 3, statsCalculator->maxClauseSize);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Positive", (uint64_t) 3,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size", (uint32_t) 3, statsCalculator->maxClauseSize);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Positive", (uint32_t) 3,
                                          statsCalculator->maxClauseSizePositive);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Negative", (uint32_t) 2,
                                          statsCalculator->maxClauseSizeNegative);
@@ -266,8 +266,8 @@ namespace exst
                                          statsCalculator->numNonHornClauses);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Dual Horn Clauses", (uint32_t) 0,
                                          statsCalculator->numNonDualHornClauses);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size", (uint64_t) 1, statsCalculator->maxClauseSize);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Positive", (uint64_t) 1,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size", (uint32_t) 1, statsCalculator->maxClauseSize);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Positive", (uint32_t) 1,
                                          statsCalculator->maxClauseSizePositive);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Negative", (uint32_t) 1,
                                          statsCalculator->maxClauseSizeNegative);
@@ -354,8 +354,8 @@ namespace exst
                                          statsCalculator->numNonHornClauses);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Dual Horn Clauses", (uint32_t) 1,
                                          statsCalculator->numNonDualHornClauses);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size", (uint64_t) 3, statsCalculator->maxClauseSize);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Positive", (uint64_t) 3,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size", (uint32_t) 3, statsCalculator->maxClauseSize);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Positive", (uint32_t) 3,
                                          statsCalculator->maxClauseSizePositive);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Negative", (uint32_t) 2,
                                          statsCalculator->maxClauseSizeNegative);
@@ -438,8 +438,8 @@ namespace exst
                                          statsCalculator->numNonHornClauses);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Dual Horn Clauses", (uint32_t) 1,
                                          statsCalculator->numNonDualHornClauses);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size", (uint64_t) 3, statsCalculator->maxClauseSize);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Positive", (uint64_t) 3,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size", (uint32_t) 3, statsCalculator->maxClauseSize);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Positive", (uint32_t) 3,
                                          statsCalculator->maxClauseSizePositive);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Negative", (uint32_t) 2,
                                          statsCalculator->maxClauseSizeNegative);

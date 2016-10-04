@@ -344,7 +344,7 @@ namespace exst
         }
     }
 
-    bool parseParameter(StatsCalculator *this_, const std::string &name, const std::string &value)
+    bool parseParameter(StatsCalculator *inst, const std::string &name, const std::string &value)
     {
         GraphFormat format;
         bool file = false;
@@ -382,24 +382,24 @@ namespace exst
 
         if (name.compare("printDgraph") == 0)
         {
-            this_->graphStatsCalculator.dependencyGraphStats.graphFormat = format;
+            inst->graphStatsCalculator.dependencyGraphStats.graphFormat = format;
             if (file)
             {
-                this_->graphStatsCalculator.dependencyGraphStats.dGraphPath = path;
+                inst->graphStatsCalculator.dependencyGraphStats.dGraphPath = path;
             }
         } else if (name.compare("printIgraph") == 0)
         {
-            this_->graphStatsCalculator.incidenceGraphStats.iGraphFormat = format;
+            inst->graphStatsCalculator.incidenceGraphStats.iGraphFormat = format;
             if (file)
             {
-                this_->graphStatsCalculator.incidenceGraphStats.iGraphPath = path;
+                inst->graphStatsCalculator.incidenceGraphStats.iGraphPath = path;
             }
         } else if (name.compare("printRgraph") == 0)
         {
-            this_->graphStatsCalculator.incidenceGraphStats.rGraphFormat = format;
+            inst->graphStatsCalculator.incidenceGraphStats.rGraphFormat = format;
             if (file)
             {
-                this_->graphStatsCalculator.incidenceGraphStats.rGraphPath = path;
+                inst->graphStatsCalculator.incidenceGraphStats.rGraphPath = path;
             }
         } else
         {

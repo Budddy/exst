@@ -31,11 +31,6 @@ namespace exst
             return dependencyGraph;
         }
 
-        uint32_t getEdgeCount()
-        {
-            return edgecount;
-        }
-
         std::string dGraphPath;
         GraphFormat graphFormat = NONE;
 
@@ -46,10 +41,6 @@ namespace exst
         std::unordered_map<uint32_t, uint32_t> atomVertexMap;
         //
         MyGraph edgeMap;
-        //number of edges in the dependency graph
-        uint32_t edgecount = 0;
-        //number of nodes in the dependency graph
-        uint32_t nodecount = 0;
     };
 }
 

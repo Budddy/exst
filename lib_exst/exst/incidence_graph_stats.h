@@ -46,11 +46,6 @@ namespace exst
         void reduceGraph(lit_type lit);
 
         /**
-         * Prints the number of edges, the treewidth and the number of nodes of the reduct graph.
-         */
-        void printIGraphReduct();
-
-        /**
          * Updates the current assignment.
          * @param new_assignment list of literals in the new assignment
          */
