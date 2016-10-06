@@ -20,27 +20,24 @@ namespace exst
     public:
         void setUp()
         {
-            dependencyGraphStats = new DependencyGraphStats();
+            dependencyGraphStats = new DependencyGraphStatsCalculator();
             statsCalculator = new StatsCalculator();
             atomIds = new std::unordered_map<uint32_t, uint32_t>();
-            graphStatsCalculator = new GraphStatsCalculator(*atomIds);
-            incidenceGraphStats = new IncidenceGraphStats(*atomIds);
+            incidenceGraphStats = new IncidenceGraphStatsCalculator(atomIds);
         }
 
         void tearDown()
         {
             delete dependencyGraphStats;
-            delete graphStatsCalculator;
             delete incidenceGraphStats;
             delete atomIds;
             delete statsCalculator;
         }
 
     protected:
-        DependencyGraphStats *dependencyGraphStats;
+        DependencyGraphStatsCalculator *dependencyGraphStats;
         StatsCalculator *statsCalculator;
-        GraphStatsCalculator *graphStatsCalculator;
-        IncidenceGraphStats *incidenceGraphStats;
+        IncidenceGraphStatsCalculator *incidenceGraphStats;
         std::unordered_map<uint32_t, uint32_t> *atomIds;
     };
 };

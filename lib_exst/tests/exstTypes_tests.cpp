@@ -1,4 +1,4 @@
-#include <exst/ExstTypes.h>
+#include <exst/exst_types.h>
 #include "test.h"
 
 namespace exst

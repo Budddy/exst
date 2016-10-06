@@ -4,15 +4,16 @@
 
 namespace exst
 {
-    void IncidenceGraphStats::addRuleIncidenceGraph(std::list<lit_type> body, std::list<lit_type> heads)
+    void IncidenceGraphStatsCalculator::addRuleIncidenceGraph(std::list<lit_type> body, std::list<lit_type> heads)
     {
         if (body.size() == 0)
         {
             return;
         }
-        std::unordered_map<uint32_t, std::unordered_map<uint32_t, EdgeType>> &myGraph = incidenceGraph;
-        std::unordered_map<uint32_t, uint32_t> &avmap = atomVertexMap;
-        std::unordered_map<uint32_t, std::unordered_map<uint32_t, EdgeType>> &rbmap = ruleBodyMap;
+        std::unordered_map<uint32_t, std::unordered_map<uint32_t, EdgeType>> &myGraph = iGraphStats.incidenceGraph;
+        std::unordered_map<uint32_t, uint32_t> &avmap = iGraphStats.atomVertexMap;
+        std::unordered_map<uint32_t, std::unordered_map<uint32_t, EdgeType>> &rbmap = iGraphStats.ruleBodyMap;
+        htd::IMutableMultiGraph *iGraph = iGraphStats.iGraph;
 
         uint32_t rule_Vertex = iGraph->addVertex();
         myGraph[rule_Vertex];
@@ -52,22 +53,22 @@ namespace exst
         }
     }
 
-    void IncidenceGraphStats::resetAssignment()
+    void IncidenceGraphStatsCalculator::resetAssignment()
     {
         //reset htd reduct graph
-        delete iGraphReduct;
-        iGraphReduct = iGraph->clone();
+        delete iGraphStats.iGraphReduct;
+        iGraphStats.iGraphReduct = iGraphStats.iGraph->clone();
         //selectedAtoms.clear();
-        ruleBodyMapReduct.insert(ruleBodyMap.begin(), ruleBodyMap.end());
+        iGraphStats.ruleBodyMapReduct.insert(iGraphStats.ruleBodyMap.begin(), iGraphStats.ruleBodyMap.end());
         //reset reduct graph
-        incidenceGraphReduct = copyMyGraph(incidenceGraph);
+        iGraphStats.incidenceGraphReduct = copyMyGraph(iGraphStats.incidenceGraph);
     }
 
-    void IncidenceGraphStats::reduceGraph(lit_type lit)
+    void IncidenceGraphStatsCalculator::reduceGraph(lit_type lit)
     {
-        uint32_t nodeIdBody = atomVertexMap[atomIds[lit.id]];
+        uint32_t nodeIdBody = iGraphStats.atomVertexMap[(*iGraphStats.atomIds)[lit.id]];
         //get all bodies the literal is in
-        std::unordered_map<uint32_t, EdgeType> edges = incidenceGraphReduct[nodeIdBody];
+        std::unordered_map<uint32_t, EdgeType> edges = iGraphStats.incidenceGraphReduct[nodeIdBody];
 
         std::unordered_map<unsigned int, EdgeType>::iterator it;
         //iterate over all bodies the literal is in
@@ -76,7 +77,7 @@ namespace exst
             //if sign is different to the sign of the literal in the body, reduce graph
             if ((*it).second == (lit.s == POSITIVE ? NEG : POS))
             {
-                std::unordered_map<uint32_t, EdgeType> bodies = ruleBodyMapReduct[(*it).first];
+                std::unordered_map<uint32_t, EdgeType> bodies = iGraphStats.ruleBodyMapReduct[(*it).first];
                 std::unordered_map<unsigned int, EdgeType>::iterator bodyIt;
                 //remove all edges of wrong body
                 for (bodyIt = bodies.begin(); bodyIt != bodies.end(); bodyIt++)
@@ -84,37 +85,38 @@ namespace exst
                     //remove only body edges
                     if (bodyIt->second == POS || bodyIt->second == NEG)
                     {
-                        incidenceGraphReduct[bodyIt->first].erase(it->first);
-                        incidenceGraphReduct[it->first].erase(bodyIt->first);
-                        ruleBodyMapReduct[it->first].erase(bodyIt->first);
-                        iGraphReduct->removeEdge(*iGraphReduct->associatedEdgeIds(bodyIt->first, it->first).begin());
+                        iGraphStats.incidenceGraphReduct[bodyIt->first].erase(it->first);
+                        iGraphStats.incidenceGraphReduct[it->first].erase(bodyIt->first);
+                        iGraphStats.ruleBodyMapReduct[it->first].erase(bodyIt->first);
+                        iGraphStats.iGraphReduct->removeEdge(
+                                *iGraphStats.iGraphReduct->associatedEdgeIds(bodyIt->first, it->first).begin());
                     }
                 }
             }
         }
     }
 
-    void IncidenceGraphStats::updateAssignment(const Clasp::LitVec new_assignment)
+    void IncidenceGraphStatsCalculator::updateAssignment(const Clasp::LitVec new_assignment)
     {
-        if (new_assignment.size() > current_assignment.size())
+        if (new_assignment.size() > iGraphStats.current_assignment.size())
         {
-            assignmentCount += new_assignment.size() - current_assignment.size();
+            iGraphStats.assignmentCount += new_assignment.size() - iGraphStats.current_assignment.size();
         } else
         {
             uint32_t pos = 0, i = 0;
-            for (pos = 0; (pos + 1) < new_assignment.size() && (pos + 1) < current_assignment.size(); pos++)
+            for (pos = 0; (pos + 1) < new_assignment.size() && (pos + 1) < iGraphStats.current_assignment.size(); pos++)
             {
-                if (new_assignment.at(pos) != current_assignment.at(pos))
+                if (new_assignment.at(pos) != iGraphStats.current_assignment.at(pos))
                 {
                     break;
                 }
             }
-            assignmentCount += new_assignment.size() - (pos + 1);
+            iGraphStats.assignmentCount += new_assignment.size() - (pos + 1);
         }
-        if (assignmentCount >= widthCalcInterval)
+        if (iGraphStats.assignmentCount >= iGraphStats.widthCalcInterval)
         {
-            numReducts++;
-            assignmentCount -= widthCalcInterval;
+            iGraphStats.numReducts++;
+            iGraphStats.assignmentCount -= iGraphStats.widthCalcInterval;
             resetAssignment();
             for (int i = 0; i < new_assignment.size(); i++)
             {
@@ -122,27 +124,29 @@ namespace exst
                                            new_assignment.at(i).sign() ? exst::POSITIVE : exst::NEGATIVE));
             }
             //calculate and save the Treewidth of the reduct graph
-            if (this->calculateTreeWidth)
+            if (this->iGraphStats.calculateTreeWidth)
             {
-                widths.push_back(getTreewidth(iGraphReduct, libraryInstance));
+                iGraphStats.widths.push_back(getTreewidth(iGraphStats.iGraphReduct, iGraphStats.libraryInstance));
             }
 
-            if (rGraphFormat != NONE)
+            if (iGraphStats.rGraphFormat != NONE)
             {
 
-                if (rGraphPath.length() != 0)
+                if (iGraphStats.rGraphPath.length() != 0)
                 {
                     std::ofstream fileStream;
-                    fileStream.open((rGraphPath + "_") + std::to_string(numReducts), std::ofstream::out);
-                    fileStream << getFormatedGraph(rGraphFormat, incidenceGraphReduct);
+                    fileStream.open((iGraphStats.rGraphPath + "_") + std::to_string(iGraphStats.numReducts),
+                                    std::ofstream::out);
+                    fileStream << getFormatedGraph(iGraphStats.rGraphFormat, iGraphStats.incidenceGraphReduct);
                     fileStream.close();
                 } else
                 {
-                    rGraphs.push_back(getFormatedGraph(rGraphFormat, incidenceGraphReduct));
+                    iGraphStats.rGraphs.push_back(
+                            getFormatedGraph(iGraphStats.rGraphFormat, iGraphStats.incidenceGraphReduct));
                 }
             }
         }
-        current_assignment = new_assignment;
+        iGraphStats.current_assignment = new_assignment;
     }
 
     size_t getTreewidth(htd::IMutableMultiGraph *graph, htd::LibraryInstance *libraryInstance)

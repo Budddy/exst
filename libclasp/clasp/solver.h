@@ -1037,7 +1037,7 @@ public:
 	 */
 	bool select(Solver& s) {
         bool ret = s.numFreeVars() != 0 && s.assume(doSelect(s));
-        exst::StatsCalculator::getInstance().graphStatsCalculator.incidenceGraphStats.updateAssignment(s.assignment().trail);
+        exst::StatsCalculator::getInstance().incidenceGraphStats.updateAssignment(s.assignment().trail);
         return ret; 
     }
 

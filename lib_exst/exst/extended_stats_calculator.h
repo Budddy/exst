@@ -3,54 +3,14 @@
 
 #include <unordered_map>
 #include <list>
-#include <exst/ExstTypes.h>
-#include <exst/graph_stats_calculator.h>
+#include <exst/exst_types.h>
+#include <exst/incidence_graph_stats.h>
+#include <exst/dependency_graph_stats.h>
 
 namespace exst
 {
-    /**
-     * class used to generate the extended stats
-     */
-    class StatsCalculator
+    struct GeneralStatistics
     {
-    public:
-
-        /**
-         * returns the single instance of the GraphStatsCalculator
-         */
-        static StatsCalculator &getInstance()
-        {
-            static StatsCalculator calc;
-            return calc;
-        }
-
-        /**
-         * adds a dependency to the dependency graph
-         */
-        void parseRule(std::list<lit_type> body, std::list<lit_type> head);
-
-        /**
-         * Maps the id of an atom before and after preprocessing.
-         * @param before id of the atom before preprocessing
-         * @param after id of the atom after preprocesing
-         */
-        void addId(uint32_t before, uint32_t after);
-
-        /**
-         * Used to set the Symbol Table.
-         * @param table the symbol table of the program
-         */
-        void setSymbolTable(std::unordered_map<uint32_t, const char *> &table);
-
-        /**
-         * Prints the Statistics.
-         */
-        void printExtendedStats();
-
-        /**
-         * Starts the calculation of the stats, implicitly called by printExtendedStats.
-         */
-        void calculateStats();
 
         ///number of facts in the program
         uint32_t numFacts = 0;
@@ -120,14 +80,64 @@ namespace exst
 
         ///num of atom occurences in non constraints
         uint32_t atomOccurencesNonConstraint = 0;
+    };
 
-        ///calculator for the graph Statistics
-        GraphStatsCalculator graphStatsCalculator;
+    /**
+     * class used to generate the extended stats
+     */
+    class StatsCalculator
+    {
+    public:
+
+        /**
+         * returns the single instance of the GraphStatsCalculator
+         */
+        static StatsCalculator &getInstance()
+        {
+            static StatsCalculator calc;
+            return calc;
+        }
+
+        /**
+         * adds a dependency to the dependency graph
+         */
+        void parseRule(std::list<lit_type> body, std::list<lit_type> head);
+
+        /**
+         * Maps the id of an atom before and after preprocessing.
+         * @param before id of the atom before preprocessing
+         * @param after id of the atom after preprocesing
+         */
+        void addId(uint32_t before, uint32_t after);
+
+        /**
+         * Used to set the Symbol Table.
+         * @param table the symbol table of the program
+         */
+        void setSymbolTable(std::unordered_map<uint32_t, const char *> &table);
+
+        /**
+         * Prints the Statistics.
+         */
+        void printExtendedStats();
+
+        /**
+         * Starts the calculation of the stats, implicitly called by printExtendedStats.
+         */
+        void calculateStats();
+
+        GeneralStatistics generalStatistics;
+
+        ///calculator for statistics of dependency graph
+        DependencyGraphStatsCalculator dependencyGraphStats;
+
+        ///calculator for statistics of incidence graph
+        IncidenceGraphStatsCalculator incidenceGraphStats;
 
         /*
          * private constructors for singleton
          */
-        StatsCalculator() : graphStatsCalculator(atomIdsNewOld)
+        StatsCalculator() : incidenceGraphStats(&generalStatistics.atomIdsOldNew)
         {
         };
 
@@ -155,5 +165,6 @@ namespace exst
     };
 
     bool parseParameter(StatsCalculator *inst, const std::string &name, const std::string &value);
+
 }
 #endif //CLASP_EXTENDED_STATS_CALCULATOR_H

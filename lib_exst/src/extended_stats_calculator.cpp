@@ -8,14 +8,14 @@ namespace exst
         std::list<exst::lit_type>::iterator it;
         for (it = head.begin(); it != head.end(); it++)
         {
-            if (atomIdsOldNew.count(it->id))
+            if (generalStatistics.atomIdsOldNew.count(it->id))
             {
                 return true;
             }
         }
         for (it = body.begin(); it != body.end(); it++)
         {
-            if (atomIdsOldNew.count(it->id))
+            if (generalStatistics.atomIdsOldNew.count(it->id))
             {
                 return true;
             }
@@ -25,27 +25,27 @@ namespace exst
 
     void StatsCalculator::parseRule(std::list<lit_type> body, std::list<lit_type> head)
     {
-        graphStatsCalculator.dependencyGraphStats.addRuleDependencyGraph(body, head);
-        graphStatsCalculator.incidenceGraphStats.addRuleIncidenceGraph(body, head);
+        dependencyGraphStats.addRuleDependencyGraph(body, head);
+        incidenceGraphStats.addRuleIncidenceGraph(body, head);
         std::pair<std::list<lit_type>, std::list<lit_type>> rule;
         rule.first = head;
         rule.second = body;
-        rules.push_back(rule);
+        generalStatistics.rules.push_back(rule);
     }
 
     void StatsCalculator::calculateStats()
     {
         std::list<std::pair<std::list<exst::lit_type>, std::list<exst::lit_type>>>::iterator it;
-        for (it = rules.begin(); it != rules.end(); it++)
+        for (it = generalStatistics.rules.begin(); it != generalStatistics.rules.end(); it++)
         {
             std::list<lit_type> &head = it->first;
             std::list<lit_type> &body = it->second;
             //rules
-            numRules++;
+            generalStatistics.numRules++;
 
             // num facts
             if (body.size() == 0)
-                numFacts++;
+                generalStatistics.numFacts++;
 
             uint32_t negative = 0, positive = 0;
             std::list<exst::lit_type>::iterator i;
@@ -72,35 +72,40 @@ namespace exst
 
             if (isConstraint(head, body))
             {
-                maxPositiveRuleSizeConstraint = (uint32_t) (maxPositiveRuleSizeConstraint < positive ? positive
-                                                                                                     : maxPositiveRuleSizeConstraint);
-                numConstraints++;
-                atomOccurencesConstraint += head.size();
-                atomOccurencesConstraint += body.size();
+                generalStatistics.maxPositiveRuleSizeConstraint = (uint32_t) (
+                        generalStatistics.maxPositiveRuleSizeConstraint < positive ? positive
+                                                                                   : generalStatistics.maxPositiveRuleSizeConstraint);
+                generalStatistics.numConstraints++;
+                generalStatistics.atomOccurencesConstraint += head.size();
+                generalStatistics.atomOccurencesConstraint += body.size();
             } else
             {
-                maxPositiveRuleSizeNonConstraint = (uint32_t) (maxPositiveRuleSizeNonConstraint < positive ? positive
-                                                                                                           : maxPositiveRuleSizeNonConstraint);
-                atomOccurencesNonConstraint += head.size();
-                atomOccurencesNonConstraint += body.size();
+                generalStatistics.maxPositiveRuleSizeNonConstraint = (uint32_t) (
+                        generalStatistics.maxPositiveRuleSizeNonConstraint < positive ? positive
+                                                                                      : generalStatistics.maxPositiveRuleSizeNonConstraint);
+                generalStatistics.atomOccurencesNonConstraint += head.size();
+                generalStatistics.atomOccurencesNonConstraint += body.size();
             }
             //non horn clause
             if (!((head.size() == 0 && negative <= 1) || (head.size() == 1 && negative <= 0)) && (body.size() > 0))
-                ++numNonHornClauses;
+                ++generalStatistics.numNonHornClauses;
 
             //non dual horn clause
             if ((body.size() - negative > 1) && (body.size() > 0))
-                ++numNonDualHornClauses;
+                ++generalStatistics.numNonDualHornClauses;
 
             //clause size
-            maxClauseSize = (maxClauseSize < body.size() + head.size() ? body.size() + head.size() : maxClauseSize);
+            generalStatistics.maxClauseSize = (generalStatistics.maxClauseSize < body.size() + head.size() ?
+                                               body.size() + head.size() : generalStatistics.maxClauseSize);
             //positive clause size
-            maxClauseSizePositive = (maxClauseSizePositive < body.size() - negative + head.size() ? body.size() -
-                                                                                                    negative +
-                                                                                                    head.size()
-                                                                                                  : maxClauseSizePositive);
+            generalStatistics.maxClauseSizePositive = (generalStatistics.maxClauseSizePositive <
+                                                       body.size() - negative + head.size() ? body.size() -
+                                                                                              negative +
+                                                                                              head.size()
+                                                                                            : generalStatistics.maxClauseSizePositive);
             //negative clause size
-            maxClauseSizeNegative = maxClauseSizeNegative < negative ? negative : maxClauseSizeNegative;
+            generalStatistics.maxClauseSizeNegative = generalStatistics.maxClauseSizeNegative < negative ? negative
+                                                                                                         : generalStatistics.maxClauseSizeNegative;
 
             //atom occurrences
             countAtomOccurences(body, head);
@@ -119,31 +124,31 @@ namespace exst
             uint32_t id = it->id;
             if (it->s == -1)
             {
-                atomOccurencesNegative[id]++;
+                generalStatistics.atomOccurencesNegative[id]++;
             } else
             {
-                atomOccurencesPositive[id]++;
+                generalStatistics.atomOccurencesPositive[id]++;
             }
-            atomOccurences[id]++;
+            generalStatistics.atomOccurences[id]++;
         }
         for (it = head.begin(); it != head.end(); it++)
         {
             uint32_t id = it->id;
             if (it->s == -1)
             {
-                atomOccurencesNegative[id]++;
+                generalStatistics.atomOccurencesNegative[id]++;
             } else
             {
-                atomOccurencesPositive[id]++;
+                generalStatistics.atomOccurencesPositive[id]++;
             }
-            atomOccurences[id]++;
+            generalStatistics.atomOccurences[id]++;
         }
     }
 
     void StatsCalculator::addId(uint32_t before, uint32_t after)
     {
-        atomIdsNewOld[after] = before;
-        atomIdsOldNew[before] = after;
+        generalStatistics.atomIdsNewOld[after] = before;
+        generalStatistics.atomIdsOldNew[before] = after;
     }
 
     void StatsCalculator::printExtendedStats()
@@ -153,79 +158,86 @@ namespace exst
 
         //dependency graph
         std::cout << "  [\"Dependency Graph Nodes\" , "
-                  << graphStatsCalculator.dependencyGraphStats.getDependencyGraph().size() << "],\n";
+                  << dependencyGraphStats.getDependencyGraph().size() << "],\n";
         std::cout << "  [\"Dependency Graph Edges\" , "
-                  << edgeCount(graphStatsCalculator.dependencyGraphStats.getDependencyGraph()) << "],\n";
+                  << edgeCount(dependencyGraphStats.getDependencyGraph()) << "],\n";
 
         //incidence graph
         std::cout << "  [\"Incidence Graph Nodes\" , "
-                  << graphStatsCalculator.incidenceGraphStats.getIncidenceGraph().size() << "],\n";
+                  << incidenceGraphStats.getIncidenceGraph().size() << "],\n";
         std::cout << "  [\"Incidence Graph Edges\" , "
-                  << edgeCount(graphStatsCalculator.incidenceGraphStats.getIncidenceGraph()) << "],\n";
+                  << edgeCount(incidenceGraphStats.getIncidenceGraph()) << "],\n";
 
         //number of non horn clauses
-        std::cout << "  [\"Non Horn Clauses\" , " << numNonHornClauses << "],\n";
+        std::cout << "  [\"Non Horn Clauses\" , " << generalStatistics.numNonHornClauses << "],\n";
 
         //number of non dual horn clauses
-        std::cout << "  [\"Non Dual Horn Clauses\" , " << numNonDualHornClauses << "],\n";
+        std::cout << "  [\"Non Dual Horn Clauses\" , " << generalStatistics.numNonDualHornClauses << "],\n";
 
         //maximum clause size
-        std::cout << "  [\"max clause size\" , " << maxClauseSize << "],\n";
+        std::cout << "  [\"max clause size\" , " << generalStatistics.maxClauseSize << "],\n";
 
         //maximum positive/negative clause size, i.e., only positive/negative literals are counted
-        std::cout << "  [\"max positive clause size\" , " << maxClauseSizePositive << "],\n";
-        std::cout << "  [\"max negative clause size\" , " << maxClauseSizeNegative << "],\n";
+        std::cout << "  [\"max positive clause size\" , " << generalStatistics.maxClauseSizePositive << "],\n";
+        std::cout << "  [\"max negative clause size\" , " << generalStatistics.maxClauseSizeNegative << "],\n";
 
         //number of variables that occur as positive/negative literals
         std::cout << "  [\"number of variables that occur as positive literals with helpers\" , "
-                  << variablePositive.size() << "],\n";
+                  << generalStatistics.variablePositive.size() << "],\n";
         std::cout << "  [\"number of variables that occur as positive literals without helpers\" , "
-                  << variablePositiveWithoutHelper.size() << "],\n";
+                  << generalStatistics.variablePositiveWithoutHelper.size() << "],\n";
         std::cout << "  [\"number of variables that occur as negative literals with helpers\" , "
-                  << variableNegative.size() << "],\n";
+                  << generalStatistics.variableNegative.size() << "],\n";
         std::cout << "  [\"number of variables that occur as negative literals without helpers\" , "
-                  << variableNegativeWithoutHelper.size() << "],\n";
+                  << generalStatistics.variableNegativeWithoutHelper.size() << "],\n";
 
         //maximum positive rule size (constraint/non-constraint)
-        std::cout << "  [\"maximum positive rule size constraint\" , " << maxPositiveRuleSizeConstraint << "],\n";
-        std::cout << "  [\"maximum positive rule size non-constraint\" , " << maxPositiveRuleSizeNonConstraint
+        std::cout << "  [\"maximum positive rule size constraint\" , "
+                  << generalStatistics.maxPositiveRuleSizeConstraint << "],\n";
+        std::cout << "  [\"maximum positive rule size non-constraint\" , "
+                  << generalStatistics.maxPositiveRuleSizeNonConstraint
                   << "],\n";
 
         //total number of atom occurrences in the program (constraints/non-constraint)
-        std::cout << "  [\"total number of atom occurrences constraint\" , " << atomOccurencesConstraint << "],\n";
-        std::cout << "  [\"total number of atom occurrences non-constraint\" , " << atomOccurencesNonConstraint
+        std::cout << "  [\"total number of atom occurrences constraint\" , "
+                  << generalStatistics.atomOccurencesConstraint << "],\n";
+        std::cout << "  [\"total number of atom occurrences non-constraint\" , "
+                  << generalStatistics.atomOccurencesNonConstraint
                   << "],\n";
 
         //maximum number of occurrences of an atom
-        std::cout << "  [\"maximum number of occurrences of an atom\" , " << maxValue(atomOccurences) << "],\n";
+        std::cout << "  [\"maximum number of occurrences of an atom\" , " << maxValue(generalStatistics.atomOccurences)
+                  << "],\n";
 
         //maximum number of positive occurrences of an atom
-        std::cout << "  [\"maximum number of positive occurrences of an atom\" , " << maxValue(atomOccurencesPositive)
+        std::cout << "  [\"maximum number of positive occurrences of an atom\" , "
+                  << maxValue(generalStatistics.atomOccurencesPositive)
                   << "],\n";
 
         //maximum number of negative occurrences of an atom
-        std::cout << "  [\"maximum number of negative occurrences of an atom\" , " << maxValue(atomOccurencesNegative)
+        std::cout << "  [\"maximum number of negative occurrences of an atom\" , "
+                  << maxValue(generalStatistics.atomOccurencesNegative)
                   << "]\n";
 
         std::list<float>::iterator it;
-        for (it = graphStatsCalculator.incidenceGraphStats.getWidths()->begin();
-             it != graphStatsCalculator.incidenceGraphStats.getWidths()->end(); it++)
+        for (it = incidenceGraphStats.getWidths()->begin();
+             it != incidenceGraphStats.getWidths()->end(); it++)
         {
             std::cout << "  ,[\"reduct width\" , " << (*it) << "]\n";
         }
 
         std::cout << " ]\n";
 
-        if (graphStatsCalculator.incidenceGraphStats.rGraphFormat != NONE)
+        if (incidenceGraphStats.iGraphStats.rGraphFormat != NONE)
         {
-            if (graphStatsCalculator.incidenceGraphStats.rGraphPath.length() == 0)
+            if (incidenceGraphStats.iGraphStats.rGraphPath.length() == 0)
             {
                 std::cout << "\n,\n\n \"Reduct Graph\" : [\n  ";
                 std::list<std::string>::iterator it_;
-                for (it_ = graphStatsCalculator.incidenceGraphStats.getRGraphs()->begin();
-                     it_ != graphStatsCalculator.incidenceGraphStats.getRGraphs()->end(); it_++)
+                for (it_ = incidenceGraphStats.getRGraphs()->begin();
+                     it_ != incidenceGraphStats.getRGraphs()->end(); it_++)
                 {
-                    if (it_ != graphStatsCalculator.incidenceGraphStats.getRGraphs()->begin())
+                    if (it_ != incidenceGraphStats.getRGraphs()->begin())
                     {
                         std::cout << "  ,";
                     }
@@ -235,38 +247,38 @@ namespace exst
             }
         }
 
-        if (graphStatsCalculator.incidenceGraphStats.iGraphFormat != NONE)
+        if (incidenceGraphStats.iGraphStats.iGraphFormat != NONE)
         {
 
-            if (graphStatsCalculator.incidenceGraphStats.iGraphPath.length() != 0)
+            if (incidenceGraphStats.iGraphStats.iGraphPath.length() != 0)
             {
                 std::ofstream fileStream;
-                fileStream.open(graphStatsCalculator.incidenceGraphStats.iGraphPath, std::ofstream::out);
-                fileStream << getFormatedGraph(graphStatsCalculator.incidenceGraphStats.iGraphFormat,
-                                               graphStatsCalculator.incidenceGraphStats.getIncidenceGraph());
+                fileStream.open(incidenceGraphStats.iGraphStats.iGraphPath, std::ofstream::out);
+                fileStream << getFormatedGraph(incidenceGraphStats.iGraphStats.iGraphFormat,
+                                               incidenceGraphStats.getIncidenceGraph());
                 fileStream.close();
             } else
             {
                 std::cout << "\n,\n\n \"Incidence Graph\" : \n["
-                          << getFormatedGraph(graphStatsCalculator.incidenceGraphStats.iGraphFormat,
-                                              graphStatsCalculator.incidenceGraphStats.getIncidenceGraph()) << "]";
+                          << getFormatedGraph(incidenceGraphStats.iGraphStats.iGraphFormat,
+                                              incidenceGraphStats.getIncidenceGraph()) << "]";
             }
         }
-        if (graphStatsCalculator.dependencyGraphStats.graphFormat != NONE)
+        if (dependencyGraphStats.dGraphStatistics.graphFormat != NONE)
         {
 
-            if (graphStatsCalculator.dependencyGraphStats.dGraphPath.length() != 0)
+            if (dependencyGraphStats.dGraphStatistics.dGraphPath.length() != 0)
             {
                 std::ofstream fileStream;
-                fileStream.open(graphStatsCalculator.dependencyGraphStats.dGraphPath, std::ofstream::out);
-                fileStream << getFormatedGraph(graphStatsCalculator.dependencyGraphStats.graphFormat,
-                                               graphStatsCalculator.dependencyGraphStats.getDependencyGraph());
+                fileStream.open(dependencyGraphStats.dGraphStatistics.dGraphPath, std::ofstream::out);
+                fileStream << getFormatedGraph(dependencyGraphStats.dGraphStatistics.graphFormat,
+                                               dependencyGraphStats.getDependencyGraph());
                 fileStream.close();
             } else
             {
                 std::cout << "\n,\n\n \"Dependency Graph\" : \n["
-                          << getFormatedGraph(graphStatsCalculator.dependencyGraphStats.graphFormat,
-                                              graphStatsCalculator.dependencyGraphStats.getDependencyGraph()) << "]";
+                          << getFormatedGraph(dependencyGraphStats.dGraphStatistics.graphFormat,
+                                              dependencyGraphStats.getDependencyGraph()) << "]";
             }
         }
         std::flush(std::cout);
@@ -278,32 +290,32 @@ namespace exst
         for (it = body.begin(); it != body.end(); it++)
         {
             uint32_t id = it->id;
-            if (atomIdsOldNew.count(id) > 0)
+            if (generalStatistics.atomIdsOldNew.count(id) > 0)
             {
                 if (it->s == -1)
                 {
-                    variableNegative[id] = true;
-                    variableNegativeWithoutHelper[id] = true;
+                    generalStatistics.variableNegative[id] = true;
+                    generalStatistics.variableNegativeWithoutHelper[id] = true;
                 } else
                 {
-                    variablePositive[id] = true;
-                    variablePositiveWithoutHelper[id] = true;
+                    generalStatistics.variablePositive[id] = true;
+                    generalStatistics.variablePositiveWithoutHelper[id] = true;
                 }
             }
         }
         for (it = head.begin(); it != head.end(); it++)
         {
             uint32_t id = it->id;
-            if (atomIdsOldNew.count(id) > 0)
+            if (generalStatistics.atomIdsOldNew.count(id) > 0)
             {
                 if (it->s == -1)
                 {
-                    variableNegative[id] = true;
-                    variableNegativeWithoutHelper[id] = true;
+                    generalStatistics.variableNegative[id] = true;
+                    generalStatistics.variableNegativeWithoutHelper[id] = true;
                 } else
                 {
-                    variablePositive[id] = true;
-                    variablePositiveWithoutHelper[id] = true;
+                    generalStatistics.variablePositive[id] = true;
+                    generalStatistics.variablePositiveWithoutHelper[id] = true;
                 }
             }
         }
@@ -311,35 +323,37 @@ namespace exst
 
     void StatsCalculator::setSymbolTable(std::unordered_map<uint32_t, const char *> &table)
     {
-        this->sTable = &table;
+        this->generalStatistics.sTable = &table;
     }
 
     void StatsCalculator::calculateVariables()
     {
         std::list<unsigned int> rem;
         std::unordered_map<unsigned int, bool>::iterator it;
-        for (it = variablePositiveWithoutHelper.begin(); it != variablePositiveWithoutHelper.end(); it++)
+        for (it = generalStatistics.variablePositiveWithoutHelper.begin();
+             it != generalStatistics.variablePositiveWithoutHelper.end(); it++)
         {
-            if (sTable->count(it->first) == 0)
+            if (generalStatistics.sTable->count(it->first) == 0)
             {
                 rem.push_back((*it).first);
             }
         }
         while (rem.size() > 0)
         {
-            variablePositiveWithoutHelper.erase(rem.front());
+            generalStatistics.variablePositiveWithoutHelper.erase(rem.front());
             rem.pop_front();
         }
-        for (it = variableNegativeWithoutHelper.begin(); it != variableNegativeWithoutHelper.end(); it++)
+        for (it = generalStatistics.variableNegativeWithoutHelper.begin();
+             it != generalStatistics.variableNegativeWithoutHelper.end(); it++)
         {
-            if (sTable->count((*it).first) == 0)
+            if (generalStatistics.sTable->count((*it).first) == 0)
             {
                 rem.push_back((*it).first);
             }
         }
         while (rem.size() > 0)
         {
-            variableNegativeWithoutHelper.erase(rem.front());
+            generalStatistics.variableNegativeWithoutHelper.erase(rem.front());
             rem.pop_front();
         }
     }
@@ -382,24 +396,24 @@ namespace exst
 
         if (name.compare("printDgraph") == 0)
         {
-            inst->graphStatsCalculator.dependencyGraphStats.graphFormat = format;
+            inst->dependencyGraphStats.dGraphStatistics.graphFormat = format;
             if (file)
             {
-                inst->graphStatsCalculator.dependencyGraphStats.dGraphPath = path;
+                inst->dependencyGraphStats.dGraphStatistics.dGraphPath = path;
             }
         } else if (name.compare("printIgraph") == 0)
         {
-            inst->graphStatsCalculator.incidenceGraphStats.iGraphFormat = format;
+            inst->incidenceGraphStats.iGraphStats.iGraphFormat = format;
             if (file)
             {
-                inst->graphStatsCalculator.incidenceGraphStats.iGraphPath = path;
+                inst->incidenceGraphStats.iGraphStats.iGraphPath = path;
             }
         } else if (name.compare("printRgraph") == 0)
         {
-            inst->graphStatsCalculator.incidenceGraphStats.rGraphFormat = format;
+            inst->incidenceGraphStats.iGraphStats.rGraphFormat = format;
             if (file)
             {
-                inst->graphStatsCalculator.incidenceGraphStats.rGraphPath = path;
+                inst->incidenceGraphStats.iGraphStats.rGraphPath = path;
             }
         } else
         {

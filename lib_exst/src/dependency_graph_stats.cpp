@@ -2,10 +2,10 @@
 
 namespace exst
 {
-    void DependencyGraphStats::addRuleDependencyGraph(std::list<lit_type> body, std::list<lit_type> heads)
+    void DependencyGraphStatsCalculator::addRuleDependencyGraph(std::list<lit_type> body, std::list<lit_type> heads)
     {
-        std::unordered_map<uint32_t, uint32_t> &vertexNodeMap = atomVertexMap;
-        std::unordered_map<uint32_t, std::unordered_map<uint32_t, EdgeType>> &graph = dependencyGraph;
+        std::unordered_map<uint32_t, uint32_t> &vertexNodeMap = dGraphStatistics.atomVertexMap;
+        std::unordered_map<uint32_t, std::unordered_map<uint32_t, EdgeType>> &graph = dGraphStatistics.dependencyGraph;
 
         // add body atoms to graph if they are not in it
         std::list<exst::lit_type>::iterator it;
@@ -38,7 +38,7 @@ namespace exst
             for (b = body.begin(); b != body.end(); b++)
             {
                 uint32_t id = b->id;
-                if ((a->id) > 1 && edgeMap[a->id].count(id) == 0)
+                if ((a->id) > 1 && dGraphStatistics.edgeMap[a->id].count(id) == 0)
                 {
                     graph[vertexNodeMap[a->id]][vertexNodeMap[id]] = HEAD;
                 };

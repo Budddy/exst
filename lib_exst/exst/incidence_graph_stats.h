@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <list>
 #include <htd/MultiGraphFactory.hpp>
-#include <exst/ExstTypes.h>
+#include <exst/exst_types.h>
 #include <clasp/literal.h>
 
 /**
@@ -12,19 +12,72 @@
  */
 namespace exst
 {
-    class IncidenceGraphStats
+    struct IncidenceGraphStatistics
+    {
+        ///
+        unsigned long long assignmentCount = 0;
+        ///
+        unsigned long long widthCalcInterval = 1000;
+        ///
+        bool calculateTreeWidth = false;
+        ///
+        std::string iGraphPath = "";
+        ///
+        std::string rGraphPath = "";
+        ///
+        GraphFormat iGraphFormat = NONE;
+        ///
+        GraphFormat rGraphFormat = NONE;
+
+        ///
+        htd::LibraryInstance *libraryInstance;
+
+        ///complete incidence graph
+        MyGraph incidenceGraph;
+        htd::IMutableMultiGraph *iGraph;
+
+        ///incidence graph of reduct
+        MyGraph incidenceGraphReduct;
+        htd::IMutableMultiGraph *iGraphReduct;
+
+        ///mapping from atoms to vertices in the incidence graph
+        std::unordered_map<uint32_t, uint32_t> atomVertexMap;
+
+        ///maps the rules to the bodies
+        MyGraph ruleBodyMapReduct;
+
+        ///maps the rules to the bodies
+        MyGraph ruleBodyMap;
+
+        ///maps atoms and ids
+        std::unordered_map<uint32_t, uint32_t> *atomIds;
+
+        ///list of the treewidth of the incidence graph reductions
+        std::list<float> widths;
+
+        ///the literals that are currently assigned to the solution
+        Clasp::LitVec current_assignment;
+
+        ///the literals that are currently assigned to the solution
+        int numReducts = 0;
+        std::list<std::string> rGraphs;
+    };
+
+    class IncidenceGraphStatsCalculator
     {
     public:
+
         /**
          * Constructor of the IncidenceGraphStats class.
          * @param atomIds used to math atom ids before and after preprocessing
          * @return a new instance of the incidence graph stat calculator
          */
-        IncidenceGraphStats(std::unordered_map<uint32_t, uint32_t> &atomIds) : atomIds(atomIds)
+        IncidenceGraphStatsCalculator(std::unordered_map<uint32_t, uint32_t> *atomIds)
         {
-            libraryInstance = htd::createManagementInstance(htd::Id::FIRST);
-            htd::MultiGraphFactory &factory = libraryInstance->multiGraphFactory();
-            iGraph = factory.getMultiGraph();
+            iGraphStats.atomIds = atomIds;
+            iGraphStats.libraryInstance = htd::createManagementInstance(htd::Id::FIRST);
+            htd::MultiGraphFactory &factory = iGraphStats.libraryInstance->multiGraphFactory();
+            iGraphStats.iGraph = factory.getMultiGraph();
         }
 
         /**
@@ -57,7 +110,7 @@ namespace exst
          */
         htd::IMutableMultiGraph *getHTDIncidenceGraph()
         {
-            return iGraph;
+            return iGraphStats.iGraph;
         }
 
         /**
@@ -66,7 +119,7 @@ namespace exst
          */
         htd::IMutableMultiGraph *getHTDIncidenceGraphReduct()
         {
-            return iGraphReduct;
+            return iGraphStats.iGraphReduct;
         }
 
         /**
@@ -75,7 +128,7 @@ namespace exst
          */
         MyGraph &getIncidenceGraph()
         {
-            return incidenceGraph;
+            return iGraphStats.incidenceGraph;
         }
 
         /**
@@ -84,7 +137,7 @@ namespace exst
          */
         MyGraph &getIncidenceGraphReduct()
         {
-            return incidenceGraphReduct;
+            return iGraphStats.incidenceGraphReduct;
         }
 
         /**
@@ -93,55 +146,16 @@ namespace exst
          */
         std::list<float> *getWidths()
         {
-            return &widths;
+            return &iGraphStats.widths;
         }
 
         std::list<std::string> *getRGraphs()
         {
-            return &rGraphs;
+            return &iGraphStats.rGraphs;
         }
 
-        unsigned long long assignmentCount = 0;
-        unsigned long long widthCalcInterval = 1000;
-        bool calculateTreeWidth = false;
-        std::string iGraphPath = "";
-        std::string rGraphPath = "";
-        GraphFormat iGraphFormat = NONE;
-        GraphFormat rGraphFormat = NONE;
+        IncidenceGraphStatistics iGraphStats;
 
-    private:
-
-        htd::LibraryInstance *libraryInstance;
-
-        //complete incidence graph
-        MyGraph incidenceGraph;
-        htd::IMutableMultiGraph *iGraph;
-
-        //incidence graph of reduct
-        MyGraph incidenceGraphReduct;
-        htd::IMutableMultiGraph *iGraphReduct;
-
-        //mapping from atoms to vertices in the incidence graph
-        std::unordered_map<uint32_t, uint32_t> atomVertexMap;
-
-        //maps the rules to the bodies
-        MyGraph ruleBodyMapReduct;
-
-        //maps the rules to the bodies
-        MyGraph ruleBodyMap;
-
-        //maps atoms and ids
-        std::unordered_map<uint32_t, uint32_t> &atomIds;
-
-        //list of the treewidth of the incidence graph reductions
-        std::list<float> widths;
-
-        //the literals that are currently assigned to the solution
-        Clasp::LitVec current_assignment;
-
-        //the literals that are currently assigned to the solution
-        int numReducts = 0;
-        std::list<std::string> rGraphs;
     };
 
     /**
