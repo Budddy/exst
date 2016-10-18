@@ -12,6 +12,7 @@ namespace exst
             CPPUNIT_TEST(testDIMACSFormat);
             CPPUNIT_TEST(testGMLFormat);
             CPPUNIT_TEST(testGrFormat);
+            CPPUNIT_TEST(testNONEFormat);
         CPPUNIT_TEST_SUITE_END();
     private:
     public:
@@ -97,7 +98,7 @@ namespace exst
                                                                                   ",\"3 4\"\n"
                                                                                   ",\"3 5\"\n"
                                                                                   ",\"4 6\"\n"
-                                                                                  ",\"5 6\""), getGrFormat(graph));
+                                                                                  ",\"5 6\""), getFormatedGraph(GR,graph));
         }
 
         void testGMLFormat()
@@ -149,7 +150,7 @@ namespace exst
                                                                                   "  ]  edge [\n"
                                                                                   "    source 5\n"
                                                                                   "    target 6\n"
-                                                                                  "  ]]"), getGMLFormat(graph));
+                                                                                  "  ]]"), getFormatedGraph(GML,graph));
         }
 
         void testDIMACSFormat()
@@ -164,7 +165,13 @@ namespace exst
                                                                                   ",\"e 3 4\"\n"
                                                                                   ",\"e 3 5\"\n"
                                                                                   ",\"e 4 6\"\n"
-                                                                                  ",\"e 5 6\""), getDIMACSFormat(graph));
+                                                                                  ",\"e 5 6\""), getFormatedGraph(DIMACS,graph));
+        }
+
+        void testNONEFormat()
+        {
+            MyGraph graph = getTestGraph();
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Assert edge count", std::string(""), getFormatedGraph(NONE,graph));
         }
 
         MyGraph getTestGraph(){

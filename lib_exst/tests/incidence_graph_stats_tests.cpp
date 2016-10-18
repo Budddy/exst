@@ -7,6 +7,12 @@ namespace exst
     CPPUNIT_TEST_SUITE(IncidenceTests);
             CPPUNIT_TEST(testSmallGraph);
             CPPUNIT_TEST(testIncidenceGraph);
+            CPPUNIT_TEST(testupdateAssignment);
+            CPPUNIT_TEST(testgetStatistics);
+            CPPUNIT_TEST(testaddId);
+            CPPUNIT_TEST(testgetAdditionalStatistics);
+            CPPUNIT_TEST(testgetTreewidth);
+            CPPUNIT_TEST(testupdateAssignment);
         CPPUNIT_TEST_SUITE_END();
     private:
     public:
@@ -216,6 +222,166 @@ namespace exst
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count Reduct", (size_t) 18,
                                          incidenceGraphStats->iGraphStats.iGraphReduct->vertexCount());
         }
+
+        void testgetTreewidth()
+        {
+            std::list<lit_type> body;
+            std::list<lit_type> head;
+            body.push_back(*new lit_type(2, NEGATIVE));
+            body.push_back(*new lit_type(3, NEGATIVE));
+            incidenceGraphStats->addRule(body, head);
+
+            head.clear();
+            body.clear();
+            body.push_back(*new lit_type(4, NEGATIVE));
+            body.push_back(*new lit_type(5, POSITIVE));
+            incidenceGraphStats->addRule(body, head);
+
+            head.clear();
+            body.clear();
+            body.push_back(*new lit_type(5, POSITIVE));
+            body.push_back(*new lit_type(6, POSITIVE));
+            head.push_back(*new lit_type(7, POSITIVE));
+            incidenceGraphStats->addRule(body, head);
+
+            head.clear();
+            body.clear();
+            head.push_back(*new lit_type(8, POSITIVE));
+            incidenceGraphStats->addRule(body, head);
+
+            head.clear();
+            body.clear();
+            head.push_back(*new lit_type(9, NEGATIVE));
+            incidenceGraphStats->addRule(body, head);
+
+            head.clear();
+            body.clear();
+            body.push_back(*new lit_type(6, POSITIVE));
+            body.push_back(*new lit_type(4, POSITIVE));
+            head.push_back(*new lit_type(2, POSITIVE));
+            incidenceGraphStats->addRule(body, head);
+
+            head.clear();
+            body.clear();
+            body.push_back(*new lit_type(3, NEGATIVE));
+            body.push_back(*new lit_type(5, POSITIVE));
+            head.push_back(*new lit_type(7, POSITIVE));
+            incidenceGraphStats->addRule(body, head);
+
+            head.clear();
+            body.clear();
+            body.push_back(*new lit_type(11, NEGATIVE));
+            body.push_back(*new lit_type(9, NEGATIVE));
+            head.push_back(*new lit_type(5, POSITIVE));
+            incidenceGraphStats->addRule(body, head);
+
+            head.clear();
+            body.clear();
+            body.push_back(*new lit_type(6, POSITIVE));
+            body.push_back(*new lit_type(15, POSITIVE));
+            incidenceGraphStats->addRule(body, head);
+
+            head.clear();
+            body.clear();
+            body.push_back(*new lit_type(13, NEGATIVE));
+            body.push_back(*new lit_type(9, POSITIVE));
+            incidenceGraphStats->addRule(body, head);
+
+            size_t width = getTreewidth(incidenceGraphStats->iGraphStats.iGraph,
+                                        incidenceGraphStats->iGraphStats.libraryInstance);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Treewidth", (size_t) 4, width);
+        };
+
+        void testupdateAssignment()
+        {
+            std::list<lit_type> body;
+            std::list<lit_type> head;
+            body.push_back(*new lit_type(2, NEGATIVE));
+            body.push_back(*new lit_type(3, NEGATIVE));
+            incidenceGraphStats->addRule(body, head);
+
+            head.clear();
+            body.clear();
+            body.push_back(*new lit_type(4, NEGATIVE));
+            body.push_back(*new lit_type(5, POSITIVE));
+            incidenceGraphStats->addRule(body, head);
+
+            head.clear();
+            body.clear();
+            body.push_back(*new lit_type(5, POSITIVE));
+            body.push_back(*new lit_type(6, POSITIVE));
+            head.push_back(*new lit_type(7, POSITIVE));
+            incidenceGraphStats->addRule(body, head);
+
+            head.clear();
+            body.clear();
+            head.push_back(*new lit_type(8, POSITIVE));
+            incidenceGraphStats->addRule(body, head);
+
+            head.clear();
+            body.clear();
+            head.push_back(*new lit_type(9, NEGATIVE));
+            incidenceGraphStats->addRule(body, head);
+
+            head.clear();
+            body.clear();
+            body.push_back(*new lit_type(6, POSITIVE));
+            body.push_back(*new lit_type(4, POSITIVE));
+            head.push_back(*new lit_type(2, POSITIVE));
+            incidenceGraphStats->addRule(body, head);
+
+            head.clear();
+            body.clear();
+            body.push_back(*new lit_type(3, NEGATIVE));
+            body.push_back(*new lit_type(5, POSITIVE));
+            head.push_back(*new lit_type(7, POSITIVE));
+            incidenceGraphStats->addRule(body, head);
+
+            head.clear();
+            body.clear();
+            body.push_back(*new lit_type(11, NEGATIVE));
+            body.push_back(*new lit_type(9, NEGATIVE));
+            head.push_back(*new lit_type(5, POSITIVE));
+            incidenceGraphStats->addRule(body, head);
+
+            head.clear();
+            body.clear();
+            body.push_back(*new lit_type(6, POSITIVE));
+            body.push_back(*new lit_type(15, POSITIVE));
+            incidenceGraphStats->addRule(body, head);
+
+            head.clear();
+            body.clear();
+            body.push_back(*new lit_type(13, NEGATIVE));
+            body.push_back(*new lit_type(9, POSITIVE));
+            incidenceGraphStats->addRule(body, head);
+
+            ProgramParameter::getInstance().widthCalcInterval=1;
+
+            Clasp::Literal l(1,false);
+            Clasp::LitVec vec(1,l);
+            incidenceGraphStats->updateAssignment(vec);
+            incidenceGraphStats->iGraphStats.current_assignment.at(0)==l;
+
+            Clasp::Literal l2(2,false);
+            Clasp::LitVec vec2(2,l);
+            incidenceGraphStats->updateAssignment(vec2);
+            incidenceGraphStats->iGraphStats.current_assignment.at(0)==l;
+
+            Clasp::Literal l3(3,false);
+            Clasp::LitVec vec3(3,l);
+            incidenceGraphStats->updateAssignment(vec3);
+            incidenceGraphStats->iGraphStats.current_assignment.at(0)==l;
+        };
+
+        void testgetStatistics()
+        {};
+
+        void testaddId()
+        {};
+
+        void testgetAdditionalStatistics()
+        {};
     };
 
     CPPUNIT_TEST_SUITE_REGISTRATION(IncidenceTests);

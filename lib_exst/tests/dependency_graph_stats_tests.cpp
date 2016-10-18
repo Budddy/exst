@@ -5,7 +5,9 @@ namespace exst
     class DependencyTests : public AbstractExstTest
     {
     CPPUNIT_TEST_SUITE(DependencyTests);
-            CPPUNIT_TEST(testCreateGraph);
+            CPPUNIT_TEST(testaddRule);
+            CPPUNIT_TEST(testgetStatistics);
+            CPPUNIT_TEST(testgetAdditionalStatistics);
         CPPUNIT_TEST_SUITE_END();
     private:
     public:
@@ -19,7 +21,7 @@ namespace exst
             AbstractExstTest::tearDown();
         }
 
-        void testCreateGraph()
+        void testaddRule()
         {
 
             std::list<lit_type> body;
@@ -92,6 +94,12 @@ namespace exst
                                          edgeCount(dependencyGraphStats->getDependencyGraph()));
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (size_t) 8, dependencyGraphStats->getDependencyGraph().size());
         }
+
+        void testgetStatistics()
+        {};
+
+        void testgetAdditionalStatistics()
+        {};
     };
 
     CPPUNIT_TEST_SUITE_REGISTRATION(DependencyTests);

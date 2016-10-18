@@ -6,6 +6,7 @@ namespace exst
     {
     CPPUNIT_TEST_SUITE(SystemTests);
             CPPUNIT_TEST(testMultipleConstraintsAndNonConstraintsWithHelpersSystem);
+            CPPUNIT_TEST(testUpdateAssignment);
         CPPUNIT_TEST_SUITE_END();
     private:
     public:
@@ -164,6 +165,43 @@ namespace exst
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", std::string("]"), line);
 
+        }
+
+        void testUpdateAssignment(){
+
+            std::list<lit_type> body;
+            std::list<lit_type> head;
+            body.push_back(*new lit_type(2, NEGATIVE));
+            body.push_back(*new lit_type(3, NEGATIVE));
+            extendedStatistics->addRule(body, head);
+
+            head.clear();
+            body.clear();
+            body.push_back(*new lit_type(4, NEGATIVE));
+            body.push_back(*new lit_type(5, POSITIVE));
+            extendedStatistics->addRule(body, head);
+
+            head.clear();
+            body.clear();
+            body.push_back(*new lit_type(5, POSITIVE));
+            body.push_back(*new lit_type(6, POSITIVE));
+            head.push_back(*new lit_type(7, POSITIVE));
+            extendedStatistics->addRule(body, head);
+
+            head.clear();
+            body.clear();
+            head.push_back(*new lit_type(8, POSITIVE));
+            extendedStatistics->addRule(body, head);
+
+            head.clear();
+            body.clear();
+            head.push_back(*new lit_type(9, NEGATIVE));
+            extendedStatistics->addRule(body, head);
+
+            Clasp::Literal l(2,false);
+            Clasp::LitVec vec(1,l);
+            this->extendedStatistics->updateAssignment(vec);
+            incidenceGraphStats->iGraphStats.current_assignment.at(0)==l;
         }
     };
 

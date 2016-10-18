@@ -12,6 +12,7 @@ namespace exst
             CPPUNIT_TEST(testMultipleConstraintsAndNonConstraints);
             CPPUNIT_TEST(testMultipleConstraintsAndNonConstraintsWithHelpers);
             CPPUNIT_TEST(testParseParameter);
+            CPPUNIT_TEST(testgetStatistics);
         CPPUNIT_TEST_SUITE_END();
     private:
     public:
@@ -505,6 +506,9 @@ namespace exst
             CPPUNIT_ASSERT_EQUAL_MESSAGE("", std::string("./rGraph"),
                                          ProgramParameter::getInstance().rGraphPath);
         }
+
+        void testgetStatistics()
+        {};
     };
 
     CPPUNIT_TEST_SUITE_REGISTRATION(ExstTests);
