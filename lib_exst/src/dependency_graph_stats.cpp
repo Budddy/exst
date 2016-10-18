@@ -1,8 +1,9 @@
 #include <exst/dependency_graph_stats.h>
+#include <fstream>
 
 namespace exst
 {
-    void DependencyGraphStatsCalculator::addRuleDependencyGraph(std::list<lit_type> body, std::list<lit_type> heads)
+    void DependencyGraphStatsCalculator::addRule(std::list<lit_type> body, std::list<lit_type> heads)
     {
         std::unordered_map<uint32_t, uint32_t> &vertexNodeMap = dGraphStatistics.atomVertexMap;
         std::unordered_map<uint32_t, std::unordered_map<uint32_t, EdgeType>> &graph = dGraphStatistics.dependencyGraph;
@@ -14,7 +15,7 @@ namespace exst
             uint32_t id = it->id;
             if (vertexNodeMap.count(id) == 0)
             {
-                vertexNodeMap[id] = graph.size();
+                vertexNodeMap[id] = (unsigned int) graph.size();
                 graph[vertexNodeMap[id]];
             }
         }
@@ -25,7 +26,7 @@ namespace exst
             uint32_t id = it->id;
             if (vertexNodeMap.count(id) == 0)
             {
-                vertexNodeMap[id] = graph.size();
+                vertexNodeMap[id] = (unsigned int) graph.size();
                 graph[vertexNodeMap[id]];
             }
         }
@@ -45,4 +46,40 @@ namespace exst
             }
         }
     }
+
+    std::list<std::string> DependencyGraphStatsCalculator::getAdditionalStatistics()
+    {
+        std::list<std::string> slist;
+        std::string str = "";
+        if (ProgramParameter::getInstance().dGraphFormat != NONE)
+        {
+
+            if (ProgramParameter::getInstance().dGraphPath.length() != 0)
+            {
+                std::ofstream fileStream;
+                fileStream.open(ProgramParameter::getInstance().dGraphPath, std::ofstream::out);
+                fileStream << getFormatedGraph(ProgramParameter::getInstance().dGraphFormat, getDependencyGraph());
+                fileStream.close();
+            } else
+            {
+                str += "\"Dependency Graph\" : \n[";
+                str += getFormatedGraph(ProgramParameter::getInstance().dGraphFormat, getDependencyGraph());
+                str += "]";
+                slist.push_back(str);
+            }
+        }
+        return std::list<std::string>();
+    }
+
+    std::list<std::pair<std::string, std::string>> DependencyGraphStatsCalculator::getStatistics()
+    {
+        std::list<std::pair<std::string, std::string>> ret;
+
+        ret.push_back(
+                std::pair<std::string, std::string>("Dependency Graph Nodes", std::to_string(this->dGraphStatistics.dependencyGraph.size())));
+        ret.push_back(
+                std::pair<std::string, std::string>("Dependency Graph Edges", std::to_string(edgeCount(this->dGraphStatistics.dependencyGraph))));
+        return ret;
+    }
+
 }

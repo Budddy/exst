@@ -11,7 +11,8 @@
 #include <cppunit/XmlOutputter.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <exst/dependency_graph_stats.h>
-#include <exst/extended_stats_calculator.h>
+#include <exst/program_stats.h>
+#include <exst/exst_statistics.h>
 
 namespace exst
 {
@@ -20,25 +21,32 @@ namespace exst
     public:
         void setUp()
         {
+            extendedStatistics->clearProgramStatistics();
             dependencyGraphStats = new DependencyGraphStatsCalculator();
-            statsCalculator = new StatsCalculator();
-            atomIds = new std::unordered_map<uint32_t, uint32_t>();
-            incidenceGraphStats = new IncidenceGraphStatsCalculator(atomIds);
+            statsCalculator = new ProgramStatsCalculator();
+            incidenceGraphStats = new IncidenceGraphStatsCalculator();
+            atomIds = &incidenceGraphStats->iGraphStats.atomIds;
+            extendedStatistics->registerProgramStatistics(dependencyGraphStats);
+            extendedStatistics->registerProgramStatistics(statsCalculator);
+            extendedStatistics->registerProgramStatistics(incidenceGraphStats);
+            /*ProgramParameter p;
+            parameter = p;*/
         }
 
         void tearDown()
         {
             delete dependencyGraphStats;
             delete incidenceGraphStats;
-            delete atomIds;
             delete statsCalculator;
+
         }
 
     protected:
         DependencyGraphStatsCalculator *dependencyGraphStats;
-        StatsCalculator *statsCalculator;
+        ProgramStatsCalculator *statsCalculator;
         IncidenceGraphStatsCalculator *incidenceGraphStats;
         std::unordered_map<uint32_t, uint32_t> *atomIds;
+        ExtendedStatistics* extendedStatistics = &ExtendedStatistics::getInstance();
     };
 };
 

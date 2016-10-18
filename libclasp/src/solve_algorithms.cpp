@@ -23,7 +23,7 @@
 #include <clasp/minimize_constraint.h>
 #include <clasp/util/timer.h>
 #include <clasp/util/atomic.h>
-#include <exst/extended_stats_calculator.h>
+#include <exst/program_stats.h>
 namespace Clasp { 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Basic solve

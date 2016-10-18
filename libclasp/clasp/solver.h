@@ -27,7 +27,8 @@
 #include <clasp/solver_types.h>
 #include <clasp/solver_strategies.h>
 #include <clasp/shared_context.h>
-#include <exst/extended_stats_calculator.h>
+#include <exst/program_stats.h>
+#include <exst/exst_statistics.h>
 
 namespace Clasp { 
 
@@ -1037,7 +1038,7 @@ public:
 	 */
 	bool select(Solver& s) {
         bool ret = s.numFreeVars() != 0 && s.assume(doSelect(s));
-        exst::StatsCalculator::getInstance().incidenceGraphStats.updateAssignment(s.assignment().trail);
+        exst::ExtendedStatistics::getInstance().updateAssignment(s.assignment().trail);
         return ret; 
     }
 

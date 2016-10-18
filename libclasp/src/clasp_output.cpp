@@ -28,7 +28,7 @@
 #include <climits>
 #include <string>
 #include <cstdlib>
-#include <exst/extended_stats_calculator.h>
+#include <exst/program_stats.h>
 
 #if !defined(_WIN32)
 #include <signal.h>
@@ -197,8 +197,8 @@ void StatsVisitor::visitStats(const SharedContext& ctx, const Asp::LpStats* lp, 
 	for(it = ctx.symbolTable().begin(); it != ctx.symbolTable().end(); it++){
 		table[it->first]=it->second.name.c_str();
 	}
-	exst::StatsCalculator::getInstance().setSymbolTable(table);
-	exst::StatsCalculator::getInstance().printExtendedStats();
+	exst::ExtendedStatistics::getInstance().setSymbolTable(table);
+	exst::ExtendedStatistics::getInstance().printStatistics();
 }
 void StatsVisitor::visitProblemStats(const Clasp::ProblemStats& stats, const Clasp::Asp::LpStats* lp) {
 	if (lp) { visitLogicProgramStats(*lp); }

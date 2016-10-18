@@ -32,7 +32,7 @@ namespace exst
             bodies.push_back(*new lit_type(3, POSITIVE));
             std::list<lit_type> heads;
             heads.push_back(*new lit_type(4, POSITIVE));
-            statsCalculator->parseRule(bodies, heads);
+            statsCalculator->addRule(bodies, heads);
 
             statsCalculator->addId(2, 2);
             statsCalculator->addId(3, 3);
@@ -52,12 +52,14 @@ namespace exst
                                          statsCalculator->generalStatistics.numNonHornClauses);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Dual Horn Clauses", (uint32_t) 0,
                                          statsCalculator->generalStatistics.numNonDualHornClauses);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size", (uint32_t) 3, statsCalculator->generalStatistics.maxClauseSize);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size", (uint32_t) 3,
+                                         statsCalculator->generalStatistics.maxClauseSize);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Positive", (uint32_t) 2,
                                          statsCalculator->generalStatistics.maxClauseSizePositive);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Negative", (uint32_t) 1,
                                          statsCalculator->generalStatistics.maxClauseSizeNegative);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences", (std::size_t) 3, statsCalculator->generalStatistics.atomOccurences.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences", (std::size_t) 3,
+                                         statsCalculator->generalStatistics.atomOccurences.size());
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Positive", (std::size_t) 2,
                                          statsCalculator->generalStatistics.atomOccurencesPositive.size());
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Negative", (std::size_t) 1,
@@ -78,7 +80,8 @@ namespace exst
                                          statsCalculator->generalStatistics.atomOccurencesConstraint);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Non Constraint", (uint32_t) 0,
                                          statsCalculator->generalStatistics.atomOccurencesNonConstraint);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Constraint", (uint32_t) 1, statsCalculator->generalStatistics.numConstraints);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Constraint", (uint32_t) 1,
+                                         statsCalculator->generalStatistics.numConstraints);
         }
 
         void testOneConstraintAndOneFact()
@@ -87,12 +90,12 @@ namespace exst
             std::list<lit_type> head;
             body.push_back(*new lit_type(2, NEGATIVE));
             body.push_back(*new lit_type(3, NEGATIVE));
-            statsCalculator->parseRule(body, head);
+            statsCalculator->addRule(body, head);
 
             head.clear();
             body.clear();
             head.push_back(*new lit_type(4, POSITIVE));
-            statsCalculator->parseRule(body, head);
+            statsCalculator->addRule(body, head);
 
             statsCalculator->addId(2, 2);
             statsCalculator->addId(3, 3);
@@ -111,12 +114,14 @@ namespace exst
                                          statsCalculator->generalStatistics.numNonHornClauses);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Dual Horn Clauses", (uint32_t) 0,
                                          statsCalculator->generalStatistics.numNonDualHornClauses);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size", (uint32_t) 2, statsCalculator->generalStatistics.maxClauseSize);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size", (uint32_t) 2,
+                                         statsCalculator->generalStatistics.maxClauseSize);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Positive", (uint32_t) 1,
                                          statsCalculator->generalStatistics.maxClauseSizePositive);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Negative", (uint32_t) 2,
                                          statsCalculator->generalStatistics.maxClauseSizeNegative);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences", (std::size_t) 3, statsCalculator->generalStatistics.atomOccurences.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences", (std::size_t) 3,
+                                         statsCalculator->generalStatistics.atomOccurences.size());
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Positive", (std::size_t) 1,
                                          statsCalculator->generalStatistics.atomOccurencesPositive.size());
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Negative", (std::size_t) 2,
@@ -137,7 +142,8 @@ namespace exst
                                          statsCalculator->generalStatistics.atomOccurencesConstraint);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Non Constraint", (uint32_t) 1,
                                          statsCalculator->generalStatistics.atomOccurencesNonConstraint);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Constraint", (uint32_t) 1, statsCalculator->generalStatistics.numConstraints);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Constraint", (uint32_t) 1,
+                                         statsCalculator->generalStatistics.numConstraints);
         }
 
         void testMultipleConstraints()
@@ -146,39 +152,39 @@ namespace exst
             std::list<lit_type> head;
             body.push_back(*new lit_type(2, NEGATIVE));
             body.push_back(*new lit_type(3, NEGATIVE));
-            statsCalculator->parseRule(body, head);
+            statsCalculator->addRule(body, head);
 
             head.clear();
             body.clear();
             body.push_back(*new lit_type(4, NEGATIVE));
             body.push_back(*new lit_type(5, POSITIVE));
-            statsCalculator->parseRule(body, head);
+            statsCalculator->addRule(body, head);
 
             head.clear();
             body.clear();
             body.push_back(*new lit_type(2, POSITIVE));
             body.push_back(*new lit_type(3, NEGATIVE));
-            statsCalculator->parseRule(body, head);
+            statsCalculator->addRule(body, head);
 
             head.clear();
             body.clear();
             body.push_back(*new lit_type(4, POSITIVE));
             body.push_back(*new lit_type(5, POSITIVE));
-            statsCalculator->parseRule(body, head);
+            statsCalculator->addRule(body, head);
 
             head.clear();
             body.clear();
             body.push_back(*new lit_type(2, NEGATIVE));
             body.push_back(*new lit_type(3, NEGATIVE));
             head.push_back(*new lit_type(6, POSITIVE));
-            statsCalculator->parseRule(body, head);
+            statsCalculator->addRule(body, head);
 
             head.clear();
             body.clear();
             body.push_back(*new lit_type(5, POSITIVE));
             body.push_back(*new lit_type(6, POSITIVE));
             head.push_back(*new lit_type(7, POSITIVE));
-            statsCalculator->parseRule(body, head);
+            statsCalculator->addRule(body, head);
 
             statsCalculator->addId(2, 2);
             statsCalculator->addId(3, 3);
@@ -204,7 +210,8 @@ namespace exst
                                          statsCalculator->generalStatistics.numNonHornClauses);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Dual Horn Clauses", (uint32_t) 2,
                                          statsCalculator->generalStatistics.numNonDualHornClauses);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size", (uint32_t) 3, statsCalculator->generalStatistics.maxClauseSize);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size", (uint32_t) 3,
+                                         statsCalculator->generalStatistics.maxClauseSize);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Positive", (uint32_t) 3,
                                          statsCalculator->generalStatistics.maxClauseSizePositive);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Negative", (uint32_t) 2,
@@ -231,7 +238,8 @@ namespace exst
                                          statsCalculator->generalStatistics.atomOccurencesConstraint);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Non Constraint", (uint32_t) 0,
                                          statsCalculator->generalStatistics.atomOccurencesNonConstraint);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Constraint", (uint32_t) 6, statsCalculator->generalStatistics.numConstraints);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Constraint", (uint32_t) 6,
+                                         statsCalculator->generalStatistics.numConstraints);
         }
 
         void testMultipleFacts()
@@ -239,17 +247,17 @@ namespace exst
             std::list<lit_type> body;
             std::list<lit_type> head;
             head.push_back(*new lit_type(3, NEGATIVE));
-            statsCalculator->parseRule(body, head);
+            statsCalculator->addRule(body, head);
 
             head.clear();
             body.clear();
             head.push_back(*new lit_type(5, POSITIVE));
-            statsCalculator->parseRule(body, head);
+            statsCalculator->addRule(body, head);
 
             head.clear();
             body.clear();
             head.push_back(*new lit_type(3, NEGATIVE));
-            statsCalculator->parseRule(body, head);
+            statsCalculator->addRule(body, head);
 
             std::unordered_map<uint32_t, const char *> table;
             table[1] = "";
@@ -266,7 +274,8 @@ namespace exst
                                          statsCalculator->generalStatistics.numNonHornClauses);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Dual Horn Clauses", (uint32_t) 0,
                                          statsCalculator->generalStatistics.numNonDualHornClauses);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size", (uint32_t) 1, statsCalculator->generalStatistics.maxClauseSize);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size", (uint32_t) 1,
+                                         statsCalculator->generalStatistics.maxClauseSize);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Positive", (uint32_t) 1,
                                          statsCalculator->generalStatistics.maxClauseSizePositive);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Negative", (uint32_t) 1,
@@ -293,7 +302,8 @@ namespace exst
                                          statsCalculator->generalStatistics.atomOccurencesConstraint);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Non Constraint", (uint32_t) 3,
                                          statsCalculator->generalStatistics.atomOccurencesNonConstraint);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Constraint", (uint32_t) 0, statsCalculator->generalStatistics.numConstraints);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Constraint", (uint32_t) 0,
+                                         statsCalculator->generalStatistics.numConstraints);
         }
 
         void testMultipleConstraintsAndNonConstraints()
@@ -303,30 +313,30 @@ namespace exst
             std::list<lit_type> head;
             body.push_back(*new lit_type(2, NEGATIVE));
             body.push_back(*new lit_type(3, NEGATIVE));
-            statsCalculator->parseRule(body, head);
+            statsCalculator->addRule(body, head);
 
             head.clear();
             body.clear();
             body.push_back(*new lit_type(4, NEGATIVE));
             body.push_back(*new lit_type(5, POSITIVE));
-            statsCalculator->parseRule(body, head);
+            statsCalculator->addRule(body, head);
 
             head.clear();
             body.clear();
             body.push_back(*new lit_type(5, POSITIVE));
             body.push_back(*new lit_type(6, POSITIVE));
             head.push_back(*new lit_type(7, POSITIVE));
-            statsCalculator->parseRule(body, head);
+            statsCalculator->addRule(body, head);
 
             head.clear();
             body.clear();
             head.push_back(*new lit_type(8, POSITIVE));
-            statsCalculator->parseRule(body, head);
+            statsCalculator->addRule(body, head);
 
             head.clear();
             body.clear();
             head.push_back(*new lit_type(9, NEGATIVE));
-            statsCalculator->parseRule(body, head);
+            statsCalculator->addRule(body, head);
 
             statsCalculator->addId(2, 2);
             statsCalculator->addId(3, 3);
@@ -354,7 +364,8 @@ namespace exst
                                          statsCalculator->generalStatistics.numNonHornClauses);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Dual Horn Clauses", (uint32_t) 1,
                                          statsCalculator->generalStatistics.numNonDualHornClauses);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size", (uint32_t) 3, statsCalculator->generalStatistics.maxClauseSize);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size", (uint32_t) 3,
+                                         statsCalculator->generalStatistics.maxClauseSize);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Positive", (uint32_t) 3,
                                          statsCalculator->generalStatistics.maxClauseSizePositive);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Negative", (uint32_t) 2,
@@ -381,7 +392,8 @@ namespace exst
                                          statsCalculator->generalStatistics.atomOccurencesConstraint);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Non Constraint", (uint32_t) 2,
                                          statsCalculator->generalStatistics.atomOccurencesNonConstraint);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Constraint", (uint32_t) 3, statsCalculator->generalStatistics.numConstraints);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Constraint", (uint32_t) 3,
+                                         statsCalculator->generalStatistics.numConstraints);
         }
 
         void testMultipleConstraintsAndNonConstraintsWithHelpers()
@@ -391,30 +403,30 @@ namespace exst
             std::list<lit_type> head;
             body.push_back(*new lit_type(2, NEGATIVE));
             body.push_back(*new lit_type(3, NEGATIVE));
-            statsCalculator->parseRule(body, head);
+            statsCalculator->addRule(body, head);
 
             head.clear();
             body.clear();
             body.push_back(*new lit_type(4, NEGATIVE));
             body.push_back(*new lit_type(5, POSITIVE));
-            statsCalculator->parseRule(body, head);
+            statsCalculator->addRule(body, head);
 
             head.clear();
             body.clear();
             body.push_back(*new lit_type(5, POSITIVE));
             body.push_back(*new lit_type(6, POSITIVE));
             head.push_back(*new lit_type(7, POSITIVE));
-            statsCalculator->parseRule(body, head);
+            statsCalculator->addRule(body, head);
 
             head.clear();
             body.clear();
             head.push_back(*new lit_type(8, POSITIVE));
-            statsCalculator->parseRule(body, head);
+            statsCalculator->addRule(body, head);
 
             head.clear();
             body.clear();
             head.push_back(*new lit_type(9, NEGATIVE));
-            statsCalculator->parseRule(body, head);
+            statsCalculator->addRule(body, head);
 
             statsCalculator->addId(2, 2);
             statsCalculator->addId(3, 3);
@@ -438,7 +450,8 @@ namespace exst
                                          statsCalculator->generalStatistics.numNonHornClauses);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Dual Horn Clauses", (uint32_t) 1,
                                          statsCalculator->generalStatistics.numNonDualHornClauses);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size", (uint32_t) 3, statsCalculator->generalStatistics.maxClauseSize);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size", (uint32_t) 3,
+                                         statsCalculator->generalStatistics.maxClauseSize);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Positive", (uint32_t) 3,
                                          statsCalculator->generalStatistics.maxClauseSizePositive);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Clause Size Negative", (uint32_t) 2,
@@ -465,28 +478,32 @@ namespace exst
                                          statsCalculator->generalStatistics.atomOccurencesConstraint);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Atom Occurences Non Constraint", (uint32_t) 2,
                                          statsCalculator->generalStatistics.atomOccurencesNonConstraint);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Constraint", (uint32_t) 3, statsCalculator->generalStatistics.numConstraints);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Constraint", (uint32_t) 3,
+                                         statsCalculator->generalStatistics.numConstraints);
         }
 
         void testParseParameter()
         {
-            CPPUNIT_ASSERT_MESSAGE("", parseParameter(statsCalculator, std::string("printDgraph"),
+            CPPUNIT_ASSERT_MESSAGE("", ProgramParameter::parseParameter(nullptr, std::string("printDgraph"),
                                                       std::string("0,./dGraph")));
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("", GraphFormat::DIMACS, statsCalculator->dependencyGraphStats.dGraphStatistics.graphFormat);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("", GraphFormat::DIMACS,
+                                         ProgramParameter::getInstance().dGraphFormat);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("", std::string("./dGraph"),
-                                         statsCalculator->dependencyGraphStats.dGraphStatistics.dGraphPath);
+                                         ProgramParameter::getInstance().dGraphPath);
 
-            CPPUNIT_ASSERT_MESSAGE("", parseParameter(statsCalculator, std::string("printIgraph"),
-                                                      std::string("0,./iGraph")));
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("", GraphFormat::DIMACS, statsCalculator->incidenceGraphStats.iGraphStats.iGraphFormat);
+            CPPUNIT_ASSERT_MESSAGE("", ProgramParameter::parseParameter(nullptr, std::string("printIgraph"),
+                                                      std::string("1,./iGraph")));
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("", GraphFormat::GR,
+                                         ProgramParameter::getInstance().iGraphFormat);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("", std::string("./iGraph"),
-                                         statsCalculator->incidenceGraphStats.iGraphStats.iGraphPath);
+                                         ProgramParameter::getInstance().iGraphPath);
 
-            CPPUNIT_ASSERT_MESSAGE("", parseParameter(statsCalculator, std::string("printRgraph"),
-                                                      std::string("0,./rGraph")));
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("", GraphFormat::DIMACS, statsCalculator->incidenceGraphStats.iGraphStats.rGraphFormat);
+            CPPUNIT_ASSERT_MESSAGE("", ProgramParameter::parseParameter(nullptr, std::string("printRgraph"),
+                                                      std::string("2,./rGraph")));
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("", GraphFormat::GML,
+                                         ProgramParameter::getInstance().rGraphFormat);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("", std::string("./rGraph"),
-                                         statsCalculator->incidenceGraphStats.iGraphStats.rGraphPath);
+                                         ProgramParameter::getInstance().rGraphPath);
         }
     };
 

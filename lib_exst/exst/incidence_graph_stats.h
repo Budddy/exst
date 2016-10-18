@@ -6,6 +6,8 @@
 #include <htd/MultiGraphFactory.hpp>
 #include <exst/exst_types.h>
 #include <clasp/literal.h>
+#include <exst/interfaces.h>
+#include <exst/program_parameter.h>
 
 /**
  * class used for calculating and saving stats of the incidence graph and the incidence graph
@@ -16,18 +18,6 @@ namespace exst
     {
         ///
         unsigned long long assignmentCount = 0;
-        ///
-        unsigned long long widthCalcInterval = 1000;
-        ///
-        bool calculateTreeWidth = false;
-        ///
-        std::string iGraphPath = "";
-        ///
-        std::string rGraphPath = "";
-        ///
-        GraphFormat iGraphFormat = NONE;
-        ///
-        GraphFormat rGraphFormat = NONE;
 
         ///
         htd::LibraryInstance *libraryInstance;
@@ -38,7 +28,7 @@ namespace exst
 
         ///incidence graph of reduct
         MyGraph incidenceGraphReduct;
-        htd::IMutableMultiGraph *iGraphReduct;
+        htd::IMutableMultiGraph *iGraphReduct = nullptr;
 
         ///mapping from atoms to vertices in the incidence graph
         std::unordered_map<uint32_t, uint32_t> atomVertexMap;
@@ -50,7 +40,7 @@ namespace exst
         MyGraph ruleBodyMap;
 
         ///maps atoms and ids
-        std::unordered_map<uint32_t, uint32_t> *atomIds;
+        std::unordered_map<uint32_t, uint32_t> atomIds;
 
         ///list of the treewidth of the incidence graph reductions
         std::list<float> widths;
@@ -63,29 +53,40 @@ namespace exst
         std::list<std::string> rGraphs;
     };
 
-    class IncidenceGraphStatsCalculator
+    class IncidenceGraphStatsCalculator : public StatisticsCalculator
     {
     public:
-
-        /**
-         * Constructor of the IncidenceGraphStats class.
-         * @param atomIds used to math atom ids before and after preprocessing
-         * @return a new instance of the incidence graph stat calculator
-         */
-        IncidenceGraphStatsCalculator(std::unordered_map<uint32_t, uint32_t> *atomIds)
-        {
-            iGraphStats.atomIds = atomIds;
-            iGraphStats.libraryInstance = htd::createManagementInstance(htd::Id::FIRST);
-            htd::MultiGraphFactory &factory = iGraphStats.libraryInstance->multiGraphFactory();
-            iGraphStats.iGraph = factory.getMultiGraph();
-        }
 
         /**
          * Adds a rule to the incidence graph.
          * @param body body of the new rule
          * @param head head of the new rule
          */
-        void addRuleIncidenceGraph(std::list<lit_type> body, std::list<lit_type> head);
+        virtual void addRule(std::list<lit_type> body, std::list<lit_type> head);
+
+        /**
+         * Updates the current assignment.
+         * @param new_assignment list of literals in the new assignment
+         */
+        virtual void updateAssignment(Clasp::LitVec new_assignment);
+
+        virtual std::list<std::pair<std::string, std::string>> getStatistics();
+
+        virtual void addId(uint32_t before, uint32_t after);
+
+        virtual std::list<std::string> getAdditionalStatistics();
+
+        /**
+         * Constructor of the IncidenceGraphStats class.
+         * @param atomIds used to math atom ids before and after preprocessing
+         * @return a new instance of the incidence graph stat calculator
+         */
+        IncidenceGraphStatsCalculator()
+        {
+            iGraphStats.libraryInstance = htd::createManagementInstance(htd::Id::FIRST);
+            htd::MultiGraphFactory &factory = iGraphStats.libraryInstance->multiGraphFactory();
+            iGraphStats.iGraph = factory.getMultiGraph();
+        }
 
         /**
          * Tesets the incidence graph of the reduct.
@@ -97,62 +98,6 @@ namespace exst
          * @param lit the literal used to reduce the graph
          */
         void reduceGraph(lit_type lit);
-
-        /**
-         * Updates the current assignment.
-         * @param new_assignment list of literals in the new assignment
-         */
-        void updateAssignment(Clasp::LitVec new_assignment);
-
-        /**
-         * Getter for the HTD incidence graph.
-         * @return the incidence graph in HTD format
-         */
-        htd::IMutableMultiGraph *getHTDIncidenceGraph()
-        {
-            return iGraphStats.iGraph;
-        }
-
-        /**
-         * Getter for the HTD incidence graph of the reduct.
-         * @return the incidence graph of the reduct in HTD format
-         */
-        htd::IMutableMultiGraph *getHTDIncidenceGraphReduct()
-        {
-            return iGraphStats.iGraphReduct;
-        }
-
-        /**
-         * Getter for the incidence graph.
-         * @return the incidence graph
-         */
-        MyGraph &getIncidenceGraph()
-        {
-            return iGraphStats.incidenceGraph;
-        }
-
-        /**
-         * Getter for the incidence graph of the reduct.
-         * @return the incidence graph of the reduct
-         */
-        MyGraph &getIncidenceGraphReduct()
-        {
-            return iGraphStats.incidenceGraphReduct;
-        }
-
-        /**
-         * Getter for the list of Treewidths.
-         * @return a list conting the Treewidths
-         */
-        std::list<float> *getWidths()
-        {
-            return &iGraphStats.widths;
-        }
-
-        std::list<std::string> *getRGraphs()
-        {
-            return &iGraphStats.rGraphs;
-        }
 
         IncidenceGraphStatistics iGraphStats;
 

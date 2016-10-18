@@ -111,6 +111,13 @@ namespace exst
      */
     std::string getGrFormat(MyGraph &graph);
 
+    /**
+     * Generates the string representation of the graph in GML format.
+     * @param graph the graph to get the Gr format from
+     * @return the graph in GML Format
+     */
+    std::string getGMLFormat(MyGraph &graph);
+
     std::string getFormatedGraph(GraphFormat f, MyGraph &graph);
 }
 

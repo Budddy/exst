@@ -6,10 +6,11 @@
 #include <exst/exst_types.h>
 #include <exst/incidence_graph_stats.h>
 #include <exst/dependency_graph_stats.h>
+#include <exst/program_parameter.h>
 
 namespace exst
 {
-    struct GeneralStatistics
+    struct ProgramStatistics
     {
 
         ///number of facts in the program
@@ -85,61 +86,33 @@ namespace exst
     /**
      * class used to generate the extended stats
      */
-    class StatsCalculator
+    class ProgramStatsCalculator : public StatisticsCalculator
     {
     public:
 
-        /**
-         * returns the single instance of the GraphStatsCalculator
-         */
-        static StatsCalculator &getInstance()
-        {
-            static StatsCalculator calc;
-            return calc;
-        }
+        virtual void addRule(std::list<lit_type> body, std::list<lit_type> head);
+
+        virtual std::list<std::pair<std::string, std::string>> getStatistics();
 
         /**
-         * adds a dependency to the dependency graph
+         * Used to set the Symbol Table.
+         * @param table the symbol table of the program
          */
-        void parseRule(std::list<lit_type> body, std::list<lit_type> head);
+        virtual void setSymbolTable(std::unordered_map<uint32_t, const char *> &table);
 
         /**
          * Maps the id of an atom before and after preprocessing.
          * @param before id of the atom before preprocessing
          * @param after id of the atom after preprocesing
          */
-        void addId(uint32_t before, uint32_t after);
-
-        /**
-         * Used to set the Symbol Table.
-         * @param table the symbol table of the program
-         */
-        void setSymbolTable(std::unordered_map<uint32_t, const char *> &table);
-
-        /**
-         * Prints the Statistics.
-         */
-        void printExtendedStats();
+        virtual void addId(uint32_t before, uint32_t after);
 
         /**
          * Starts the calculation of the stats, implicitly called by printExtendedStats.
          */
         void calculateStats();
 
-        GeneralStatistics generalStatistics;
-
-        ///calculator for statistics of dependency graph
-        DependencyGraphStatsCalculator dependencyGraphStats;
-
-        ///calculator for statistics of incidence graph
-        IncidenceGraphStatsCalculator incidenceGraphStats;
-
-        /*
-         * private constructors for singleton
-         */
-        StatsCalculator() : incidenceGraphStats(&generalStatistics.atomIdsOldNew)
-        {
-        };
+        ProgramStatistics generalStatistics;
 
     private:
 
@@ -164,7 +137,6 @@ namespace exst
         void calculateVariables();
     };
 
-    bool parseParameter(StatsCalculator *inst, const std::string &name, const std::string &value);
 
 }
 #endif //CLASP_EXTENDED_STATS_CALCULATOR_H

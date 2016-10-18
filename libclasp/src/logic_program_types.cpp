@@ -28,7 +28,7 @@
 #include <clasp/util/misc_types.h>
 
 #include <deque>
-#include <exst/extended_stats_calculator.h>
+#include <exst/program_stats.h>
 
 namespace Clasp { namespace Asp {
 
@@ -596,7 +596,7 @@ void PrgHead::assignVar(LogicProgram& prg, PrgEdge support) {
 		else {
 			const Literal &x = posLit(prg.ctx()->addVar(Var_t::atom_var));
 			setLiteral(x);
-			exst::StatsCalculator::getInstance().addId(id_,x.var());
+			exst::ExtendedStatistics::getInstance().addId(id_,x.var());
 		}
 	}
 }

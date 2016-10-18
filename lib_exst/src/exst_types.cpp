@@ -2,7 +2,7 @@
 
 namespace exst
 {
-    uint32_t edgeCount(MyGraph &graph)
+    std::set<std::pair<uint32_t, uint32_t>> genUniqueEdgeSet(MyGraph &graph)
     {
         std::set<std::pair<uint32_t, uint32_t>> test;
         std::unordered_map<unsigned int, std::unordered_map<unsigned int, exst::EdgeType>>::iterator a;
@@ -16,7 +16,12 @@ namespace exst
                 test.insert(std::pair<uint32_t, uint32_t>(first, second));
             }
         }
-        return test.size();
+        return test;
+    };
+
+    uint32_t edgeCount(MyGraph &graph)
+    {
+        return (uint32_t) genUniqueEdgeSet(graph).size();
     }
 
     MyGraph copyMyGraph(MyGraph graph)
@@ -33,19 +38,16 @@ namespace exst
     std::string getDIMACSFormat(MyGraph &graph)
     {
         std::string dimacsString;
+        std::set<std::pair<uint32_t, uint32_t>> edges = genUniqueEdgeSet(graph);
+        int correction = 0;
+        if(graph.find(0)!=graph.end()){
+            correction = 1;
+        }
         dimacsString += "\"p edge " + std::to_string(graph.size()) + " " + std::to_string(edgeCount(graph)) + "\"";
-
-        std::unordered_map<unsigned int, std::unordered_map<unsigned int, exst::EdgeType>>::iterator it;
-        for (it = graph.begin(); it != graph.end(); it++)
+        std::set<std::pair<uint32_t, uint32_t>>::iterator it;
+        for (it = edges.begin(); it != edges.end(); it++)
         {
-            std::unordered_map<unsigned int, exst::EdgeType>::iterator it2;
-            for (it2 = it->second.begin(); it2 != it->second.end(); it2++)
-            {
-                if (it->first < it2->first)
-                {
-                    dimacsString += "\n,\"e " + std::to_string(it->first) + " " + std::to_string(it2->first) + "\"";
-                }
-            }
+            dimacsString += "\n,\"e " + std::to_string(it->first+correction) + " " + std::to_string(it->second+correction) + "\"";
         }
         return dimacsString;
     }
@@ -53,19 +55,17 @@ namespace exst
     std::string getGrFormat(MyGraph &graph)
     {
         std::string grString;
+        std::set<std::pair<uint32_t, uint32_t>> edges = genUniqueEdgeSet(graph);
+        int correction = 0;
+        if(graph.find(0)!=graph.end()){
+            correction = 1;
+        }
         grString += "\"p tw " + std::to_string(graph.size()) + " " + std::to_string(edgeCount(graph)) + "\"";
 
-        std::unordered_map<unsigned int, std::unordered_map<unsigned int, exst::EdgeType>>::iterator it;
-        for (it = graph.begin(); it != graph.end(); it++)
+        std::set<std::pair<uint32_t, uint32_t>>::iterator it;
+        for (it = edges.begin(); it != edges.end(); it++)
         {
-            std::unordered_map<unsigned int, exst::EdgeType>::iterator it2;
-            for (it2 = it->second.begin(); it2 != it->second.end(); it2++)
-            {
-                if (it->first < it2->first)
-                {
-                    grString += "\n,\"" + std::to_string(it->first + 1) + " " + std::to_string(it2->first + 1) + "\"";
-                }
-            }
+            grString += "\n,\"" + std::to_string(it->first+correction) + " " + std::to_string(it->second+correction) + "\"";
         }
         return grString;
     }
@@ -73,26 +73,25 @@ namespace exst
     std::string getGMLFormat(MyGraph &graph)
     {
         std::string gmlString;
+        std::set<std::pair<uint32_t, uint32_t>> edges = genUniqueEdgeSet(graph);
+        int correction = 0;
+        if(graph.find(0)!=graph.end()){
+            correction = 1;
+        }
         gmlString += "graph [\n";
 
         std::unordered_map<unsigned int, std::unordered_map<unsigned int, exst::EdgeType>>::iterator it;
         for (it = graph.begin(); it != graph.end(); it++)
         {
-            gmlString += "  node [\n    id " + std::to_string(it->first + 1) + "\n    label \"" +
-                         std::to_string(it->first + 1) + "\"\n  ]";
+            gmlString += "  node [\n    id " + std::to_string(it->first+correction) + "\n    label \"" +
+                         std::to_string(it->first+correction) + "\"\n  ]";
         }
 
-        for (it = graph.begin(); it != graph.end(); it++)
+        std::set<std::pair<uint32_t, uint32_t>>::iterator it_;
+        for (it_ = edges.begin(); it_ != edges.end(); it_++)
         {
-            std::unordered_map<unsigned int, exst::EdgeType>::iterator it2;
-            for (it2 = it->second.begin(); it2 != it->second.end(); it2++)
-            {
-                if (it->first < it2->first)
-                {
-                    gmlString += "  edge [\n    source " + std::to_string(it->first + 1);
-                    gmlString += "\n    target " + std::to_string(it2->first + 1) + "\n  ]";
-                }
-            }
+            gmlString += "  edge [\n    source " + std::to_string(it_->first+correction);
+            gmlString += "\n    target " + std::to_string(it_->second+correction) + "\n  ]";
         }
         gmlString += "]";
         return gmlString;

@@ -24,7 +24,7 @@
 #include <cctype>
 #include <limits.h>
 #include <cstring>
-#include <exst/extended_stats_calculator.h>
+#include <exst/exst_statistics.h>
 #ifdef _MSC_VER
 #pragma warning (disable : 4996)
 #endif
@@ -32,6 +32,9 @@
 #include <stdlib.h>
 #if !defined(_WIN32)
 #include <unistd.h> // for _exit
+#include <exst/exst_statistics.h>
+#include <exst/program_parameter.h>
+
 static long fetch_and_inc(volatile long& x) {
 	return __sync_fetch_and_add(&x, 1);
 }
@@ -208,24 +211,24 @@ bool Application::getOptions(int argc, char** argv) {
 			("verbose,V"   , storeTo(verbose_ = 0)->implicit("-1")->arg("<n>"), "Set verbosity level to %A")
 			("time-limit"  , storeTo(timeout_ = 0)->arg("<n>"), "Set time limit to %A seconds (0=no limit)")
 			("fast-exit,@1", flag(fastExit_   = false)        , "Force fast exit (do not call dtors)")
-			("width-intervall"   , storeTo(exst::StatsCalculator::getInstance().incidenceGraphStats.iGraphStats.widthCalcInterval = 0)->arg("<n>"), "number of assignments between interval calculation")
-			("calcTWidth"   , flag(exst::StatsCalculator::getInstance().incidenceGraphStats.iGraphStats.calculateTreeWidth = false),
+			("width-intervall"   , storeTo(exst::ProgramParameter::getInstance().widthCalcInterval = 0)->arg("<n>"), "number of assignments between interval calculation")
+			("calcTWidth"   , flag(exst::ProgramParameter::getInstance().calculateTreeWidth = false),
 			 "calculate the Tree Width")
-			("printDgraph"   , notify(&exst::StatsCalculator::getInstance(),exst::parseParameter)->arg("<format>[,<filePath>]"),
+			("printDgraph"   , notify(&exst::ProgramParameter::getInstance(),exst::ProgramParameter::parseParameter)->arg("<format>[,<filePath>]"),
 			 "Print the dependency graph\n"
 					 "    <format> : {0|1|2}\n"
 					 "        0    : the dimacs graph format\n"
 					 "        1    : graph format used in the pacechallenge\n"
 					 "        2    : gml graph format\n"
 					 "    <filePath> : path used to write the graph to")
-			("printIgraph"   , notify(&exst::StatsCalculator::getInstance(),exst::parseParameter)->arg("<format>[,<filePath>]"),
+			("printIgraph"   , notify(&exst::ProgramParameter::getInstance(),exst::ProgramParameter::parseParameter)->arg("<format>[,<filePath>]"),
 			 "Print the incidence graph"
 					 "    <format> : {0|1|2}\n"
 					 "        0    : the dimacs graph format\n"
 					 "        1    : graph format used in the pacechallenge\n"
 					 "        2    : gml graph format\n"
 					 "    <filePath> : path used to write the graph to")
-			("printRgraph"   , notify(&exst::StatsCalculator::getInstance(),exst::parseParameter)->arg("<format>[,<filePath>]"),
+			("printRgraph"   , notify(&exst::ProgramParameter::getInstance(),exst::ProgramParameter::parseParameter)->arg("<format>[,<filePath>]"),
 			 "Print the reduct graph"
 					 "    <format> : {0|1|2}\n"
 					 "        0    : the dimacs graph format\n"
