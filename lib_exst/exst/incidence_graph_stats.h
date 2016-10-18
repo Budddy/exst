@@ -108,7 +108,7 @@ namespace exst
      * @param graph the graph to calculate the treewidth
      * @return the treewidth of the given graph
      */
-    static size_t getTreewidth(htd::IMutableMultiGraph *graph, htd::LibraryInstance *libraryInstance);
+    size_t getTreewidth(htd::IMutableMultiGraph *graph, htd::LibraryInstance *libraryInstance);
 
     /*
      *  Width Minimizing Fitness Function Copied from htd: https://github.com/mabseher/htd/blob/master/src/htd_main/main.cpp
