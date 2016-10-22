@@ -1,0 +1,15 @@
+language: cpp
+compiler:
+  - gcc
+install:
+  - sudo apt-get update
+  - sudo apt-get install libcppunit-dev libcppunit-1.12-1
+  - git clone https://github.com/mabseher/htd
+  - mkdir build_htd
+  - cd build_htd
+  - cmake ../build_htd
+  - sudo make
+  - cd ..
+  - ./build.sh
+script:
+  - ./build_test/bin/exst_test
