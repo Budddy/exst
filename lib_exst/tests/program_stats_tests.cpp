@@ -11,8 +11,6 @@ namespace exst
             CPPUNIT_TEST(testMultipleFacts);
             CPPUNIT_TEST(testMultipleConstraintsAndNonConstraints);
             CPPUNIT_TEST(testMultipleConstraintsAndNonConstraintsWithHelpers);
-            CPPUNIT_TEST(testParseParameter);
-            CPPUNIT_TEST(testgetStatistics);
         CPPUNIT_TEST_SUITE_END();
     private:
     public:
@@ -482,33 +480,6 @@ namespace exst
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Constraint", (uint32_t) 3,
                                          statsCalculator->generalStatistics.numConstraints);
         }
-
-        void testParseParameter()
-        {
-            CPPUNIT_ASSERT_MESSAGE("", ProgramParameter::parseParameter(nullptr, std::string("printDgraph"),
-                                                      std::string("0,./dGraph")));
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("", GraphFormat::DIMACS,
-                                         ProgramParameter::getInstance().dGraphFormat);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("", std::string("./dGraph"),
-                                         ProgramParameter::getInstance().dGraphPath);
-
-            CPPUNIT_ASSERT_MESSAGE("", ProgramParameter::parseParameter(nullptr, std::string("printIgraph"),
-                                                      std::string("1,./iGraph")));
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("", GraphFormat::GR,
-                                         ProgramParameter::getInstance().iGraphFormat);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("", std::string("./iGraph"),
-                                         ProgramParameter::getInstance().iGraphPath);
-
-            CPPUNIT_ASSERT_MESSAGE("", ProgramParameter::parseParameter(nullptr, std::string("printRgraph"),
-                                                      std::string("2,./rGraph")));
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("", GraphFormat::GML,
-                                         ProgramParameter::getInstance().rGraphFormat);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("", std::string("./rGraph"),
-                                         ProgramParameter::getInstance().rGraphPath);
-        }
-
-        void testgetStatistics()
-        {};
     };
 
     CPPUNIT_TEST_SUITE_REGISTRATION(ExstTests);

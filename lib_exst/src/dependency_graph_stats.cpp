@@ -68,7 +68,7 @@ namespace exst
                 slist.push_back(str);
             }
         }
-        return std::list<std::string>();
+        return slist;
     }
 
     std::list<std::pair<std::string, std::string>> DependencyGraphStatsCalculator::getStatistics()

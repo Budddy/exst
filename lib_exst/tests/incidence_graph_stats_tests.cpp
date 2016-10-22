@@ -8,8 +8,6 @@ namespace exst
             CPPUNIT_TEST(testSmallGraph);
             CPPUNIT_TEST(testIncidenceGraph);
             CPPUNIT_TEST(testupdateAssignment);
-            CPPUNIT_TEST(testgetStatistics);
-            CPPUNIT_TEST(testaddId);
             CPPUNIT_TEST(testgetAdditionalStatistics);
             CPPUNIT_TEST(testgetTreewidth);
             CPPUNIT_TEST(testupdateAssignment);
@@ -374,14 +372,79 @@ namespace exst
             incidenceGraphStats->iGraphStats.current_assignment.at(0)==l;
         };
 
-        void testgetStatistics()
-        {};
-
-        void testaddId()
-        {};
-
         void testgetAdditionalStatistics()
-        {};
+        {
+            ProgramParameter::getInstance().rGraphFormat = GraphFormat::DIMACS;
+            ProgramParameter::getInstance().iGraphFormat = GraphFormat::DIMACS;
+
+            std::list<lit_type> body;
+            std::list<lit_type> head;
+            body.push_back(*new lit_type(2, NEGATIVE));
+            body.push_back(*new lit_type(3, NEGATIVE));
+            incidenceGraphStats->addRule(body, head);
+
+            head.clear();
+            body.clear();
+            body.push_back(*new lit_type(4, NEGATIVE));
+            body.push_back(*new lit_type(5, POSITIVE));
+            incidenceGraphStats->addRule(body, head);
+
+            head.clear();
+            body.clear();
+            body.push_back(*new lit_type(5, POSITIVE));
+            body.push_back(*new lit_type(6, POSITIVE));
+            head.push_back(*new lit_type(7, POSITIVE));
+            incidenceGraphStats->addRule(body, head);
+
+            head.clear();
+            body.clear();
+            head.push_back(*new lit_type(8, POSITIVE));
+            incidenceGraphStats->addRule(body, head);
+
+            head.clear();
+            body.clear();
+            head.push_back(*new lit_type(9, NEGATIVE));
+            incidenceGraphStats->addRule(body, head);
+
+            head.clear();
+            body.clear();
+            body.push_back(*new lit_type(5, POSITIVE));
+            head.push_back(*new lit_type(7, POSITIVE));
+            incidenceGraphStats->addRule(body, head);
+
+            head.clear();
+            body.clear();
+            body.push_back(*new lit_type(2, POSITIVE));
+            body.push_back(*new lit_type(4, NEGATIVE));
+            head.push_back(*new lit_type(3, POSITIVE));
+            incidenceGraphStats->addRule(body, head);
+
+            const std::list<std::string> &stats = incidenceGraphStats->getAdditionalStatistics();
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Reduct Graph", std::string("\n"
+                                                                             ",\n"
+                                                                             "\n"
+                                                                             " \"Reduct Graph\" : [\n"
+                                                                             "  ]\n"),
+                                         stats.front());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Incidence Graph", std::string("\n"
+                                                                                ",\n"
+                                                                                "\n"
+                                                                                " \"Incidence Graph\" : \n"
+                                                                                "[\"p edge 11 12\"\n"
+                                                                                ",\"e 1 2\"\n"
+                                                                                ",\"e 1 3\"\n"
+                                                                                ",\"e 2 11\"\n"
+                                                                                ",\"e 3 11\"\n"
+                                                                                ",\"e 4 5\"\n"
+                                                                                ",\"e 4 6\"\n"
+                                                                                ",\"e 5 11\"\n"
+                                                                                ",\"e 6 7\"\n"
+                                                                                ",\"e 6 10\"\n"
+                                                                                ",\"e 7 8\"\n"
+                                                                                ",\"e 7 9\"\n"
+                                                                                ",\"e 9 10\"]"),
+                                         stats.back());
+        };
     };
 
     CPPUNIT_TEST_SUITE_REGISTRATION(IncidenceTests);

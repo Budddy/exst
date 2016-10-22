@@ -29,8 +29,7 @@ namespace exst
             extendedStatistics->registerProgramStatistics(dependencyGraphStats);
             extendedStatistics->registerProgramStatistics(statsCalculator);
             extendedStatistics->registerProgramStatistics(incidenceGraphStats);
-            /*ProgramParameter p;
-            parameter = p;*/
+            ProgramParameter::getInstance() = * new ProgramParameter();
         }
 
         void tearDown()

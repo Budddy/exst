@@ -179,17 +179,17 @@ namespace exst
             if (ProgramParameter::getInstance().rGraphPath.length() == 0)
             {
                 str = "";
-                std::cout << "\n,\n\n \"Reduct Graph\" : [\n  ";
+                str+= "\n,\n\n \"Reduct Graph\" : [\n  ";
                 std::list<std::string>::iterator it_;
                 for (it_ = iGraphStats.rGraphs.begin(); it_ != iGraphStats.rGraphs.end(); it_++)
                 {
                     if (it_ != iGraphStats.rGraphs.begin())
                     {
-                        std::cout << "  ,";
+                        str+= "  ,";
                     }
-                    std::cout << "[" << (*it_) << "]\n";
+                    str+= "[" + (*it_) + "]\n";
                 }
-                std::cout << "]\n";
+                str+= "]\n";
                 slist.push_back(str);
             }
         }
@@ -207,13 +207,13 @@ namespace exst
             } else
             {
                 str = "";
-                std::cout << "\n,\n\n \"Incidence Graph\" : \n["
-                          << getFormatedGraph(ProgramParameter::getInstance().iGraphFormat, iGraphStats.incidenceGraph)
-                          << "]";
+                str+= "\n,\n\n \"Incidence Graph\" : \n[";
+                str+= getFormatedGraph(ProgramParameter::getInstance().iGraphFormat, iGraphStats.incidenceGraph);
+                str+= "]";
                 slist.push_back(str);
             }
         }
-        return std::list<std::string>();
+        return slist;
     }
 
     std::list<std::pair<std::string, std::string>> IncidenceGraphStatsCalculator::getStatistics()
