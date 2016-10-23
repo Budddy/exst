@@ -1,15 +1,46 @@
+sudo: required
+
+dist: trusty
+
 language: cpp
+
 compiler:
   - gcc
+
+os:
+  - linux
+
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    - llvm-toolchain-precise-3.7
+    packages:
+    - gcc-4.9
+    - g++-4.9
+    - clang-3.7
+    - valgrind
+    - libcppunit-dev
+    - libcppunit-1.13-0
+    - build-essential
+
 install:
-  - sudo apt-get update
-  - sudo apt-get install libcppunit-dev libcppunit-1.12-1
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.9" CC="gcc-4.9"; fi
+  - if [ "$CXX" = "clang++" ] && [ "$TRAVIS_OS_NAME" = "linux" ]; then export CXX="clang++-3.7" CC="clang-3.7"; fi
   - git clone https://github.com/mabseher/htd
   - mkdir build_htd
   - cd build_htd
-  - cmake ../build_htd
-  - sudo make
+  - cmake -DBUILD_SHARED_LIBS=True -DHTD_USE_EXTENDED_IDENTIFIERS=True DCMAKE_CXX_FLAGS="${CXX_FLAGS}" ../htd
+  - make
+  - sudo make install
+  - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/travis/build/Budddy/test_exst/build_htd/lib/
   - cd ..
-  - ./build.sh
+  - mkdir build_test
+  - cd build_test
+  - cmake -Dtests=ON ../
+  - make
+  - cd ..
+  - chmod +x ./test_travis.sh
+
 script:
-  - ./build_test/bin/exst_test
+  - ./test_travis.sh
