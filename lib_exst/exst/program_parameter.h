@@ -31,7 +31,7 @@ namespace exst
         /// output format for the dependency graph
         GraphFormat dGraphFormat = NONE;
 
-        static bool parseParameter(ProgramParameter *, const std::__cxx11::string &name, const std::__cxx11::string &value);
+        static bool parseParameter(ProgramParameter *, const std::string &name, const std::string &value);
     };
 }
 

@@ -2,8 +2,8 @@
 
 namespace exst
 {
-    bool exst::ProgramParameter::parseParameter(ProgramParameter *, const std::__cxx11::string &name,
-                                                const std::__cxx11::string &value)
+    bool exst::ProgramParameter::parseParameter(ProgramParameter *, const std::string &name,
+                                                const std::string &value)
     {
         exst::GraphFormat format;
         bool file = false;
