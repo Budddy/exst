@@ -30,11 +30,9 @@ add_subdirectory(lib_exst)
 add_subdirectory(app)
 
 if(tests)
-    include_directories(lib_exst/tests libclasp/tests)
+    include_directories(lib_exst/tests)
 
     # build exst tests
     add_subdirectory(lib_exst/tests)
-    # build clasp tests
-    add_subdirectory(libclasp/tests)
 endif(tests)
 
