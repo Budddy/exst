@@ -49,4 +49,4 @@ script:
   - ./test_travis.sh
 
 after_success:
-  - coveralls -b ./build_test/lib_exst/CMakeFiles/lib_exst.dir/src/ --exclude lib --exclude tests --gcov-options '\-lp'
+  - coveralls -b ./build_test/lib_exst/CMakeFiles/lib_exst.dir/src/ --exclude libclasp --exclude htd --exclude tests --gcov-options '\-lp'
