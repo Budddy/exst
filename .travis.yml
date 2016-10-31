@@ -44,10 +44,9 @@ install:
   - make
   - cd ..
   - chmod +x ./test_travis.sh
-  - ls /usr/local/lib/
 
 script:
   - ./test_travis.sh
 
 after_success:
-  - coveralls -b ./build_test/lib_exst/CMakeFiles/lib_exst.dir/src/ --exclude libclasp --exclude htd --exclude tests --gcov-options '\-lp'
+  - coveralls -b ./build_test/lib_exst/CMakeFiles/lib_exst.dir/src/ --exclude libprogram_opts --exclude htd --exclude app --exclude build_htd --exclude build_test --exclude lib_exst/tests --exclude libclasp --gcov-options '\-lp'
