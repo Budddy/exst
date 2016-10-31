@@ -36,7 +36,7 @@ install:
   - cmake -DBUILD_SHARED_LIBS=True -DHTD_USE_EXTENDED_IDENTIFIERS=True DCMAKE_CXX_FLAGS="${CXX_FLAGS}" ../htd
   - make
   - sudo make install
-  - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/travis/build/Budddy/test_exst/build_htd/lib/
+  - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/
   - cd ..
   - mkdir build_test
   - cd build_test
@@ -44,6 +44,7 @@ install:
   - make
   - cd ..
   - chmod +x ./test_travis.sh
+  - ls /usr/local/lib/
 
 script:
   - ./test_travis.sh
