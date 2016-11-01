@@ -8,14 +8,25 @@ output:
 ---
 
 ```{r setup, include=FALSE}
+
 knitr::opts_chunk$set(echo = TRUE)
-library("psych", lib.loc="~/R/win-library/3.3")
+library("psych", lib.loc = "~/R/win-library/3.3")
 library("ggplot2")
+library("zoom", lib.loc = "~/R/win-library/3.3")
 setwd("C:/Users/Markus/Sync/Bachelor/exst_clasp/Experiments")
+
 ```
 
 ```{r load data, include=FALSE}
-Statistics <- read.csv(file="Statistics.csv",header = TRUE, sep = ",", quote = "\"", dec = ".")
+
+Statistics <-
+  read.csv(
+    file = "Statistics.csv",
+    header = TRUE,
+    sep = ",",
+    quote = "\"",
+    dec = "."
+  )
 stat <- Statistics[,-41:-70]
 stat <- stat[,-38]
 stat <- stat[,-35]
@@ -23,6 +34,7 @@ stat <- Statistics[,-18]
 stat <- stat[,-16]
 stat <- stat[,-4]
 stat <- stat[,-1]
+
 ```
 
 # Correlations
@@ -30,30 +42,204 @@ stat <- stat[,-1]
 List of parameter correlations that are higher than 0.5 or lower than -0.5
 
 ```{r correlations, echo=FALSE, message=TRUE, warning=TRUE}
-a <- corr.test(stat,adjust="none")
-corelation <- round(a$r,2)
-list_cor = matrix(nrow=0,ncol=3)
-for(a in 1:length(corelation[,1])){
-  for(b in 1:length(corelation[,1])){
-    if(!is.na(corelation[a,b])){
-      if((a<b)&&((corelation[a,b] >= 0.3)||(corelation[a,b] <= -0.3))){
-        list_cor <- rbind(list_cor,c(row.names(corelation)[a],colnames(corelation)[b],corelation[a,b]))
+
+a <- corr.test(stat, adjust = "none")
+corelation <- round(a$r, 2)
+list_cor = matrix(nrow = 0, ncol = 3)
+for (a in 1:length(corelation[, 1])) {
+  for (b in 1:length(corelation[, 1])) {
+    if (!is.na(corelation[a, b])) {
+      if ((a < b) && ((corelation[a, b] >= 0.3) ||
+                      (corelation[a, b] <= -0.3))) {
+        list_cor <-
+          rbind(list_cor, c(
+            row.names(corelation)[a],
+            colnames(corelation)[b],
+            corelation[a, b]
+          ))
       }
     }
   }
 }
-write.table(format(list_cor[order(list_cor[,3],decreasing=TRUE),],justify="left"),quote = F,row.names = FALSE,col.names=FALSE)
+write.table(
+  format(list_cor[order(list_cor[, 3], decreasing = TRUE), ], justify = "left"),
+  quote = F,
+  row.names = FALSE,
+  col.names = FALSE
+)
+
 ```
 
-```{r plots, echo=FALSE}
-#l <- 10
+# Plots
+
+## Comparison between solving time and coices
+```{r time Choices, echo=FALSE}
+
+plot(
+  y = stat$time_total,
+  x = stat$choices,
+  type = "p",
+  xlab = "Number of Choices",
+  ylab = "Total solving time",
+  main = "Comparison between solving time and coices"
+)
+
+st_ <- stat[order(stat[,1], decreasing = TRUE),]
+for (a in 1:3) {
+  st <- st_[(length(st_)/3*(a-1):length(st_)/3*(a)),];
+  points(
+    y = st$time_total,
+    x = st$choices,
+    col = colors()[length(colors())/a],
+    pch = a
+  )
+}
+
+```
+
+## Comparison between solving time and the maximal pausitive clause size
+```{r time maximal pausitive clause size, echo=FALSE}
+
+plot(
+  y = stat$time_total,
+  x = stat$maxPositiveClauseSize,
+  type = "p",
+  xlab = "maximal pausitive clause size",
+  ylab = "Total solving time",
+  main = "Comparison between solving time and maximal pausitive clause size"
+)
+
+```
+
+## Comparison between solving time and the maximal negative clause size
+```{r time maximal negative clause size, echo=FALSE}
+
+plot(
+  y = stat$time_total,
+  x = stat$maxNegativeClauseSize,
+  type = "p",
+  xlab = "maximal negative clause size",
+  ylab = "Total solving time",
+  main = "Comparison between solving time and maximal negative clause size"
+)
+
+```
+
+# Raw Plots with high correlation
+
+```{r Raw Plots with high correlation, echo=FALSE}
+
 l <- length(colnames(stat))
-for(a in 1:l){
-  for(b in 1:l){
-    if(a<b){
-      print(qplot(y=stat[a], x=stat[b],xlab=colnames(stat)[b],ylab = colnames(stat)[a]))
+for (a in 1:l) {
+  for (b in 1:l) {
+    if (!is.na(corelation[a, b])) {
+      if (a < b) {
+        if (corelation[a, b] >= 0.7 || corelation[a, b] <= (-0.7)) {
+          print(c(
+            row.names(corelation)[a],
+            colnames(corelation)[b],
+            corelation[a, b]
+          ))
+          print(qplot(
+            y = stat[a],
+            x = stat[b],
+            xlab = colnames(stat)[b],
+            ylab = colnames(stat)[a]
+          ))
+        }
+      }
     }
   }
 }
+
 ```
 
+# Raw Plots with medium correlation
+
+```{r Raw Plots with medium correlation, echo=FALSE}
+
+l <- length(colnames(stat))
+for (a in 1:l) {
+  for (b in 1:l) {
+    if (!is.na(corelation[a, b])) {
+      if (a < b) {
+        if ((corelation[a, b] < 0.7 && corelation[a, b] >= 0.5) ||
+            (corelation[a, b] > -0.7 && corelation[a, b] <= -0.5)) {
+          print(c(
+            row.names(corelation)[a],
+            colnames(corelation)[b],
+            corelation[a, b]
+          ))
+          print(qplot(
+            y = stat[a],
+            x = stat[b],
+            xlab = colnames(stat)[b],
+            ylab = colnames(stat)[a]
+          ))
+        }
+      }
+    }
+  }
+}
+
+```
+
+# Raw Plots with low correlation
+
+```{r Raw Plots with low correlation, echo=FALSE}
+
+l <- length(colnames(stat))
+for (a in 1:l) {
+  for (b in 1:l) {
+    if (!is.na(corelation[a, b])) {
+      if (a < b) {
+        if ((corelation[a, b] < 0.5 && corelation[a, b] >= 0.3) ||
+            (corelation[a, b] > -0.5 && corelation[a, b] <= -0.3)) {
+          print(c(
+            row.names(corelation)[a],
+            colnames(corelation)[b],
+            corelation[a, b]
+          ))
+          print(qplot(
+            y = stat[a],
+            x = stat[b],
+            xlab = colnames(stat)[b],
+            ylab = colnames(stat)[a]
+          ))
+        }
+      }
+    }
+  }
+}
+
+```
+
+# Raw Plots with almost no correlation
+
+```{r Raw Plots with almost no correlation, echo=FALSE}
+
+l <- length(colnames(stat))
+for (a in 1:l) {
+  for (b in 1:l) {
+    if (!is.na(corelation[a, b])) {
+      if (a < b) {
+        if ((corelation[a, b] < 0.3) &&
+            (corelation[a, b] > -0.3)) {
+          print(c(
+            row.names(corelation)[a],
+            colnames(corelation)[b],
+            corelation[a, b]
+          ))
+          print(qplot(
+            y = stat[a],
+            x = stat[b],
+            xlab = colnames(stat)[b],
+            ylab = colnames(stat)[a]
+          ))
+        }
+      }
+    }
+  }
+}
+
+```
