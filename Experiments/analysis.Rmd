@@ -49,8 +49,7 @@ list_cor = matrix(nrow = 0, ncol = 3)
 for (a in 1:length(corelation[, 1])) {
   for (b in 1:length(corelation[, 1])) {
     if (!is.na(corelation[a, b])) {
-      if ((a < b) && ((corelation[a, b] >= 0.3) ||
-                      (corelation[a, b] <= -0.3))) {
+      if ((a < b)) {
         list_cor <-
           rbind(list_cor, c(
             row.names(corelation)[a],
@@ -62,7 +61,7 @@ for (a in 1:length(corelation[, 1])) {
   }
 }
 write.table(
-  format(list_cor[order(list_cor[, 3], decreasing = TRUE), ], justify = "left"),
+  format(list_cor[order(abs(as.numeric(list_cor[, 3])), decreasing = TRUE), ], justify = "left"),
   quote = F,
   row.names = FALSE,
   col.names = FALSE
