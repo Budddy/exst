@@ -9,15 +9,17 @@ output:
 
 ```{r setup, include=FALSE}
 
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(
+  warning = FALSE
+)
 library("psych", lib.loc = "~/R/win-library/3.3")
-library("ggplot2")
 library("zoom", lib.loc = "~/R/win-library/3.3")
+library("knitr", lib.loc = "~/R/win-library/3.3")
 setwd("C:/Users/Markus/Sync/Bachelor/exst_clasp/Experiments")
 
 ```
 
-```{r load data, include=FALSE}
+```{r load data, echo=FALSE, message=FALSE, warning=FALSE}
 
 Statistics <-
   read.csv(
@@ -27,23 +29,145 @@ Statistics <-
     quote = "\"",
     dec = "."
   )
-stat <- Statistics[,-41:-70]
-stat <- stat[,-38]
-stat <- stat[,-35]
-stat <- Statistics[,-18]
-stat <- stat[,-16]
-stat <- stat[,-4]
-stat <- stat[,-1]
+stat <- Statistics[, -41:-70]
+stat <- stat[, -38]
+stat <- stat[, -35]
+stat <- stat[, -19]
+stat <- Statistics[, -17]
+stat <- Statistics[, -5]
+stat <- stat[, -2]
+
+```
+
+# Summary
+
+## Overall Summary
+```{r Overall Summary, echo=FALSE, message=FALSE, warning=FALSE}
+
+oSummary = matrix(nrow = 0, ncol = 5)
+
+cat("Number Problems: ", length(unique(stat[, 1])), "\n")
+cat("Number Instanzes: ", length(stat[, 1]), "\n")
+for (col in 2:length(colnames(stat))) {
+    oSummary <-
+      rbind(oSummary, c(
+      colnames(stat)[col],
+      min(stat[, col], na.rm = TRUE),
+      max(stat[, col], na.rm = TRUE),
+      mean(stat[, col], na.rm = TRUE),
+      median(stat[, col], na.rm = TRUE)
+      ))
+}
+kable(oSummary, digits=3, col.names = c("Statistic","Min","Max","Avg","Median"))
+
+```
+
+## Summary per problem
+```{r Summary per problem, echo=FALSE, message=FALSE, warning=FALSE}
+
+su = matrix(nrow = 0, ncol = 6)
+overview = matrix(nrow = 0, ncol = 2)
+
+for (pro in unique(stat[, 1])) {
+  st <- stat[stat$problem == pro, ]
+  overview <-
+    rbind(overview, c(pro, length(st[, 1])))
+  for (col in 2:length(colnames(stat))) {
+    su <-
+      rbind(su, c(
+        pro,
+        colnames(stat)[col],
+        min(st[, col], na.rm = TRUE),
+        max(st[, col], na.rm = TRUE),
+        mean(st[, col], na.rm = TRUE),
+        median(st[, col], na.rm = TRUE)
+      ))
+  }
+}
+kable(overview, digits=3, col.names = c("Problem","Number of Instances"))
+kable(su, digits=3, col.names = c("Problem","Statistic","Min","Max","Mean","Median"))
+
+```
+
+# Plots
+
+## Comparison between solving time and coices
+```{r time Choices, echo=FALSE, message=FALSE, warning=FALSE}
+
+num <- 0
+for (a in unique(stat[,1])) {
+  num <- num + 1
+  st <- stat[stat$problem == a, ]
+  
+  if (num > 1) {
+    points(y = st$time_total,
+           x = st$choices,
+           pch = num)
+  } else{
+    plot(
+      y = st$time_total,
+      x = st$choices,
+      xlab = "Number of Choices",
+      ylab = "Total solving time",
+      main = "Comparison between solving time and coices",
+      ylim = c(0, max(stat$time_total)),
+      xlim = c(0, max(stat$choices))
+    )
+    
+  }
+}
+
+```
+
+## Comparison between solving time and the maximal pausitive clause size
+```{r time maximal pausitive clause size, echo=FALSE, message=FALSE, warning=FALSE}
+
+num <- 0
+for (a in unique(stat[,1])) {
+  num <- num + 1
+  st <- stat[stat$problem == a, ]
+  
+  if (num > 1) {
+    points(
+      y = st$time_total,
+      x = st$maxPositiveClauseSize,
+      pch = num
+    )
+  } else{
+    plot(
+      y = st$time_total,
+      x = st$maxPositiveClauseSize,
+      xlab = "maximal pausitive clause size",
+      ylab = "Total solving time",
+      main = "Comparison between solving time and maximal pausitive clause size",
+      ylim = c(0, max(stat$time_total)),
+      xlim = c(0, max(stat$maxPositiveClauseSize))
+    )
+    
+  }
+}
+
+```
+
+## Comparison between solving time and the maximal negative clause size
+```{r time maximal negative clause size, echo=FALSE, message=FALSE, warning=FALSE}
+
+plot(
+  y = stat$time_total,
+  x = stat$maxNegativeClauseSize,
+  type = "p",
+  xlab = "maximal negative clause size",
+  ylab = "Total solving time",
+  main = "Comparison between solving time and maximal negative clause size"
+)
 
 ```
 
 # Correlations
 
-List of parameter correlations that are higher than 0.5 or lower than -0.5
+```{r correlations, echo=FALSE, message=FALSE, warning=FALSE}
 
-```{r correlations, echo=FALSE, message=TRUE, warning=TRUE}
-
-a <- corr.test(stat, adjust = "none")
+a <- corr.test(stat[, -1], adjust = "none")
 corelation <- round(a$r, 2)
 list_cor = matrix(nrow = 0, ncol = 3)
 for (a in 1:length(corelation[, 1])) {
@@ -60,181 +184,74 @@ for (a in 1:length(corelation[, 1])) {
     }
   }
 }
-write.table(
-  format(list_cor[order(abs(as.numeric(list_cor[, 3])), decreasing = TRUE), ], justify = "left"),
-  quote = F,
-  row.names = FALSE,
-  col.names = FALSE
-)
 
 ```
 
-# Plots
+```{r print correlations, echo=FALSE, message=FALSE, warning=FALSE}
 
-## Comparison between solving time and coices
-```{r time Choices, echo=FALSE}
-
-plot(
-  y = stat$time_total,
-  x = stat$choices,
-  type = "p",
-  xlab = "Number of Choices",
-  ylab = "Total solving time",
-  main = "Comparison between solving time and coices"
-)
-
-st_ <- stat[order(stat[,1], decreasing = TRUE),]
-for (a in 1:3) {
-  st <- st_[(length(st_)/3*(a-1):length(st_)/3*(a)),];
-  points(
-    y = st$time_total,
-    x = st$choices,
-    col = colors()[length(colors())/a],
-    pch = a
-  )
-}
+list_cor <- list_cor[order(abs(as.numeric(list_cor[, 3])), decreasing = TRUE), ]
+kable(list_cor, digits=3, col.names = c("Statistic","Statistic","Correlation"))
 
 ```
 
-## Comparison between solving time and the maximal pausitive clause size
-```{r time maximal pausitive clause size, echo=FALSE}
+#All Plots
 
-plot(
-  y = stat$time_total,
-  x = stat$maxPositiveClauseSize,
-  type = "p",
-  xlab = "maximal pausitive clause size",
-  ylab = "Total solving time",
-  main = "Comparison between solving time and maximal pausitive clause size"
-)
+```{r Raw Plots with correlation, echo=FALSE, message=FALSE, warning=FALSE}
 
-```
-
-## Comparison between solving time and the maximal negative clause size
-```{r time maximal negative clause size, echo=FALSE}
-
-plot(
-  y = stat$time_total,
-  x = stat$maxNegativeClauseSize,
-  type = "p",
-  xlab = "maximal negative clause size",
-  ylab = "Total solving time",
-  main = "Comparison between solving time and maximal negative clause size"
-)
-
-```
-
-# Raw Plots with high correlation
-
-```{r Raw Plots with high correlation, echo=FALSE}
-
-l <- length(colnames(stat))
-for (a in 1:l) {
-  for (b in 1:l) {
-    if (!is.na(corelation[a, b])) {
-      if (a < b) {
-        if (corelation[a, b] >= 0.7 || corelation[a, b] <= (-0.7)) {
-          print(c(
-            row.names(corelation)[a],
-            colnames(corelation)[b],
-            corelation[a, b]
-          ))
-          print(qplot(
-            y = stat[a],
-            x = stat[b],
-            xlab = colnames(stat)[b],
-            ylab = colnames(stat)[a]
-          ))
-        }
-      }
-    }
-  }
-}
-
-```
-
-# Raw Plots with medium correlation
-
-```{r Raw Plots with medium correlation, echo=FALSE}
-
-l <- length(colnames(stat))
-for (a in 1:l) {
-  for (b in 1:l) {
-    if (!is.na(corelation[a, b])) {
-      if (a < b) {
-        if ((corelation[a, b] < 0.7 && corelation[a, b] >= 0.5) ||
-            (corelation[a, b] > -0.7 && corelation[a, b] <= -0.5)) {
-          print(c(
-            row.names(corelation)[a],
-            colnames(corelation)[b],
-            corelation[a, b]
-          ))
-          print(qplot(
-            y = stat[a],
-            x = stat[b],
-            xlab = colnames(stat)[b],
-            ylab = colnames(stat)[a]
-          ))
-        }
-      }
-    }
-  }
-}
-
-```
-
-# Raw Plots with low correlation
-
-```{r Raw Plots with low correlation, echo=FALSE}
-
-l <- length(colnames(stat))
-for (a in 1:l) {
-  for (b in 1:l) {
-    if (!is.na(corelation[a, b])) {
-      if (a < b) {
-        if ((corelation[a, b] < 0.5 && corelation[a, b] >= 0.3) ||
-            (corelation[a, b] > -0.5 && corelation[a, b] <= -0.3)) {
-          print(c(
-            row.names(corelation)[a],
-            colnames(corelation)[b],
-            corelation[a, b]
-          ))
-          print(qplot(
-            y = stat[a],
-            x = stat[b],
-            xlab = colnames(stat)[b],
-            ylab = colnames(stat)[a]
-          ))
-        }
-      }
-    }
-  }
-}
-
-```
-
-# Raw Plots with almost no correlation
-
-```{r Raw Plots with almost no correlation, echo=FALSE}
-
-l <- length(colnames(stat))
-for (a in 1:l) {
-  for (b in 1:l) {
-    if (!is.na(corelation[a, b])) {
-      if (a < b) {
-        if ((corelation[a, b] < 0.3) &&
-            (corelation[a, b] > -0.3)) {
-          print(c(
-            row.names(corelation)[a],
-            colnames(corelation)[b],
-            corelation[a, b]
-          ))
-          print(qplot(
-            y = stat[a],
-            x = stat[b],
-            xlab = colnames(stat)[b],
-            ylab = colnames(stat)[a]
-          ))
+borders <-
+  matrix(c(c(1, 0.7, -0.7, -1),
+    c(0.7, 0.5, -0.5, -0.7),
+    c(0.5, 0.3, -0.3, -0.5),
+    c(0.3, 0, 0, -0.3)), nrow=4,ncol=4)
+l <- length(colnames(stat)) - 1
+for(i in 1:4){
+  bord <- borders[,i]
+  for (a in 1:l) {
+    for (b in 1:l) {
+      if (!is.na(corelation[a, b])) {
+        if (a < b) {
+          if ((corelation[a, b] <= bord[1] && corelation[a, b] >= bord[2]) ||
+              (corelation[a, b] <= bord[3] && corelation[a, b] >= bord[4])) {
+            print(c(
+              colnames(corelation)[a],
+              colnames(corelation)[b],
+              corelation[a, b]
+            ))
+            num <- 0
+            cal <- 0
+            for (pro in unique(stat[, 1])) {
+              num <- num + 1
+              st <- stat[stat$problem == pro, ]
+              st <- st[,-1]
+              if ((sum(!is.na(st[, a])) > 0) &&
+                  (sum(!is.na(st[, b])) > 0)) {
+                 if (cal > 0) {
+                   points(
+                     x = as.numeric(unlist(st[, b])),
+                     y = as.numeric(unlist(st[, a])),
+                     pch = num
+                   )
+                 } else {
+                   cal <- 1
+                   print(
+                     plot(
+                       x = st[, b],
+                       y = st[, a],
+                       xlab = colnames(st)[b],
+                       ylab = colnames(st)[a],
+                       xlim = c(0, ceiling(
+                         max(stat[, b + 1], na.rm = TRUE) * 1.05
+                       )),
+                       ylim = c(0, ceiling(
+                         max(stat[, a + 1], na.rm = TRUE) * 1.05
+                       ))
+                     )
+                   )
+                   
+                 }
+              }
+            }
+          }
         }
       }
     }
