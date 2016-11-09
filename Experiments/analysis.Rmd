@@ -29,12 +29,7 @@ Statistics <-
     quote = "\"",
     dec = "."
   )
-stat <- Statistics[, -41:-70]
-stat <- stat[, -38]
-stat <- stat[, -35]
-stat <- stat[, -19]
-stat <- Statistics[, -17]
-stat <- Statistics[, -5]
+stat <- Statistics[, -40:-69]
 stat <- stat[, -2]
 
 ```
@@ -100,17 +95,17 @@ for (a in unique(stat[,1])) {
   st <- stat[stat$problem == a, ]
   
   if (num > 1) {
-    points(y = st$time_total,
+    points(y = st$time_CPU,
            x = st$choices,
            pch = num)
   } else{
     plot(
-      y = st$time_total,
+      y = st$time_CPU,
       x = st$choices,
       xlab = "Number of Choices",
-      ylab = "Total solving time",
+      ylab = "Solving time",
       main = "Comparison between solving time and coices",
-      ylim = c(0, max(stat$time_total)),
+      ylim = c(0, max(stat$time_CPU)),
       xlim = c(0, max(stat$choices))
     )
     
@@ -129,37 +124,23 @@ for (a in unique(stat[,1])) {
   
   if (num > 1) {
     points(
-      y = st$time_total,
+      y = st$time_CPU,
       x = st$maxPositiveClauseSize,
       pch = num
     )
   } else{
     plot(
-      y = st$time_total,
+      y = st$time_CPU,
       x = st$maxPositiveClauseSize,
       xlab = "maximal pausitive clause size",
-      ylab = "Total solving time",
+      ylab = "Solving time",
       main = "Comparison between solving time and maximal pausitive clause size",
-      ylim = c(0, max(stat$time_total)),
+      ylim = c(0, max(stat$time_CPU)),
       xlim = c(0, max(stat$maxPositiveClauseSize))
     )
     
   }
 }
-
-```
-
-## Comparison between solving time and the maximal negative clause size
-```{r time maximal negative clause size, echo=FALSE, message=FALSE, warning=FALSE}
-
-plot(
-  y = stat$time_total,
-  x = stat$maxNegativeClauseSize,
-  type = "p",
-  xlab = "maximal negative clause size",
-  ylab = "Total solving time",
-  main = "Comparison between solving time and maximal negative clause size"
-)
 
 ```
 
@@ -240,10 +221,10 @@ for(i in 1:4){
                        xlab = colnames(st)[b],
                        ylab = colnames(st)[a],
                        xlim = c(0, ceiling(
-                         max(stat[, b + 1], na.rm = TRUE) * 1.05
+                         max(stat[, b + 1], na.rm = TRUE)
                        )),
                        ylim = c(0, ceiling(
-                         max(stat[, a + 1], na.rm = TRUE) * 1.05
+                         max(stat[, a + 1], na.rm = TRUE)
                        ))
                      )
                    )
