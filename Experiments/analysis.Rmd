@@ -204,8 +204,8 @@ for(i in 1:4){
               num <- num + 1
               st <- stat[stat$problem == pro, ]
               st <- st[,-1]
-              if ((sum(!is.na(st[, a])) > 0) &&
-                  (sum(!is.na(st[, b])) > 0)) {
+              if ((sum(!is.na(st[, a])) > 5) &&
+                  (sum(!is.na(st[, b])) > 5)) {
                  if (cal > 0) {
                    points(
                      x = as.numeric(unlist(st[, b])),
