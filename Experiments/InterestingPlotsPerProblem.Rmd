@@ -1,0 +1,140 @@
+---
+output:
+  html_document:
+    toc: yes
+  pdf_document:
+    number_sections: yes
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(
+  warning = FALSE
+)
+library("psych", lib.loc = "~/R/win-library/3.3")
+library("zoom", lib.loc = "~/R/win-library/3.3")
+library("knitr", lib.loc = "~/R/win-library/3.3")
+setwd("C:/Users/Markus/Sync/Bachelor/exst_clasp/Experiments")
+
+```
+
+```{r load data, echo=FALSE, message=FALSE, warning=FALSE}
+
+Statistics <-
+  read.csv(
+    file = "Statistics.csv",
+    header = TRUE,
+    sep = ",",
+    quote = "\"",
+    dec = "."
+  )
+stat <- Statistics[, -40:-69]
+stat <- stat[, -2]
+problems <- unique(stat[, 1])
+
+```
+
+# Correlations
+
+##Correlation per Problem
+
+```{r correlations per problem, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+begin <- TRUE
+count <- 2
+for (pro in unique(stat[, 1])) {
+  st <- stat[stat$problem == pro, ]
+  lenst <- sum(!is.na(st[, 1]))
+  if (lenst > 10) {
+    a <- corr.test(st[,-1], adjust = "none")
+    if (begin) {
+      correlations <- list(round(a$r, 2))
+      problems <- list(pro)
+      begin <- FALSE
+    } else{
+      correlations[[count]] <- round(a$r, 2)
+      problems[[count]] <- pro
+      count <- count + 1
+    }
+  }
+}
+
+```
+
+```{r correlations per problem stat, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+
+len <- length(colnames(correlations[[1]]))
+minmatrix <- matrix(nrow=len,ncol=len)
+maxmatrix <- matrix(nrow=len,ncol=len)
+begin <- TRUE
+count <- 2
+for (stat1 in 1:len) {
+  for (stat2 in 1:len) {
+    begin <- TRUE
+    for (prob in 1:length(problems)) {
+      if(!is.na(correlations[[prob]][stat1, stat2])){
+      if (begin) {
+        cors <- c(correlations[[prob]][stat1, stat2])
+        begin <- FALSE
+      } else{
+        cors <- c(cors, correlations[[prob]][stat1, stat2])
+      }}
+    }
+    minmatrix[stat1,stat2] <- min(abs(cors), na.rm = TRUE)
+    maxmatrix[stat1,stat2] <- max(abs(cors), na.rm = TRUE)
+  }
+}
+
+```
+
+#Plots for corrlation with hight difference
+
+```{r correlations per problem with plots, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+
+for(a in 1:len) {
+  for (b in 1:len) {
+    if (minmatrix[a, b] <= 0.4 && maxmatrix >= 0.6) {
+      num <- 1
+      cat(sprintf(
+        "\n\n## Statistic: %s vs. %s \n\n",
+        colnames(st)[a + 1],
+        colnames(st)[b + 1]
+      ))
+      for (pro in problems) {
+        lenst <- sum(!is.na(st[, 1]))
+        if (lenst > 10) {
+          st <- stat[stat$problem == pro,]
+          if (!is.na(max(st[, a + 1])) &&
+              !is.na(max(st[, b + 1])) &&
+              !is.na(min(st[, a + 1])) &&
+              !is.na(min(st[, b + 1]))) {
+            cat(
+              sprintf(
+                "\n\n### Problem: %s Statistic: %s vs. %s Correlation: %s\n\n",
+                pro,
+                colnames(st)[a + 1],
+                colnames(st)[b + 1],
+                correlations[[num]][a, b]
+              )
+            )
+            print(
+              plot(
+                x = st[, a + 1],
+                y = st[, b + 1],
+                xlab = colnames(st)[a + 1],
+                ylab = colnames(st)[b + 1],
+                xlim = c(min(st[, a + 1]), max(st[, a + 1])),
+                ylim = c(min(st[, b + 1]), max(st[, b + 1])),
+                pch = "x"
+              )
+            )
+            
+          }
+        }
+        num <- num + 1
+      }
+    }
+  }
+}
+
+```
