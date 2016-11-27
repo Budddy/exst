@@ -91,50 +91,55 @@ for (stat1 in 1:len) {
 
 ```{r correlations per problem with plots, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
 
+
+maxlen <- max(nchar(problems))
 for(a in 1:len) {
   for (b in 1:len) {
-    if (minmatrix[a, b] <= 0.4 && maxmatrix >= 0.6) {
-      num <- 1
-      cat(sprintf(
-        "\n\n## Statistic: %s vs. %s \n\n",
-        colnames(st)[a + 1],
-        colnames(st)[b + 1]
-      ))
-      for (pro in problems) {
-        lenst <- sum(!is.na(st[, 1]))
-        if (lenst > 10) {
-          st <- stat[stat$problem == pro,]
-          if (!is.na(max(st[, a + 1])) &&
-              !is.na(max(st[, b + 1])) &&
-              !is.na(min(st[, a + 1])) &&
-              !is.na(min(st[, b + 1]))) {
-            cat(
-              sprintf(
-                "\n\n### Problem: %s Statistic: %s vs. %s Correlation: %s\n\n",
-                pro,
-                colnames(st)[a + 1],
-                colnames(st)[b + 1],
-                correlations[[num]][a, b]
+    if (a < b) {
+      if (minmatrix[a, b] <= 0.4 && maxmatrix >= 0.6) {
+        num <- 1
+        cat(sprintf(
+          "\n\n## Statistic: %s vs. %s \n\n",
+          colnames(st)[a + 1],
+          colnames(st)[b + 1]
+        ))
+        for (pro in problems) {
+          lenst <- sum(!is.na(st[, 1]))
+          if (lenst > 10) {
+            st <- stat[stat$problem == pro, ]
+            if (!is.na(max(st[, a + 1])) &&
+                !is.na(max(st[, b + 1])) &&
+                !is.na(min(st[, a + 1])) &&
+                !is.na(min(st[, b + 1])) &&
+                !is.na(correlations[[num]][a, b])) {
+              cat(
+                sprintf(
+                  "\n\n### %s%s Correlation: %s\n\n",
+                  pro,
+                  paste(replicate(maxlen-nchar(pro)," "),collapse = ""),
+                  correlations[[num]][a, b]
+                )
               )
-            )
-            print(
-              plot(
-                x = st[, a + 1],
-                y = st[, b + 1],
-                xlab = colnames(st)[a + 1],
-                ylab = colnames(st)[b + 1],
-                xlim = c(min(st[, a + 1]), max(st[, a + 1])),
-                ylim = c(min(st[, b + 1]), max(st[, b + 1])),
-                pch = "x"
+              print(
+                plot(
+                  x = st[, a + 1],
+                  y = st[, b + 1],
+                  xlab = colnames(st)[a + 1],
+                  ylab = colnames(st)[b + 1],
+                  xlim = c(min(st[, a + 1]), max(st[, a + 1])),
+                  ylim = c(min(st[, b + 1]), max(st[, b + 1])),
+                  pch = "x"
+                )
               )
-            )
-            
+              
+            }
           }
+          num <- num + 1
         }
-        num <- num + 1
       }
     }
   }
 }
+
 
 ```

@@ -32,6 +32,8 @@ Statistics <-
 stat <- Statistics[, -40:-69]
 stat <- stat[, -2]
 
+asdf <- Statistics[, -40:-70]
+asdf <- asdf[, -3:-36]
 ```
 
 # Summary
