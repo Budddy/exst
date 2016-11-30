@@ -16,9 +16,6 @@ namespace exst
         ///number of facts in the program
         uint32_t numFacts = 0;
 
-        ///number of rules in the program
-        uint32_t numRules = 0;
-
         ///rules
         std::list<std::pair<std::list<lit_type>, std::list<lit_type>>> rules;
 
@@ -71,7 +68,7 @@ namespace exst
         uint32_t numConstraints = 0;
 
         ///maximum size of the positive rules in constraints
-        uint32_t maxPositiveRuleSizeConstraint = 0;
+        uint32_t maxPositiveSizeConstraint = 0;
 
         ///maximum size of the positive rules in non constraints
         uint32_t maxPositiveRuleSizeNonConstraint = 0;
@@ -81,6 +78,19 @@ namespace exst
 
         ///num of atom occurences in non constraints
         uint32_t atomOccurencesNonConstraint = 0;
+
+        uint32_t maxNegativeRuleSizeBody = 0;
+        uint32_t maxPositiveBodySizeConstraint = 0;
+        uint32_t maxNegativeBodySizeConstraint = 0;
+        unsigned long numAtomsHead = 0;
+        uint32_t numAtomsPositiveBody = 0;
+        uint32_t numAtomsNegativeBody = 0;
+        uint32_t maxHeadSizeRule = 0;
+        uint32_t maxBodySizeNonConstraint = 0;
+        uint32_t maxSizeHeadNegBodyRule = 0;
+        unsigned long maxSizeNonConstraint = 0;
+        std::unordered_map<uint32_t, uint32_t> varOccurr;
+        std::unordered_map<uint32_t, uint32_t> varOccurrHeadNegBody;
     };
 
     /**

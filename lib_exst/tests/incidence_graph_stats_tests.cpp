@@ -354,22 +354,22 @@ namespace exst
             body.push_back(*new lit_type(9, POSITIVE));
             incidenceGraphStats->addRule(body, head);
 
-            ProgramParameter::getInstance().widthCalcInterval=1;
+            ProgramParameter::getInstance().widthCalcInterval = 1;
 
-            Clasp::Literal l(1,false);
-            Clasp::LitVec vec(1,l);
+            Clasp::Literal l(1, false);
+            Clasp::LitVec vec(1, l);
             incidenceGraphStats->updateAssignment(vec);
-            incidenceGraphStats->iGraphStats.current_assignment.at(0)==l;
+            incidenceGraphStats->iGraphStats.current_assignment.at(0) == l;
 
-            Clasp::Literal l2(2,false);
-            Clasp::LitVec vec2(2,l);
+            Clasp::Literal l2(2, false);
+            Clasp::LitVec vec2(2, l);
             incidenceGraphStats->updateAssignment(vec2);
-            incidenceGraphStats->iGraphStats.current_assignment.at(0)==l;
+            incidenceGraphStats->iGraphStats.current_assignment.at(0) == l;
 
-            Clasp::Literal l3(3,false);
-            Clasp::LitVec vec3(3,l);
+            Clasp::Literal l3(3, false);
+            Clasp::LitVec vec3(3, l);
             incidenceGraphStats->updateAssignment(vec3);
-            incidenceGraphStats->iGraphStats.current_assignment.at(0)==l;
+            incidenceGraphStats->iGraphStats.current_assignment.at(0) == l;
         };
 
         void testgetAdditionalStatistics()
@@ -420,30 +420,26 @@ namespace exst
             incidenceGraphStats->addRule(body, head);
 
             const std::list<std::string> &stats = incidenceGraphStats->getAdditionalStatistics();
+            std::string rg = stats.front();
+            std::string ig = stats.back();
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Reduct Graph", std::string("\n"
-                                                                             ",\n"
-                                                                             "\n"
-                                                                             " \"Reduct Graph\" : [\n"
-                                                                             "  ]\n"),
-                                         stats.front());
+                                                                         " \"Reduct Graph\" : [\n"
+                                                                         "  ]\n"), stats.front());
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Incidence Graph", std::string("\n"
-                                                                                ",\n"
-                                                                                "\n"
-                                                                                " \"Incidence Graph\" : \n"
-                                                                                "[\"p edge 11 12\"\n"
-                                                                                ",\"e 1 2\"\n"
-                                                                                ",\"e 1 3\"\n"
-                                                                                ",\"e 2 11\"\n"
-                                                                                ",\"e 3 11\"\n"
-                                                                                ",\"e 4 5\"\n"
-                                                                                ",\"e 4 6\"\n"
-                                                                                ",\"e 5 11\"\n"
-                                                                                ",\"e 6 7\"\n"
-                                                                                ",\"e 6 10\"\n"
-                                                                                ",\"e 7 8\"\n"
-                                                                                ",\"e 7 9\"\n"
-                                                                                ",\"e 9 10\"]"),
-                                         stats.back());
+                                                                            " \"Incidence Graph\" : \n"
+                                                                            "[\"p edge 11 12\"\n"
+                                                                            ",\"e 1 2\"\n"
+                                                                            ",\"e 1 3\"\n"
+                                                                            ",\"e 2 11\"\n"
+                                                                            ",\"e 3 11\"\n"
+                                                                            ",\"e 4 5\"\n"
+                                                                            ",\"e 4 6\"\n"
+                                                                            ",\"e 5 11\"\n"
+                                                                            ",\"e 6 7\"\n"
+                                                                            ",\"e 6 10\"\n"
+                                                                            ",\"e 7 8\"\n"
+                                                                            ",\"e 7 9\"\n"
+                                                                            ",\"e 9 10\"]"), stats.back());
         };
     };
 

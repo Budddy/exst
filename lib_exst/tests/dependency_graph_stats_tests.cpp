@@ -142,12 +142,11 @@ namespace exst
 
             const std::list<std::string> &stats = dependencyGraphStats->getAdditionalStatistics();
             CPPUNIT_ASSERT_EQUAL_MESSAGE("dependency graph", std::string("\"Dependency Graph\" : \n"
-                                                                                 "[\"p edge 8 4\"\n"
-                                                                                 ",\"e 1 2\"\n"
-                                                                                 ",\"e 2 3\"\n"
-                                                                                 ",\"e 4 6\"\n"
-                                                                                 ",\"e 5 6\"]"),
-                                         stats.front());
+                                                                             "[\"p edge 8 4\"\n"
+                                                                             ",\"e 1 2\"\n"
+                                                                             ",\"e 2 3\"\n"
+                                                                             ",\"e 4 6\"\n"
+                                                                             ",\"e 5 6\"]"), stats.front());
         };
     };
 

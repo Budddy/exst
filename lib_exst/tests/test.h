@@ -29,7 +29,7 @@ namespace exst
             extendedStatistics->registerProgramStatistics(dependencyGraphStats);
             extendedStatistics->registerProgramStatistics(statsCalculator);
             extendedStatistics->registerProgramStatistics(incidenceGraphStats);
-            ProgramParameter::getInstance() = * new ProgramParameter();
+            ProgramParameter::getInstance() = *new ProgramParameter();
         }
 
         void tearDown()
@@ -45,7 +45,7 @@ namespace exst
         ProgramStatsCalculator *statsCalculator;
         IncidenceGraphStatsCalculator *incidenceGraphStats;
         std::unordered_map<uint32_t, uint32_t> *atomIds;
-        ExtendedStatistics* extendedStatistics = &ExtendedStatistics::getInstance();
+        ExtendedStatistics *extendedStatistics = &ExtendedStatistics::getInstance();
     };
 };
 

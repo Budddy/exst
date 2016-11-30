@@ -119,35 +119,35 @@ namespace exst
 
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", std::string(
-                    "  ,[\"number of variables that occur as positive literals with helpers\" , 3]"), line);
+                "  ,[\"number of variables that occur as positive literals with helpers\" , 3]"), line);
 
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", std::string(
-                    "  ,[\"number of variables that occur as positive literals without helpers\" , 3]"), line);
+                "  ,[\"number of variables that occur as positive literals without helpers\" , 3]"), line);
 
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", std::string(
-                    "  ,[\"number of variables that occur as negative literals with helpers\" , 3]"), line);
+                "  ,[\"number of variables that occur as negative literals with helpers\" , 3]"), line);
 
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", std::string(
-                    "  ,[\"number of variables that occur as negative literals without helpers\" , 1]"), line);
+                "  ,[\"number of variables that occur as negative literals without helpers\" , 1]"), line);
 
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses",
-                                         std::string("  ,[\"maximum positive rule size constraint\" , 3]"), line);
+                                         std::string("  ,[\"maximum positive rule size constraint\" , 1]"), line);
 
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses",
-                                         std::string("  ,[\"maximum positive rule size non-constraint\" , 1]"), line);
+                                         std::string("  ,[\"maximum positive rule size non-constraint\" , 3]"), line);
 
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses",
-                                         std::string("  ,[\"total number of atom occurrences constraint\" , 7]"), line);
+                                         std::string("  ,[\"total number of atom occurrences constraint\" , 4]"), line);
 
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses",
-                                         std::string("  ,[\"total number of atom occurrences non-constraint\" , 2]"),
+                                         std::string("  ,[\"total number of atom occurrences non-constraint\" , 5]"),
                                          line);
 
             std::getline(res, line, '\n');
@@ -155,19 +155,76 @@ namespace exst
                                          std::string("  ,[\"maximum number of occurrences of an atom\" , 2]"), line);
 
             std::getline(res, line, '\n');
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", std::string(
-                    "  ,[\"maximum number of positive occurrences of an atom\" , 2]"), line);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses",
+                                         std::string("  ,[\"maximum number of positive occurrences of an atom\" , 2]"),
+                                         line);
+
+            std::getline(res, line, '\n');
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses",
+                                         std::string("  ,[\"maximum number of negative occurrences of an atom\" , 1]"),
+                                         line);
+
+            std::getline(res, line, '\n');
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses",
+                                         std::string("  ,[\"maximum size of a non-constraint rule\" , 3]"), line);
 
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", std::string(
-                    "  ,[\"maximum number of negative occurrences of an atom\" , 1]"), line);
+                "  ,[\"maximum size of the head and negative body of a rule\" , 2]"), line);
+
+            std::getline(res, line, '\n');
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses",
+                                         std::string("  ,[\"maximum size of the head of a rule\" , 1]"), line);
+
+            std::getline(res, line, '\n');
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", std::string(
+                "  ,[\"maximum size of the positive body of a non-constraint rule\" , 2]"), line);
+
+            std::getline(res, line, '\n');
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses",
+                                         std::string("  ,[\"maximum size of the negative body of a rule\" , 2]"), line);
+
+            std::getline(res, line, '\n');
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses",
+                                         std::string("  ,[\"maximum size of the positive body of a constraint\" , 1]"),
+                                         line);
+
+            std::getline(res, line, '\n');
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses",
+                                         std::string("  ,[\"maximum size of the negative body of a constraint\" , 2]"),
+                                         line);
+
+            std::getline(res, line, '\n');
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses",
+                                         std::string("  ,[\"number of atoms that occur in the head\" , 3]"), line);
+
+            std::getline(res, line, '\n');
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses",
+                                         std::string("  ,[\"number of atoms that occur in the positive body\" , 3]"),
+                                         line);
+
+            std::getline(res, line, '\n');
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses",
+                                         std::string("  ,[\"number of atoms that occur in the negative body\" , 3]"),
+                                         line);
+
+            std::getline(res, line, '\n');
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses",
+                                         std::string("  ,[\"maximum number of occurences of a variable\" , 2]"), line);
+
+            std::getline(res, line, '\n');
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", std::string(
+                "  ,[\"maximum number of occurrences of a variable only head and negative body occurences\" , 1]"),
+                                         line);
 
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", std::string("]"), line);
 
+
         }
 
-        void testUpdateAssignment(){
+        void testUpdateAssignment()
+        {
 
             std::list<lit_type> body;
             std::list<lit_type> head;
@@ -198,10 +255,10 @@ namespace exst
             head.push_back(*new lit_type(9, NEGATIVE));
             extendedStatistics->addRule(body, head);
 
-            Clasp::Literal l(2,false);
-            Clasp::LitVec vec(1,l);
+            Clasp::Literal l(2, false);
+            Clasp::LitVec vec(1, l);
             this->extendedStatistics->updateAssignment(vec);
-            incidenceGraphStats->iGraphStats.current_assignment.at(0)==l;
+            incidenceGraphStats->iGraphStats.current_assignment.at(0) == l;
         }
     };
 
