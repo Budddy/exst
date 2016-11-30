@@ -19,7 +19,7 @@ setwd("C:/Users/Markus/Sync/Bachelor/exst_clasp/Experiments")
 
 ```
 
-```{r load data, echo=FALSE, message=FALSE, warning=FALSE}
+```{r load data, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
 
 Statistics <-
   read.csv(
@@ -34,12 +34,14 @@ stat <- stat[, -2]
 
 asdf <- Statistics[, -40:-70]
 asdf <- asdf[, -3:-36]
+
+problems <- unique(stat[, 1])
 ```
 
 # Summary
 
 ## Overall Summary
-```{r Overall Summary, echo=FALSE, message=FALSE, warning=FALSE}
+```{r Overall Summary, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
 
 oSummary = matrix(nrow = 0, ncol = 5)
 
@@ -60,7 +62,7 @@ kable(oSummary, digits=3, col.names = c("Statistic","Min","Max","Avg","Median"))
 ```
 
 ## Summary per problem
-```{r Summary per problem, echo=FALSE, message=FALSE, warning=FALSE}
+```{r Summary per problem, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
 
 su = matrix(nrow = 0, ncol = 6)
 overview = matrix(nrow = 0, ncol = 2)
@@ -87,7 +89,7 @@ kable(su, digits=3, col.names = c("Problem","Statistic","Min","Max","Mean","Medi
 ```
 
 ## Summary per problem
-```{r Summary per problem2, echo=FALSE, message=FALSE, warning=FALSE}
+```{r Summary per problem2, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
 
 asdf = matrix(nrow = 0, ncol = (length(unique(stat[, 1]))+2))
 
@@ -119,7 +121,7 @@ kable(asdf,
 
 ##All Correlations
 
-```{r correlations, echo=FALSE, message=FALSE, warning=FALSE}
+```{r correlations, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
 
 a <- corr.test(stat[, -1], adjust = "none")
 corelation <- round(a$r, 2)
@@ -141,7 +143,7 @@ for (a in 1:length(corelation[, 1])) {
 
 ```
 
-```{r print correlations, echo=FALSE, message=FALSE, warning=FALSE}
+```{r print correlations, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
 
 kable(
       corelation,
@@ -222,4 +224,193 @@ for (stat1 in 1:len) {
 
 kable(corrmatrix)
 ```
+
+```{r Overall Summary_, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+
+oSummary = matrix(nrow = 0, ncol = 5)
+
+for (col in 2:length(colnames(stat))) {
+    oSummary <-
+      rbind(oSummary, c(
+      colnames(stat)[col],
+      min(stat[, col], na.rm = TRUE),
+      max(stat[, col], na.rm = TRUE),
+      mean(stat[, col], na.rm = TRUE),
+      median(stat[, col], na.rm = TRUE)
+      ))
+}
+
+```
+
+```{r Summary per problem_, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+
+su = matrix(nrow = 0, ncol = 6)
+overview = matrix(nrow = 0, ncol = 2)
+
+for (pro in problems) {
+  st <- stat[stat$problem == pro, ]
+  overview <- rbind(overview, c(pro, length(st[, 1])))
+  for (col in 2:length(colnames(stat))) {
+    su <-
+      rbind(su, c(
+        pro,
+        colnames(stat)[col],
+        min(st[, col], na.rm = TRUE),
+        max(st[, col], na.rm = TRUE),
+        mean(st[, col], na.rm = TRUE),
+        median(st[, col], na.rm = TRUE)
+      ))
+  }
+}
+
+```
+
+```{r Summary per problem2_, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+
+asdf = matrix(nrow = 0, ncol = (length(unique(stat[, 1]))+2))
+
+for (col in 2:length(colnames(stat))) {
+  st <- stat[stat$problem == pro,]
+  minrow <- c(colnames(stat)[col], "min")
+  maxrow <- c(colnames(stat)[col], "max")
+  meanrow <- c(colnames(stat)[col], "mean")
+  medianrow <-  c(colnames(stat)[col], "median")
+  for (pro in unique(stat[, 1])) {
+    st <- stat[stat$problem == pro,]
+    minrow <- c(minrow, min(st[, col], na.rm = TRUE))
+    maxrow <- c(maxrow, max(st[, col], na.rm = TRUE))
+    meanrow <- c(meanrow, mean(st[, col], na.rm = TRUE))
+    medianrow <-  c(medianrow, median(st[, col], na.rm = TRUE))
+  }
+  asdf <- rbind(asdf, minrow)
+  asdf <- rbind(asdf, maxrow)
+  asdf <- rbind(asdf, meanrow)
+  asdf <- rbind(asdf, medianrow)
+}
+
+```
+
+# Correlations
+
+```{r correlations_, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+
+a <- corr.test(stat[, -1], adjust = "none")
+corelation <- round(a$r, 2)
+list_cor = matrix(nrow = 0, ncol = 3)
+for (a in 1:length(corelation[, 1])) {
+  for (b in 1:length(corelation[, 1])) {
+    if (!is.na(corelation[a, b])) {
+      if ((a < b)) {
+        list_cor <-
+          rbind(list_cor, c(
+            row.names(corelation)[a],
+            colnames(corelation)[b],
+            corelation[a, b]
+          ))
+      }
+    }
+  }
+}
+
+```
+
+##Correlation per Problem
+
+```{r correlations per problem_, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+begin <- TRUE
+count <- 2
+for (pro in unique(stat[, 1])) {
+  st <- stat[stat$problem == pro, ]
+  lenst <- sum(!is.na(st[, 1]))
+  if (lenst > 10) {
+    a <- corr.test(st[,-1], adjust = "none")
+    if (begin) {
+      correlations <- list(round(a$r, 2))
+      problems <- list(pro)
+      begin <- FALSE
+    } else{
+      correlations[[count]] <- round(a$r, 2)
+      problems[[count]] <- pro
+      count <- count + 1
+    }
+  }
+}
+
+```
+
+```{r correlations per problem stat_, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+
+len <- length(colnames(correlations[[1]]))
+minmatrix <- matrix(nrow=len,ncol=len)
+maxmatrix <- matrix(nrow=len,ncol=len)
+corrmatrix <- matrix(nrow=len^2,ncol=10)
+begin <- TRUE
+count <- 2
+for (stat1 in 1:len) {
+  for (stat2 in 1:len) {
+    begin <- TRUE
+    for (prob in 1:length(problems)) {
+      if(!is.na(correlations[[prob]][stat1, stat2])){
+      if (begin) {
+        cors <- c(correlations[[prob]][stat1, stat2])
+        begin <- FALSE
+      } else{
+        cors <- c(cors, correlations[[prob]][stat1, stat2])
+      }}
+    }
+    corrmatrix[(stat1-1) * (len) + stat2, 1] <- colnames(correlations[[1]])[stat1]
+    corrmatrix[(stat1-1) * (len) + stat2, 2] <- colnames(correlations[[1]])[stat2]
+    corrmatrix[(stat1-1) * (len) + stat2, 3] <- min(cors, na.rm = TRUE)
+    corrmatrix[(stat1-1) * (len) + stat2, 4] <- max(cors, na.rm = TRUE)
+    corrmatrix[(stat1-1) * (len) + stat2, 5] <- mean(cors, na.rm = TRUE)
+    corrmatrix[(stat1-1) * (len) + stat2, 6] <- median(cors, na.rm = TRUE)
+    corrmatrix[(stat1-1) * (len) + stat2, 7] <- min(abs(cors), na.rm = TRUE)
+    corrmatrix[(stat1-1) * (len) + stat2, 8] <- max(abs(cors), na.rm = TRUE)
+    corrmatrix[(stat1-1) * (len) + stat2, 9] <- mean(abs(cors), na.rm = TRUE)
+    corrmatrix[(stat1-1) * (len) + stat2, 10] <- median(abs(cors), na.rm = TRUE)
+    minmatrix[stat1,stat2] <- min(abs(cors), na.rm = TRUE)
+    maxmatrix[stat1,stat2] <- max(abs(cors), na.rm = TRUE)
+  }
+}
+
+```
+
+```{r correlations per problem with plots___, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+print(kable(corrmatrix,col.names = c("Statistic","Statistic","min","max","mean","median","absolute min","absolute max","absolute mean","absolute median")))
+
+```
+
+#corrlation per problem sorted
+
+```{r correlations per problem with plots_, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+
+maxlen <- max(nchar(problems))
+for(a in 1:len) {
+      cat(sprintf(
+        "\n\n## Statistic: %s \n\n",
+        colnames(st)[a + 1]
+      ))
+  for (b in 1:len) {
+    if (minmatrix[a, b] <= 0.4 && maxmatrix >= 0.6) {
+      num <- 1
+      cormatrix_stat <- matrix(ncol = 2, nrow = length(problems))
+      for (pro in problems) {
+        lenst <- sum(!is.na(st[, 1]))
+        cormatrix_stat[num, 1] <- pro
+        cormatrix_stat[num, 2] <- correlations[[num]][a, b]
+        num <- num + 1
+      }
+      print(kable(cormatrix_stat[order(cormatrix_stat[,2],decreasing = TRUE),],col.names = c("Problems","Correlation")))
+      
+    }
+  }
+}
+
+```
+
+# Statistics k Consistency
+
+
+
+
 
