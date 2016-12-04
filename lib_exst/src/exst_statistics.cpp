@@ -86,4 +86,15 @@ namespace exst
 
     }
 
+    void ExtendedStatistics::addModel(const Clasp::ValueVec *model)
+    {
+
+        std::list<exst::StatisticsCalculator *>::iterator it;
+        for (it = programStatistics.begin(); it != programStatistics.end(); it++)
+        {
+            (*it)->addModel(model);
+        }
+
+    }
+
 }

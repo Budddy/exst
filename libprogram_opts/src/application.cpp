@@ -211,9 +211,13 @@ bool Application::getOptions(int argc, char** argv) {
 			("verbose,V"   , storeTo(verbose_ = 0)->implicit("-1")->arg("<n>"), "Set verbosity level to %A")
 			("time-limit"  , storeTo(timeout_ = 0)->arg("<n>"), "Set time limit to %A seconds (0=no limit)")
 			("fast-exit,@1", flag(fastExit_   = false)        , "Force fast exit (do not call dtors)")
-			("width-intervall"   , storeTo(exst::ProgramParameter::getInstance().widthCalcInterval = 0)->arg("<n>"), "number of assignments between interval calculation")
-			("calcTWidth"   , flag(exst::ProgramParameter::getInstance().calculateTreeWidth = false),
-			 "calculate the Tree Width")
+            ("width-intervall"   , storeTo(exst::ProgramParameter::getInstance().widthCalcInterval = 0)->arg("<n>"), "number of assignments between interval calculation")
+            ("calcTWidth"   , flag(exst::ProgramParameter::getInstance().calculateTreeWidth = false),
+             "calculate the Tree Width")
+            ("stopIGraphGen"   , flag(exst::ProgramParameter::getInstance().stopIGraphGen = false),
+             "deactivate the incidence Graph generation")
+            ("stopRGraphGen"   , flag(exst::ProgramParameter::getInstance().genRGraph = false),
+             "deactivate the reduct Graph generation")
 			("printDgraph"   , notify(&exst::ProgramParameter::getInstance(),exst::ProgramParameter::parseParameter)->arg("<format>[,<filePath>]"),
 			 "Print the dependency graph\n"
 					 "    <format> : {0|1|2}\n"

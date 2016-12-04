@@ -39,6 +39,10 @@ namespace exst
         {
             return std::list<std::string>();
         };
+
+        virtual void addModel(const Clasp::ValueVec *model){
+
+        };
     };
 }
 

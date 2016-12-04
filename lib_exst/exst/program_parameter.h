@@ -14,10 +14,15 @@ namespace exst
             static ProgramParameter param;
             return param;
         }
+
         ///
         unsigned long long widthCalcInterval = 1000;
         ///
         bool calculateTreeWidth = false;
+        ///
+        bool stopIGraphGen = false;
+        ///
+        bool genRGraph = false;
         ///
         std::string iGraphPath = "";
         ///

@@ -28,6 +28,8 @@ namespace exst
 
         void setSymbolTable(std::unordered_map<uint32_t, const char *> &table);
 
+        void addModel(const Clasp::ValueVec *model);
+
         void addId(uint32_t before, uint32_t after);
 
 
@@ -48,7 +50,10 @@ namespace exst
         {
             registerProgramStatistics(new DependencyGraphStatsCalculator());
             registerProgramStatistics(new ProgramStatsCalculator());
-            registerProgramStatistics(new IncidenceGraphStatsCalculator());
+            if(!ProgramParameter::getInstance().stopIGraphGen)
+            {
+                registerProgramStatistics(new IncidenceGraphStatsCalculator());
+            }
         }
 
     };

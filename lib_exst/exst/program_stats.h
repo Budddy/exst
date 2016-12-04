@@ -89,8 +89,9 @@ namespace exst
         uint32_t maxBodySizeNonConstraint = 0;
         uint32_t maxSizeHeadNegBodyRule = 0;
         unsigned long maxSizeNonConstraint = 0;
-        std::unordered_map<uint32_t, uint32_t> varOccurr;
+        std::unordered_map<uint32_t, uint32_t> maxNumVarOcc;
         std::unordered_map<uint32_t, uint32_t> varOccurrHeadNegBody;
+        unsigned int modelSize;
     };
 
     /**
@@ -101,6 +102,8 @@ namespace exst
     public:
 
         virtual void addRule(std::list<lit_type> body, std::list<lit_type> head);
+
+        virtual void addModel(const Clasp::ValueVec *model);
 
         virtual std::list<std::pair<std::string, std::string>> getStatistics();
 

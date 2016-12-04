@@ -40,7 +40,8 @@ namespace exst
             std::list<lit_type> &head = it->first;
             std::list<lit_type> &body = it->second;
 
-            if(head.size()>0 && head.front().id==1){
+            if (head.size() > 0 && head.front().id == 1)
+            {
                 head.pop_front();
             }
             uint32_t negativeBody = 0, positiveBody = 0;
@@ -242,6 +243,7 @@ namespace exst
         ret.push_back(std::pair<std::string, std::string>("maximum number of negative occurrences of an atom",
                                                           std::to_string(
                                                               maxValue(generalStatistics.atomOccurencesNegative))));
+
         ret.push_back(std::pair<std::string, std::string>("maximum size of a non-constraint rule",
                                                           std::to_string(generalStatistics.maxSizeNonConstraint)));
         ret.push_back(std::pair<std::string, std::string>("maximum size of the head and negative body of a rule",
@@ -265,12 +267,19 @@ namespace exst
         ret.push_back(std::pair<std::string, std::string>("number of atoms that occur in the negative body",
                                                           std::to_string(generalStatistics.numAtomsNegativeBody)));
         ret.push_back(std::pair<std::string, std::string>("maximum number of occurences of a variable",
-                                                          std::to_string(maxValue(generalStatistics.varOccurr))));
+                                                          std::to_string(maxValue(generalStatistics.maxNumVarOcc))));
         ret.push_back(std::pair<std::string, std::string>(
             "maximum number of occurrences of a variable only head and negative body occurences",
             std::to_string(maxValue(generalStatistics.varOccurrHeadNegBody))));
+        ret.push_back(std::pair<std::string, std::string>("maximal size of the model",
+                                                          std::to_string(generalStatistics.modelSize)));
 
         return ret;
+    }
+
+    void ProgramStatsCalculator::addModel(const Clasp::ValueVec *model)
+    {
+        generalStatistics.modelSize = model->size();
     }
 
     void ProgramStatsCalculator::parseVariableLiteral(std::list<lit_type> body, std::list<lit_type> head)
@@ -292,7 +301,7 @@ namespace exst
                     generalStatistics.variablePositiveWithoutHelper[id] = true;
                 }
             }
-            generalStatistics.varOccurr[id]++;
+            generalStatistics.maxNumVarOcc[id]++;
         }
         for (it = head.begin(); it != head.end(); it++)
         {
@@ -309,7 +318,7 @@ namespace exst
                     generalStatistics.variablePositiveWithoutHelper[id] = true;
                 }
             }
-            generalStatistics.varOccurr[id]++;
+            generalStatistics.maxNumVarOcc[id]++;
             generalStatistics.varOccurrHeadNegBody[id]++;
         }
     }
