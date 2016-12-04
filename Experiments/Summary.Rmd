@@ -391,6 +391,10 @@ for(a in 1:len) {
         colnames(st)[a + 1]
       ))
   for (b in 1:len) {
+      cat(sprintf(
+        "\n\nvs. %s \n\n",
+        colnames(st)[b + 1]
+      ))
     if (minmatrix[a, b] <= 0.4 && maxmatrix >= 0.6) {
       num <- 1
       cormatrix_stat <- matrix(ncol = 2, nrow = length(problems))
@@ -409,6 +413,241 @@ for(a in 1:len) {
 ```
 
 # Statistics k Consistency
+
+## Number of Atoms in the Head
+```{r Number of Atoms in the Head, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+num <- 1
+cormatrix_stat <- matrix(ncol = 2, nrow = length(unique(stat[, 1])))
+for (pro in unique(stat[, 1])) {
+  st <- stat[stat$problem == pro, ]
+  lenst <- sum(!is.na(st[, 1]))
+  cormatrix_stat[num, 1] <- pro
+  if (lenst > 2) {
+    a <- cor.test(st$numAtomsHead, st$time_CPU)
+    cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
+  }
+  num <- num + 1
+}
+print(kable(cormatrix_stat[order(cormatrix_stat[,2],decreasing = TRUE),],col.names = c("Problems","Correlation")))
+
+```
+
+## Maximum size of the Head of a rule + Number of Rules
+```{r Maximum size of the Head of a rule + Number of Rules, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+num <- 1
+cormatrix_stat <- matrix(ncol = 2, nrow = length(unique(stat[, 1])))
+for (pro in unique(stat[, 1])) {
+  st <- stat[stat$problem == pro, ]
+  lenst <- sum(!is.na(st[, 1]))
+  cormatrix_stat[num, 1] <- pro
+  if (lenst > 2) {
+    a <- cor.test(st$maxSizeRuleHead + st$rules, st$time_CPU)
+    cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
+  }
+  num <- num + 1
+}
+print(kable(cormatrix_stat[order(cormatrix_stat[,2],decreasing = TRUE),],col.names = c("Problems","Correlation")))
+
+```
+
+## Maximum size of an answer set + Maximum size of the head and negative body of a rule
+```{r Maximum size of an answer set + Maximum size of the head and negative body of a rule, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+num <- 1
+cormatrix_stat <- matrix(ncol = 2, nrow = length(unique(stat[, 1])))
+for (pro in unique(stat[, 1])) {
+  st <- stat[stat$problem == pro, ]
+  lenst <- sum(!is.na(st[, 1]))
+  cormatrix_stat[num, 1] <- pro
+  if (lenst > 2) {
+    a <- cor.test(st$modelSize + st$maxSizeHeadNegBodyRule, st$time_CPU)
+    cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
+  }
+  num <- num + 1
+}
+print(kable(cormatrix_stat[order(cormatrix_stat[,2],decreasing = TRUE),],col.names = c("Problems","Correlation")))
+
+```
+
+## Number non Horn rules + Maximum size of the head and negative body of a rule
+```{r Number non Horn rules + Maximum size of the head and negative body of a rule, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+num <- 1
+cormatrix_stat <- matrix(ncol = 2, nrow = length(unique(stat[, 1])))
+for (pro in unique(stat[, 1])) {
+  st <- stat[stat$problem == pro, ]
+  lenst <- sum(!is.na(st[, 1]))
+  cormatrix_stat[num, 1] <- pro
+  if (lenst > 2) {
+    a <-
+      cor.test(st$nHornClauses + st$maxSizeHeadNegBodyRule, st$time_CPU)
+    cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
+  }
+  num <- num + 1
+}
+print(kable(cormatrix_stat[order(cormatrix_stat[,2],decreasing = TRUE),],col.names = c("Problems","Correlation")))
+
+```
+
+## Maximum size of an answer set + Number of Atoms in the positive body + Maximum Number of Occurences of a variable when only head and negative body + Maximum size of the negative body of an constraint + Number of Atoms in the negative body
+```{r Maximum size of an answer set + Number of Atoms in the positive body + Maximum Number of Occurences of a variable when only head and negative body + Maximum size of the negative body of an constraint + Number of Atoms in the negative body, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+num <- 1
+cormatrix_stat <- matrix(ncol = 2, nrow = length(unique(stat[, 1])))
+for (pro in unique(stat[, 1])) {
+  st <- stat[stat$problem == pro, ]
+  lenst <- sum(!is.na(st[, 1]))
+  cormatrix_stat[num, 1] <- pro
+  if (lenst > 2) {
+    a <-
+      cor.test(
+        st$modelSize + st$numAtomsPosBody + st$maxNumVarOccHeadNegBody + st$maxSizeNegBodyCon + st$numAtomsNegBody,
+        st$time_CPU
+      )
+    cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
+  }
+  num <- num + 1
+}
+print(kable(cormatrix_stat[order(cormatrix_stat[,2],decreasing = TRUE),],col.names = c("Problems","Correlation")))
+
+```
+
+## Number of Atoms in the positive body + Number non Horn rules + Maximum size of the negative body of an constraint + Number of Atoms in the negative body
+```{r Number of Atoms in the positive body + Number non Horn rules + Maximum size of the negative body of an constraint + Number of Atoms in the negative body, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+num <- 1
+cormatrix_stat <- matrix(ncol = 2, nrow = length(unique(stat[, 1])))
+for (pro in unique(stat[, 1])) {
+  st <- stat[stat$problem == pro, ]
+  lenst <- sum(!is.na(st[, 1]))
+  cormatrix_stat[num, 1] <- pro
+  if (lenst > 2) {
+    a <-
+      cor.test(
+        st$numAtomsPosBody + st$nHornClauses + st$maxSizeNegBodyCon + st$numAtomsNegBody,
+        st$time_CPU
+      )
+    cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
+  }
+  num <- num + 1
+}
+print(kable(cormatrix_stat[order(cormatrix_stat[, 2], decreasing = TRUE), ], col.names = c("Problems", "Correlation")))
+
+```
+
+## Maximum size of an answer set + Number of Atoms in the positive body + Maximum Number of Occurences of a variable when only head and negative body + Number of Rules + Number of Atoms in the negative body
+```{r Maximum size of an answer set + Number of Atoms in the positive body + Maximum Number of Occurences of a variable when only head and negative body + Number of Rules + Number of Atoms in the negative body, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+num <- 1
+cormatrix_stat <- matrix(ncol = 2, nrow = length(unique(stat[, 1])))
+for (pro in unique(stat[, 1])) {
+  st <- stat[stat$problem == pro, ]
+  lenst <- sum(!is.na(st[, 1]))
+  cormatrix_stat[num, 1] <- pro
+  if (lenst > 2) {
+    a <-
+      cor.test(
+        st$modelSize + st$numAtomsPosBody + st$maxNumVarOccHeadNegBody + st$rules +
+          st$numAtomsNegBody,
+        st$time_CPU
+      )
+    cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
+  }
+  num <- num + 1
+}
+print(kable(cormatrix_stat[order(cormatrix_stat[,2],decreasing = TRUE),],col.names = c("Problems","Correlation")))
+
+```
+
+## Number of Atoms in the positive body + Number non Horn rules + Number of Rules + Number of Atoms in the negative body
+```{r Number of Atoms in the positive body + Number non Horn rules + Number of Rules + Number of Atoms in the negative body, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+num <- 1
+cormatrix_stat <- matrix(ncol = 2, nrow = length(unique(stat[, 1])))
+for (pro in unique(stat[, 1])) {
+  st <- stat[stat$problem == pro, ]
+  lenst <- sum(!is.na(st[, 1]))
+  cormatrix_stat[num, 1] <- pro
+  if (lenst > 2) {
+    a <-
+      cor.test(st$numAtomsPosBody + st$nHornClauses + st$rules + st$numAtomsNegBody,
+               st$time_CPU)
+    cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
+  }
+  num <- num + 1
+}
+print(kable(cormatrix_stat[order(cormatrix_stat[,2],decreasing = TRUE),],col.names = c("Problems","Correlation")))
+
+```
+
+## Number of Rules + Number of Atoms in the negative body
+```{r Number of Rules + Number of Atoms in the negative body, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+num <- 1
+cormatrix_stat <- matrix(ncol = 2, nrow = length(unique(stat[, 1])))
+for (pro in unique(stat[, 1])) {
+  st <- stat[stat$problem == pro, ]
+  lenst <- sum(!is.na(st[, 1]))
+  cormatrix_stat[num, 1] <- pro
+  if (lenst > 2) {
+    a <- cor.test(st$rules + st$numAtomsNegBody, st$time_CPU)
+    cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
+  }
+  num <- num + 1
+}
+print(kable(cormatrix_stat[order(cormatrix_stat[,2],decreasing = TRUE),],col.names = c("Problems","Correlation")))
+
+```
+
+## Maximum size of the head and negative body of a rule + Number non Horn rules
+```{r Maximum size of the head and negative body of a rule + Number non Horn rules, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+num <- 1
+cormatrix_stat <- matrix(ncol = 2, nrow = length(unique(stat[, 1])))
+for (pro in unique(stat[, 1])) {
+  st <- stat[stat$problem == pro, ]
+  lenst <- sum(!is.na(st[, 1]))
+  cormatrix_stat[num, 1] <- pro
+  if (lenst > 2) {
+    a <-
+      cor.test(st$maxSizeHeadNegBodyRule + st$nHornClauses, st$time_CPU)
+    cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
+  }
+  num <- num + 1
+}
+print(kable(cormatrix_stat[order(cormatrix_stat[,2],decreasing = TRUE),],col.names = c("Problems","Correlation")))
+
+```
+
+## Number of Rules
+```{r Number of Rules, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+num <- 1
+cormatrix_stat <- matrix(ncol = 2, nrow = length(unique(stat[, 1])))
+for (pro in unique(stat[, 1])) {
+  st <- stat[stat$problem == pro, ]
+  lenst <- sum(!is.na(st[, 1]))
+  cormatrix_stat[num, 1] <- pro
+  if (lenst > 2) {
+    a <- cor.test(st$rules, st$time_CPU)
+    cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
+  }
+  num <- num + 1
+}
+print(kable(cormatrix_stat[order(cormatrix_stat[,2],decreasing = TRUE),],col.names = c("Problems","Correlation")))
+
+```
+
+## Maximum size of an answer set
+```{r Maximum size of an answer set, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+num <- 1
+cormatrix_stat <- matrix(ncol = 2, nrow = length(unique(stat[, 1])))
+for (pro in unique(stat[, 1])) {
+  st <- stat[stat$problem == pro, ]
+  lenst <- sum(!is.na(st[, 1]))
+  cormatrix_stat[num, 1] <- pro
+  if (lenst > 2) {
+    a <- cor.test(st$modelSize, st$time_CPU)
+    cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
+  }
+  num <- num + 1
+}
+print(kable(cormatrix_stat[order(cormatrix_stat[,2],decreasing = TRUE),],col.names = c("Problems","Correlation")))
+
+```
+
+
 
 
 
