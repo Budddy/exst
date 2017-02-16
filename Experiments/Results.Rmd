@@ -1,0 +1,537 @@
+---
+title: "Results"
+output:
+  html_document:
+    number_sections: yes
+    toc: yes
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(warning = FALSE)
+library("psych", lib.loc = "~/R/win-library/3.3")
+library("zoom", lib.loc = "~/R/win-library/3.3")
+library("knitr", lib.loc = "~/R/win-library/3.3")
+setwd("C:/Users/Markus/Dropbox/uni/Semester10/Bachelorarbeit/BachelorThesis")
+
+```
+
+```{r load data, echo=FALSE, message=FALSE, warning=FALSE}
+
+
+Statistics <-
+  read.csv(
+    file = "Statistics.csv",
+    header = TRUE,
+    sep = ",",
+    quote = "\"",
+    dec = "."
+  )
+stat <- Statistics[, -40:-69]
+stat <- stat[, -2]
+
+stat <- stat[stat$problem != "HydraulicLeaking",]
+stat <- stat[stat$problem != "HydraulicPlanning",]
+
+mininst <- 7
+numinst <- 0
+probs <- c()
+for (pro in unique(stat[, 1])) {
+  st <- stat[stat$problem == pro, ]
+  lenst <- sum(!is.na(st[, 1]))
+  if (lenst >= mininst) {
+    numinst <- numinst + 1
+    probs <- c(probs, pro)
+  }
+}
+
+probs <- probs[order(probs)]
+timesLow <- matrix(nrow = numinst, ncol = 2)
+timesHigh <- matrix(nrow = numinst, ncol = 2)
+timesNA <- matrix(nrow = numinst, ncol = 2)
+i <- 1
+for (pro in unique(stat[, 1])) {
+  st <- stat[stat$problem == pro, ]
+  lenst <- sum(!is.na(st[, 1]))
+  if (lenst >= mininst) {
+    timesLow[i, 1] <- pro
+    timesLow[i, 2] <- 0
+    timesHigh[i, 1] <- pro
+    timesHigh[i, 2] <- 0
+    timesNA[i, 1] <- pro
+    timesNA[i, 2] <- 0
+    i <- i + 1
+  }
+}
+
+```
+
+```{r printAll, echo=FALSE, message=FALSE, warning=FALSE}
+printAll <- function(param, problems, labelx) {
+  for (pro in probs) {
+    st <- stat[stat$problem == pro,]
+    
+    File <- paste("./Plots/", labelx, "/", pro, ".png", sep = "")
+    dir.create(dirname(File), showWarnings = FALSE)
+    
+    png(file = File, bg = "white", res = 144)
+    plot(
+      x = combineParams(param, st),
+      y = st$time_CPU,
+      xlab = labelx,
+      ylab = "time_CPU",
+      pch = "*",
+      main = pro
+    )
+    dev.off()
+    
+    cat(sprintf("\n\n###Problem: %s\n\n", pro))
+    plot(
+      x = combineParams(param, st),
+      y = st$time_CPU,
+      xlab = labelx,
+      ylab = "time_CPU",
+      pch = "*",
+      main = pro
+    )
+  }
+  
+}
+
+```
+
+```{r printTable, echo=FALSE, message=FALSE, warning=FALSE}
+
+
+printTable <- function(mytable, label) {
+  tableOrdered <-
+    mytable[order(as.numeric(mytable[, 2]), decreasing = TRUE), ]
+  lines <- c(
+    "\\begin{table}[]",
+    "  \\centering",
+    "  \\small",
+    "  \\begin{tabular}{|l|l|l|l|}",
+    "    \\hline",
+    paste(
+      "    \\textbf{Benchmark set}      & \\textbf{Times ",
+      label,
+      "}\\\\",
+      sep = ""
+    ),
+    "    \\hline"
+  )
+  
+  for (a in 1:nrow(tableOrdered)) {
+    lines <- c(lines,
+               paste("    ",
+                     tableOrdered[a, 1],
+                     " & ",
+                     tableOrdered[a, 2],
+                     "\\\\",
+                     sep = ""),
+               "    \\hline")
+  }
+  
+  lines <- c(
+    lines,
+    "  \\end{tabular}",
+    paste(
+      "  \\caption[Table number ",
+      label,
+      " correlations]{Table showing the times a Set was in a",
+      label,
+      " correlation}",
+      sep = ""
+    ),
+    paste("  \\label{table-correlations-", label, "}", sep = ""),
+    "\\end{table}"
+  )
+  File <- file(paste("./Plots/", label, "Table.tex", sep = ""))
+  writeLines(lines, File)
+  close(File)
+}
+```
+
+```{r printLatexTable, echo=FALSE, message=FALSE, warning=FALSE}
+printLatexTable <- function(correlations, param, label) {
+  highcorrelations <- list()
+  lowcorrelations <- list()
+  high <- 1
+  low <- 1
+  problems <- c()
+  lines <- c()
+  
+  for (a in 1:nrow(correlations)) {
+    if (!is.na(correlations[a, 2])) {
+      if (abs(as.numeric(correlations[a, 2])) >= 0.7) {
+        highcorrelations[[high]] <-
+          c(correlations[a, 1], correlations[a, 2])
+        problems <- c(problems, correlations[a, 1])
+        timesHigh[timesHigh[, 1] == correlations[a, 1], 2] <<-
+          as.numeric(timesHigh[timesHigh[, 1] == correlations[a, 1], 2]) + 1
+        high <- (high + 1)
+      }
+      if (abs(as.numeric(correlations[a, 2])) <= 0.2) {
+        lowcorrelations[[low]] <- c(correlations[a, 1], correlations[a, 2])
+        problems <- c(problems, correlations[a, 1])
+        timesLow[timesLow[, 1] == correlations[a, 1], 2] <<-
+          as.numeric(timesLow[timesLow[, 1] == correlations[a, 1], 2]) + 1
+        low <- (low + 1)
+      }
+    } else{
+      lowcorrelations[[low]] <- c(correlations[a, 1], correlations[a, 2])
+      problems <- c(problems, correlations[a, 1])
+      timesNA[timesNA[, 1] == correlations[a, 1], 2] <<-
+        as.numeric(timesNA[timesNA[, 1] == correlations[a, 1], 2]) + 1
+      low <- (low + 1)
+    }
+  }
+  
+  high <- high - 1
+  low <- low - 1
+  lines <- c(
+    lines,
+    paste("In Table \\ref{table-correlations-",label,"} we can see the Benchmark sets, high correlations are on the left side and the Benchmark sets with low correlations are on the right side.",sep=""),
+    "",
+    "\\begin{table}[]",
+    "  \\centering",
+    "  \\small",
+    "  \\begin{tabular}{|l|l|l|l|}",
+    "    \\hline",
+    "    \\textbf{Benchmark set}              & \\textbf{Corr}     & \\textbf{Benchmark set}    & \\textbf{Corr}\\\\",
+    "\\hline"
+  )
+  
+  for (a in 1:max(high, low)) {
+    if (high >= a && low >= a) {
+      lines <- c(
+        lines,
+        paste(
+          "    ",
+          highcorrelations[[a]][1],
+          " & ",
+          highcorrelations[[a]][2],
+          " & ",
+          lowcorrelations[[a]][1],
+          " & ",
+          lowcorrelations[[a]][2],
+          "\\\\",
+          sep = ""
+        ),
+        "    \\hline"
+      )
+      
+    } else if (high >= a) {
+      lines <- c(
+        lines,
+        paste(
+          "    ",
+          highcorrelations[[a]][1],
+          " & ",
+          highcorrelations[[a]][2],
+          " & ",
+          " & ",
+          "\\\\",
+          sep = ""
+        ),
+        "    \\hline"
+      )
+      
+    } else if (low >= a) {
+      lines <- c(
+        lines,
+        paste(
+          "    ",
+          " & ",
+          " & ",
+          lowcorrelations[[a]][1],
+          " & ",
+          lowcorrelations[[a]][2],
+          "\\\\",
+          sep = ""
+        ),
+        "    \\hline"
+      )
+      
+    }
+  }
+  
+  lines <- c(
+    lines,
+    "  \\end{tabular}",
+    paste(
+      "  \\caption[Table corr. ",
+      label,
+      "]{Table showing the Correlation between time and ",
+      label,
+      "}",
+      sep = ""
+    ),
+    paste("  \\label{table-correlations-",
+          label,
+          "}",
+          sep = ""),
+    "\\end{table}"
+  )
+  File <- file(paste("./Plots/", label, ".tex", sep = ""))
+  writeLines(lines, File)
+  close(File)
+  printAll(param, problems, label)
+}
+
+```
+
+```{r combineParams, echo=FALSE, message=FALSE, warning=FALSE}
+combineParams <- function(params, st) {
+  combined <- st[, params[1]]
+  params <- params[-1]
+  for (a in params) {
+    combined <- combined + st[, a]
+  }
+  return(combined)
+}
+
+```
+
+```{r genCors, echo=FALSE, message=FALSE, warning=FALSE}
+genCors <- function(param, label, algo) {
+  num <- 1
+  cormatrix_stat <- matrix(ncol = 2, nrow = numinst)
+  
+  for (pro in unique(stat[, 1])) {
+    st <- stat[stat$problem == pro,]
+    lenst <- sum(!is.na(st[, 1]))
+    if (lenst >= mininst) {
+      cormatrix_stat[num, 1] <- pro
+      a <-
+        cor.test(combineParams(param, st), st$time_CPU, method = algo)
+      cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
+      num <- num + 1
+    }
+  }
+  
+  correlations <-
+    cormatrix_stat[order(cormatrix_stat[, 2], decreasing = TRUE), ]
+  print(kable(correlations, col.names = c("Problems", "Correlation")))
+  printLatexTable(correlations, param, label)
+}
+```
+
+# one parameter combinations
+## choices
+```{r spearman choices, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("choices"),"choices","spearman")
+```
+
+## conflicts
+```{r spearman conflicts, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("conflicts"),"conflicts","spearman")
+```
+
+## restarts
+```{r spearman restarts, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("restarts"),"restarts","spearman")
+```
+
+## atoms
+```{r spearman atoms, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("atoms"),"atoms","spearman")
+```
+
+## bodies
+```{r spearman bodies, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("bodies"),"bodies","spearman")
+```
+
+## variables
+```{r spearman variables, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("variables"),"variables","spearman")
+```
+
+## constraints
+```{r spearman constraints, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("constraints"),"constraints","spearman")
+```
+
+## nDualHornClauses
+```{r spearman nDualHornClauses, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("nDualHornClauses"),"nDualHornClauses","spearman")
+```
+
+## numVPosLit
+```{r spearman numVPosLit, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("numVPosLit"),"numVPosLit","spearman")
+```
+
+## numAtomOccC
+```{r spearman numAtomOccC, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("numAtomOccC"),"numAtomOccC","spearman")
+```
+
+## numAtomsPosBody
+```{r spearman numAtomsPosBody, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("numAtomsPosBody"),"numAtomsPosBody","spearman")
+```
+
+# two parameter combinations
+## atoms + choices
+```{r spearman atoms + choices, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("atoms" , "choices"),"atoms + choices","spearman")
+```
+
+## atoms + conflicts
+```{r spearman atoms + conflicts, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c(4,9),"atoms + conflicts","spearman")
+```
+
+## nHornClauses + variables
+```{r spearman nHornClauses + variables, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c(17,13),"nHornClauses + variables","spearman")
+```
+
+## maxNumAtomOcc + equivalences
+```{r spearman maxNumAtomOcc + equivalences, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("maxNumAtomOcc" , "equivalences"),"maxNumAtomOcc + equivalences","spearman")
+```
+
+## numAtomsNegBody + variables
+```{r spearman numAtomsNegBody + variables, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c(49,13),"numAtomsNegBody + variables","spearman")
+```
+
+## modelSize + nHornClauses
+```{r spearman modelSize + nHornClauses, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c(52,17),"modelSize + nHornClauses","spearman")
+```
+
+## modelSize + numAtomsNegBody
+```{r spearman modelSize + numAtomsNegBody, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c(52,49),"modelSize + numAtomsNegBody","spearman")
+```
+
+# three parameter combinations
+## numVNegLitH + nDualHornClauses + atoms
+```{r spearman numVNegLitH + nDualHornClauses + atoms, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("numVNegLitH" , "nDualHornClauses" , "atoms"),"numVNegLitH + nDualHornClauses + atoms","spearman")
+```
+
+## numVNegLitH + nDualHornClauses + variables
+```{r spearman numVNegLitH + nDualHornClauses + variables, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("numVNegLitH" , "nDualHornClauses" , "variables"),"numVNegLitH + nDualHornClauses + variables","spearman")
+```
+
+## numVNegLitH + numVPosLit + nDualHornClauses
+```{r spearman numVNegLitH + numVPosLit + nDualHornClauses, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("numVNegLitH" , "numVPosLit" , "nDualHornClauses"),"numVNegLitH + numVPosLit + nDualHornClauses","spearman")
+```
+
+# k Consistency
+## numAtomsHead
+```{r spearman numAtomsHead, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c(47),"numAtomsHead","spearman")
+```
+
+## maxSizeRuleHead + rules
+```{r spearman maxSizeRuleHead + rules, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c(42,10),"maxSizeRuleHead + rules","spearman")
+```
+
+## modelSize + maxSizeHeadNegBodyRule
+```{r spearman modelSize + maxSizeHeadNegBodyRule, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c(52,41),"modelSize + maxSizeHeadNegBodyRule","spearman")
+```
+
+## nHornClauses + maxSizeHeadNegBodyRule
+```{r spearman nHornClauses + maxSizeHeadNegBodyRule, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c(17,41),"nHornClauses + maxSizeHeadNegBodyRule","spearman")
+```
+
+## modelSize + numAtomsPosBody + maxNumVarOccHeadNegBody + maxSizeNegBodyCon + numAtomsNegBody
+```{r spearman modelSize + numAtomsPosBody + maxNumVarOccHeadNegBody + maxSizeNegBodyCon + numAtomsNegBody, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c(52,48,51,46,49),"modelSize + numAtomsPosBody + maxNumVarOccHeadNegBody + maxSizeNegBodyCon + numAtomsNegBody","spearman")
+```
+
+## numAtomsPosBody + nHornClauses + maxSizeNegBodyCon + numAtomsNegBody
+```{r spearman numAtomsPosBody + nHornClauses + maxSizeNegBodyCon + numAtomsNegBody, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c(48,17,46,49),"numAtomsPosBody + nHornClauses + maxSizeNegBodyCon + numAtomsNegBody","spearman")
+```
+
+## modelSize + numAtomsPosBody + maxNumVarOccHeadNegBody + rules + numAtomsNegBody
+```{r spearman modelSize + numAtomsPosBody + maxNumVarOccHeadNegBody + rules + numAtomsNegBody, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c(52,48,51,10,49),"modelSize + numAtomsPosBody + maxNumVarOccHeadNegBody + rules + numAtomsNegBody","spearman")
+```
+
+## numAtomsPosBody + nHornClauses + rules + numAtomsNegBody
+```{r spearman numAtomsPosBody + nHornClauses + rules + numAtomsNegBody, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c(48,17,10,49),"numAtomsPosBody + nHornClauses + rules + numAtomsNegBody","spearman")
+```
+
+## rules + numAtomsNegBody
+```{r spearman rules + numAtomsNegBody, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c(10,49),"rules + numAtomsNegBody","spearman")
+```
+
+## maxSizeHeadNegBodyRule + nHornClauses
+```{r spearman maxSizeHeadNegBodyRule + nHornClauses, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c(41,17),"maxSizeHeadNegBodyRule + nHornClauses","spearman")
+```
+
+## rules
+```{r spearman rules, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c(10),"rules","spearman")
+```
+
+## modelSize
+```{r spearman modelSize, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c(52),"modelSize","spearman")
+```
+
+# Hardness
+## maxSizeNCon + maxNumAtomOcc + numAtomsPosBody + constraints + maxSizeNegBodyCon + numAtomOccC
+```{r spearman maxSizeNCon + maxNumAtomOcc + numAtomsPosBody + constraints + maxSizeNegBodyCon + numAtomOccC, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("maxSizeNCon", "maxNumAtomOcc", "numAtomsPosBody", "constraints", "maxSizeNegBodyCon", "numAtomOccC"),"maxSizeNCon + maxNumAtomOcc + numAtomsPosBody + constraints + maxSizeNegBodyCon + numAtomOccC","spearman")
+```
+
+## modelSize + maxSizeNegBodyRule + maxSizePosBodyCon + maxSizeNegBodyCon
+```{r spearman modelSize + maxSizeNegBodyRule + maxSizePosBodyCon + maxSizeNegBodyCon, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("modelSize", "maxSizeNegBodyRule", "maxSizePosBodyCon", "maxSizeNegBodyCon"),"modelSize + maxSizeNegBodyRule + maxSizePosBodyCon + maxSizeNegBodyCon","spearman")
+```
+
+## modelSize + maxSizePosBodyNCon + numAtomsPosBody + constraints + maxSizeNegBodyCon + numAtomOccC
+```{r spearman modelSize + maxSizePosBodyNCon + numAtomsPosBody + constraints + maxSizeNegBodyCon + numAtomOccC, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("modelSize", "maxSizePosBodyNCon", "numAtomsPosBody", "constraints", "maxSizeNegBodyCon", "numAtomOccC"),"modelSize + maxSizePosBodyNCon + numAtomsPosBody + constraints + maxSizeNegBodyCon + numAtomOccC","spearman")
+```
+
+## modelSize + maxSizePosBodyNCon + nHornClauses + maxNumAtomOcc + numAtomsPosBody + rules
+```{r spearman modelSize + maxSizePosBodyNCon + nHornClauses + maxNumAtomOcc + numAtomsPosBody + rules, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("modelSize", "maxSizePosBodyNCon", "nHornClauses", "maxNumAtomOcc", "numAtomsPosBody", "rules"),"modelSize + maxSizePosBodyNCon + nHornClauses + maxNumAtomOcc + numAtomsPosBody + rules","spearman")
+```
+
+## modelSize + maxSizePosBodyNCon + nHornClauses + maxNumVarOccHeadNegBody + constraints + maxSizeNegBodyCon + numAtomOccC
+```{r spearman modelSize + maxSizePosBodyNCon + nHornClauses + maxNumVarOccHeadNegBody + constraints + maxSizeNegBodyCon + numAtomOccC, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("modelSize", "maxSizePosBodyNCon", "nHornClauses", "maxNumVarOccHeadNegBody", "constraints", "maxSizeNegBodyCon", "numAtomOccC"),"modelSize + maxSizePosBodyNCon + nHornClauses + maxNumVarOccHeadNegBody + constraints + maxSizeNegBodyCon + numAtomOccC","spearman")
+```
+
+## maxSizePosBodyNCon + nHornClauses + maxNumAtomOcc + constraints + maxSizeNegBodyCon + numAtomOccC
+```{r spearman maxSizePosBodyNCon + nHornClauses + maxNumAtomOcc + constraints + maxSizeNegBodyCon + numAtomOccC, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("maxSizePosBodyNCon", "nHornClauses", "maxNumAtomOcc", "constraints", "maxSizeNegBodyCon", "numAtomOccC"),"maxSizePosBodyNCon + nHornClauses + maxNumAtomOcc + constraints + maxSizeNegBodyCon + numAtomOccC","spearman")
+```
+
+## modelSize + maxSizePosBodyNCon + nHornClauses + maxNumAtomOcc + rules + maxSizeNegBodyCon
+```{r spearman modelSize + maxSizePosBodyNCon + nHornClauses + maxNumAtomOcc + rules + maxSizeNegBodyCon, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("modelSize", "maxSizePosBodyNCon", "nHornClauses", "maxNumAtomOcc", "rules", "maxSizeNegBodyCon"),"modelSize + maxSizePosBodyNCon + nHornClauses + maxNumAtomOcc + rules + maxSizeNegBodyCon","spearman")
+```
+
+```{r spearman end, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+
+timesLow <- timesLow[timesLow[,2]!=0,]
+printTable(timesLow,"low")
+printTable(timesHigh,"high")
+timesNA <- timesNA[timesNA[,2]!=0,]
+printTable(timesNA,"NA")
+```
+
+
+
+
