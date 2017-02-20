@@ -65,6 +65,7 @@ kable(oSummary, digits=3, col.names = c("Statistic","Min","Max","Avg","Median"))
 ```
 
 # Summary per problem
+## Number of instances per problem
 ```{r Summary per problem, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
 
 su = matrix(nrow = 0, ncol = 6)
@@ -86,12 +87,13 @@ for (pro in unique(stat[, 1])) {
       ))
   }
 }
-kable(overview, digits=3, col.names = c("Problem","Number of Instances"))
+kable(overview[order(overview[, 2], decreasing = TRUE),], digits=3, col.names = c("Problem","Number of Instances"))
 # kable(su, digits=3, col.names = c("Problem","Statistic","Min","Max","Mean","Median"))
 
 ```
 
-# Summary per problem
+
+## Parameter min max mean and median per problem
 ```{r Summary per problem2, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
 
 asdf = matrix(nrow = 0, ncol = (length(unique(stat[, 1]))+2))

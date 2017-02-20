@@ -2,24 +2,19 @@
 title: "Results"
 output:
   html_document:
-    number_sections: yes
     toc: yes
     toc_depth: 3
 ---
 
 ```{r setup, include=FALSE}
-
 knitr::opts_chunk$set(warning = FALSE)
 library("psych", lib.loc = "~/R/win-library/3.3")
 library("zoom", lib.loc = "~/R/win-library/3.3")
 library("knitr", lib.loc = "~/R/win-library/3.3")
 setwd("C:/Users/Markus/Dropbox/uni/Semester10/Bachelorarbeit/BachelorThesis")
-
 ```
 
 ```{r load data, echo=FALSE, message=FALSE, warning=FALSE}
-
-
 Statistics <-
   read.csv(
     file = "Statistics.csv",
@@ -65,6 +60,9 @@ for (pro in unique(stat[, 1])) {
   }
 }
 
+numCorrelations <- 0
+
+paramHighLow <- matrix(nrow = 40, ncol = 3)
 ```
 
 ```{r printAll, echo=FALSE, message=FALSE, warning=FALSE}
@@ -73,6 +71,62 @@ printAll <- function(param, problems, labelx) {
     st <- stat[stat$problem == pro,]
     
     File <- paste("./Plots/", labelx, "/", pro, ".png", sep = "")
+    dir.create(dirname(File), showWarnings = FALSE)
+    
+    png(file = File, bg = "white", res = 144)
+    plot(
+      x = combineParams(param, st),
+      y = st$time_CPU,
+      xlab = labelx,
+      ylab = "time_CPU",
+      pch = "*",
+      main = pro
+    )
+    dev.off()
+    
+    File <- paste("./Plots/", pro, "/", labelx, ".png", sep = "")
+    dir.create(dirname(File), showWarnings = FALSE)
+    
+    png(file = File, bg = "white", res = 144)
+    plot(
+      x = combineParams(param, st),
+      y = st$time_CPU,
+      xlab = labelx,
+      ylab = "time_CPU",
+      pch = "*",
+      main = pro
+    )
+    dev.off()
+    
+    File <- paste("./Plots/_Parameter/", labelx, "/", pro, ".png", sep = "")
+    dir.create(dirname(File), showWarnings = FALSE)
+    
+    png(file = File, bg = "white", res = 144)
+    plot(
+      x = combineParams(param, st),
+      y = st$time_CPU,
+      xlab = labelx,
+      ylab = "time_CPU",
+      pch = "*",
+      main = pro
+    )
+    dev.off()
+    
+    File <- paste("./Plots/_Problems/", pro, "/", labelx, ".png", sep = "")
+    dir.create(dirname(File), showWarnings = FALSE)
+    
+    png(file = File, bg = "white", res = 144)
+    plot(
+      x = combineParams(param, st),
+      y = st$time_CPU,
+      xlab = labelx,
+      ylab = "time_CPU",
+      pch = "*",
+      main = pro
+    )
+    dev.off()
+    
+    File <- paste("./Plots/_All/", labelx, " ", pro, ".png", sep = "")
     dir.create(dirname(File), showWarnings = FALSE)
     
     png(file = File, bg = "white", res = 144)
@@ -102,8 +156,6 @@ printAll <- function(param, problems, labelx) {
 ```
 
 ```{r printTable, echo=FALSE, message=FALSE, warning=FALSE}
-
-
 printTable <- function(mytable, label) {
   tableOrdered <-
     mytable[order(as.numeric(mytable[, 2]), decreasing = TRUE), ]
@@ -139,7 +191,7 @@ printTable <- function(mytable, label) {
     paste(
       "  \\caption[Table number ",
       label,
-      " correlations]{Table showing the times a Set was in a",
+      " correlations]{Table showing the times a Set was in a ",
       label,
       " correlation}",
       sep = ""
@@ -148,6 +200,43 @@ printTable <- function(mytable, label) {
     "\\end{table}"
   )
   File <- file(paste("./Plots/", label, "Table.tex", sep = ""))
+  writeLines(lines, File)
+  close(File)
+}
+```
+
+```{r printTableHighLow, echo=FALSE, message=FALSE, warning=FALSE}
+printTableHighLow <- function() {
+  tableOrdered <-
+    paramHighLow[order(as.numeric(paramHighLow[, 2]), decreasing = TRUE),]
+  lines <- c(
+    "  \\begin{longtable}{|p{95mm}|l|l|}",
+    "    \\hline",
+    paste("    \\textbf{Parameter}      & \\textbf{High}      & \\textbf{Low}\\\\",
+          sep = ""),
+    "    \\hline"
+  )
+  
+  for (a in 1:nrow(tableOrdered)) {
+    lines <- c(lines,
+               paste("    ",
+                     tableOrdered[a, 1],
+                     " & ",
+                     tableOrdered[a, 2],
+                     " & ",
+                     tableOrdered[a, 3],
+                     "\\\\",
+                     sep = ""),
+               "    \\hline")
+  }
+  
+  lines <- c(
+    lines,
+    "  \\caption[Table High Low corr.]{Table showing the number of High and low correlations per parameter}",
+    "  \\label{table-highlow-correlations}",
+    "  \\end{longtable}"
+  )
+  File <- file("./Plots/HighLowTable.tex")
   writeLines(lines, File)
   close(File)
 }
@@ -190,6 +279,10 @@ printLatexTable <- function(correlations, param, label) {
   
   high <- high - 1
   low <- low - 1
+  paramHighLow[numCorrelations,1] <<- label
+  paramHighLow[numCorrelations,2] <<- high
+  paramHighLow[numCorrelations,3] <<- low
+  
   lines <- c(
     lines,
     paste("In Table \\ref{table-correlations-",label,"} we can see the Benchmark sets, high correlations are on the left side and the Benchmark sets with low correlations are on the right side.",sep=""),
@@ -291,11 +384,11 @@ combineParams <- function(params, st) {
   }
   return(combined)
 }
-
 ```
 
 ```{r genCors, echo=FALSE, message=FALSE, warning=FALSE}
 genCors <- function(param, label, algo) {
+  numCorrelations <<- numCorrelations + 1
   num <- 1
   cormatrix_stat <- matrix(ncol = 2, nrow = numinst)
   
@@ -310,7 +403,9 @@ genCors <- function(param, label, algo) {
       num <- num + 1
     }
   }
-  
+  asdf <-
+    cor.test(combineParams(param, stat), stat$time_CPU, method = algo)
+  cat(sprintf("\nOverall Correlation: %f\n\n",round(a$estimate, digits = 2)))
   correlations <-
     cormatrix_stat[order(cormatrix_stat[, 2], decreasing = TRUE), ]
   print(kable(correlations, col.names = c("Problems", "Correlation")))
@@ -523,15 +618,17 @@ genCors(c("maxSizePosBodyNCon", "nHornClauses", "maxNumAtomOcc", "constraints", 
 genCors(c("modelSize", "maxSizePosBodyNCon", "nHornClauses", "maxNumAtomOcc", "rules", "maxSizeNegBodyCon"),"modelSize + maxSizePosBodyNCon + nHornClauses + maxNumAtomOcc + rules + maxSizeNegBodyCon","spearman")
 ```
 
-```{r spearman end, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+# Number of High and Low Correlations per parameter
+```{r Number of High Low Correlations per parameter, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+print(kable(paramHighLow[order(as.numeric(paramHighLow[, 2]), decreasing = TRUE), ], col.names = c("Parameter", "Times high", "Times low")))
+```
 
+```{r latexTables, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
 timesLow <- timesLow[timesLow[,2]!=0,]
 printTable(timesLow,"low")
 printTable(timesHigh,"high")
 timesNA <- timesNA[timesNA[,2]!=0,]
 printTable(timesNA,"NA")
+printTableHighLow()
+numCorrelations
 ```
-
-
-
-
