@@ -370,6 +370,7 @@ namespace Clasp
 
         bool ClaspAppBase::onModel(const Solver &s, const Model &m)
         {
+            exst::ExtendedStatistics::getInstance().addModel(m.values);
             bool ret = true;
             if (out_.get() && !out_->quiet())
             {

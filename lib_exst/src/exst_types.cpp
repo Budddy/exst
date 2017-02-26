@@ -49,8 +49,8 @@ namespace exst
         for (it = edges.begin(); it != edges.end(); it++)
         {
             dimacsString +=
-                    "\n,\"e " + std::to_string(it->first + correction) + " " + std::to_string(it->second + correction) +
-                    "\"";
+                "\n,\"e " + std::to_string(it->first + correction) + " " + std::to_string(it->second + correction) +
+                "\"";
         }
         return dimacsString;
     }
@@ -69,9 +69,7 @@ namespace exst
         std::set<std::pair<uint32_t, uint32_t>>::iterator it;
         for (it = edges.begin(); it != edges.end(); it++)
         {
-            grString +=
-                    "\n,\"" + std::to_string(it->first + correction) + " " + std::to_string(it->second + correction) +
-                    "\"";
+            grString += "\n,\"" + std::to_string(it->first + correction) + " " + std::to_string(it->second + correction) + "\"";
         }
         return grString;
     }

@@ -75,10 +75,10 @@ namespace exst
     {
         std::list<std::pair<std::string, std::string>> ret;
 
-        ret.push_back(
-                std::pair<std::string, std::string>("Dependency Graph Nodes", std::to_string(this->dGraphStatistics.dependencyGraph.size())));
-        ret.push_back(
-                std::pair<std::string, std::string>("Dependency Graph Edges", std::to_string(edgeCount(this->dGraphStatistics.dependencyGraph))));
+        ret.push_back(std::pair<std::string, std::string>("Dependency Graph Nodes", std::to_string(
+            this->dGraphStatistics.dependencyGraph.size())));
+        ret.push_back(std::pair<std::string, std::string>("Dependency Graph Edges", std::to_string(
+            edgeCount(this->dGraphStatistics.dependencyGraph))));
         return ret;
     }
 

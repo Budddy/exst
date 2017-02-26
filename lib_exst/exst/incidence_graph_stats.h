@@ -85,7 +85,7 @@ namespace exst
         {
             iGraphStats.libraryInstance = htd::createManagementInstance(htd::Id::FIRST);
             htd::MultiGraphFactory &factory = iGraphStats.libraryInstance->multiGraphFactory();
-            iGraphStats.iGraph = factory.getMultiGraph();
+            iGraphStats.iGraph = factory.createInstance();
         }
 
         /**

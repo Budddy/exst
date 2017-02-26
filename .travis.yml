@@ -21,7 +21,7 @@ addons:
     - clang-3.7
     - valgrind
     - libcppunit-dev
-    - libcppunit-1.13-0
+    - libcppunit-1.12-0
     - build-essential
 
 before_install:

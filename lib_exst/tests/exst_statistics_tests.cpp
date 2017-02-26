@@ -218,7 +218,7 @@ namespace exst
                                          line);
 
             std::getline(res, line, '\n');
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", std::string("]"), line);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", std::string("  ,[\"maximal size of the model\" , 0]"), line);
 
 
         }
