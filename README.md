@@ -25,8 +25,6 @@ An extension for clasp to create additional paramters.
 - Tests
   - Linux
     - To compile the tests run `cmake -Dtests=ON <PATH_TO_EXST_DIRECTORY>` and then `make`.
-  - Windows
-    - To compile the tests run `cmake -Dtests=ON -G "MinGW Makefiles" <PATH_TO_EXST_DIRECTORY>` and then `mingw32-make`. Then put the htd dll library in the same folder as the exst binary.
 
 ## Options:
 - `--printDgraph=<format>[,<filePath>]`
