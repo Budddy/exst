@@ -1,9 +1,7 @@
 #include "test.h"
 
-namespace exst
-{
-    class ExstTests : public AbstractExstTest
-    {
+namespace exst {
+    class ExstTests : public AbstractExstTest {
     CPPUNIT_TEST_SUITE(ExstTests);
             CPPUNIT_TEST(testOneConstraint);
             CPPUNIT_TEST(testOneConstraintAndOneFact);
@@ -14,18 +12,15 @@ namespace exst
         CPPUNIT_TEST_SUITE_END();
     private:
     public:
-        void setUp()
-        {
+        void setUp() {
             AbstractExstTest::setUp();
         }
 
-        void tearDown()
-        {
+        void tearDown() {
             AbstractExstTest::tearDown();
         }
 
-        void testOneConstraint()
-        {
+        void testOneConstraint() {
             std::list<lit_type> bodies;
             bodies.push_back(*new lit_type(2, NEGATIVE));
             bodies.push_back(*new lit_type(3, POSITIVE));
@@ -83,8 +78,7 @@ namespace exst
                                          statsCalculator->generalStatistics.numConstraints);
         }
 
-        void testOneConstraintAndOneFact()
-        {
+        void testOneConstraintAndOneFact() {
             std::list<lit_type> body;
             std::list<lit_type> head;
             body.push_back(*new lit_type(2, NEGATIVE));
@@ -145,8 +139,7 @@ namespace exst
                                          statsCalculator->generalStatistics.numConstraints);
         }
 
-        void testMultipleConstraints()
-        {
+        void testMultipleConstraints() {
             std::list<lit_type> body;
             std::list<lit_type> head;
             body.push_back(*new lit_type(2, NEGATIVE));
@@ -241,8 +234,7 @@ namespace exst
                                          statsCalculator->generalStatistics.numConstraints);
         }
 
-        void testMultipleFacts()
-        {
+        void testMultipleFacts() {
             std::list<lit_type> body;
             std::list<lit_type> head;
             head.push_back(*new lit_type(3, NEGATIVE));
@@ -305,8 +297,7 @@ namespace exst
                                          statsCalculator->generalStatistics.numConstraints);
         }
 
-        void testMultipleConstraintsAndNonConstraints()
-        {
+        void testMultipleConstraintsAndNonConstraints() {
 
             std::list<lit_type> body;
             std::list<lit_type> head;
@@ -395,8 +386,7 @@ namespace exst
                                          statsCalculator->generalStatistics.numConstraints);
         }
 
-        void testMultipleConstraintsAndNonConstraintsWithHelpers()
-        {
+        void testMultipleConstraintsAndNonConstraintsWithHelpers() {
 
             std::list<lit_type> body;
             std::list<lit_type> head;

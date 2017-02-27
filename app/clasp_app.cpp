@@ -741,8 +741,6 @@ namespace Clasp
         void ClaspApp::printHelp(const ProgramOptions::OptionContext &root)
         {
             ClaspAppBase::printHelp(root);
-            printf("\nexst is part of Potassco: %s\n", "http://potassco.sourceforge.net/#exst");
-            printf("Get help/report bugs via : http://sourceforge.net/projects/potassco/support\n");
             fflush(stdout);
         }
 

@@ -12,10 +12,8 @@
 /**
  * class used for calculating and saving stats of the incidence graph and the incidence graph
  */
-namespace exst
-{
-    struct IncidenceGraphStatistics
-    {
+namespace exst {
+    struct IncidenceGraphStatistics {
         ///
         unsigned long long assignmentCount = 0;
 
@@ -53,8 +51,7 @@ namespace exst
         std::list<std::string> rGraphs;
     };
 
-    class IncidenceGraphStatsCalculator : public StatisticsCalculator
-    {
+    class IncidenceGraphStatsCalculator : public StatisticsCalculator {
     public:
 
         /**
@@ -81,8 +78,7 @@ namespace exst
          * @param atomIds used to math atom ids before and after preprocessing
          * @return a new instance of the incidence graph stat calculator
          */
-        IncidenceGraphStatsCalculator()
-        {
+        IncidenceGraphStatsCalculator() {
             iGraphStats.libraryInstance = htd::createManagementInstance(htd::Id::FIRST);
             htd::MultiGraphFactory &factory = iGraphStats.libraryInstance->multiGraphFactory();
             iGraphStats.iGraph = factory.createInstance();
@@ -114,33 +110,28 @@ namespace exst
      *  Width Minimizing Fitness Function Copied from htd: https://github.com/mabseher/htd/blob/master/src/htd_main/main.cpp
      *  Implementation of the htd::ITreeDecompositionFitnessFunction interface which prefers decompositions of minimal width.
      */
-    class WidthMinimizingFitnessFunction : public htd::ITreeDecompositionFitnessFunction
-    {
+    class WidthMinimizingFitnessFunction : public htd::ITreeDecompositionFitnessFunction {
     public:
         /*
          *  Constructor of class WidthMinimizingFitnessFunction.
          */
-        WidthMinimizingFitnessFunction(void)
-        {
+        WidthMinimizingFitnessFunction(void) {
         }
 
         /*
          *  Destructor of class WidthMinimizingFitnessFunction.
          */
-        virtual ~WidthMinimizingFitnessFunction()
-        {
+        virtual ~WidthMinimizingFitnessFunction() {
         }
 
         htd::FitnessEvaluation *
-        fitness(const htd::IMultiHypergraph &graph, const htd::ITreeDecomposition &decomposition) const HTD_OVERRIDE
-        {
+        fitness(const htd::IMultiHypergraph &graph, const htd::ITreeDecomposition &decomposition) const HTD_OVERRIDE {
             HTD_UNUSED(graph)
 
             return new htd::FitnessEvaluation(1, -(double) (decomposition.maximumBagSize()));
         }
 
-        WidthMinimizingFitnessFunction *clone(void) const HTD_OVERRIDE
-        {
+        WidthMinimizingFitnessFunction *clone(void) const HTD_OVERRIDE {
             return new WidthMinimizingFitnessFunction();
         }
     };

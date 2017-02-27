@@ -9,13 +9,10 @@
 #include <exst/program_stats.h>
 #include <exst/incidence_graph_stats.h>
 
-namespace exst
-{
-    class ExtendedStatistics
-    {
+namespace exst {
+    class ExtendedStatistics {
     public:
-        static ExtendedStatistics &getInstance()
-        {
+        static ExtendedStatistics &getInstance() {
             static ExtendedStatistics stats;
             return stats;
         }
@@ -35,23 +32,19 @@ namespace exst
 
         std::list<StatisticsCalculator *> programStatistics;
 
-        void registerProgramStatistics(StatisticsCalculator *pStats)
-        {
+        void registerProgramStatistics(StatisticsCalculator *pStats) {
             programStatistics.push_back(pStats);
         }
 
-        void clearProgramStatistics()
-        {
+        void clearProgramStatistics() {
             programStatistics.clear();
         }
 
     private:
-        ExtendedStatistics()
-        {
+        ExtendedStatistics() {
             registerProgramStatistics(new DependencyGraphStatsCalculator());
             registerProgramStatistics(new ProgramStatsCalculator());
-            if(!ProgramParameter::getInstance().stopIGraphGen)
-            {
+            if (!ProgramParameter::getInstance().stopIGraphGen) {
                 registerProgramStatistics(new IncidenceGraphStatsCalculator());
             }
         }

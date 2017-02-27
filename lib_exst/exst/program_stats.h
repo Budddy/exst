@@ -8,10 +8,8 @@
 #include <exst/dependency_graph_stats.h>
 #include <exst/program_parameter.h>
 
-namespace exst
-{
-    struct ProgramStatistics
-    {
+namespace exst {
+    struct ProgramStatistics {
 
         ///number of facts in the program
         uint32_t numFacts = 0;
@@ -97,8 +95,7 @@ namespace exst
     /**
      * class used to generate the extended stats
      */
-    class ProgramStatsCalculator : public StatisticsCalculator
-    {
+    class ProgramStatsCalculator : public StatisticsCalculator {
     public:
 
         virtual void addRule(std::list<lit_type> body, std::list<lit_type> head);

@@ -4,13 +4,10 @@
 #include <exst/exst_types.h>
 #include <string>
 
-namespace exst
-{
-    class ProgramParameter
-    {
+namespace exst {
+    class ProgramParameter {
     public:
-        static ProgramParameter &getInstance()
-        {
+        static ProgramParameter &getInstance() {
             static ProgramParameter param;
             return param;
         }

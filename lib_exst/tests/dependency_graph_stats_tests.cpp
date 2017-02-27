@@ -1,27 +1,22 @@
 #include "test.h";
 
-namespace exst
-{
-    class DependencyTests : public AbstractExstTest
-    {
+namespace exst {
+    class DependencyTests : public AbstractExstTest {
     CPPUNIT_TEST_SUITE(DependencyTests);
             CPPUNIT_TEST(testaddRule);
             CPPUNIT_TEST(testgetAdditionalStatistics);
         CPPUNIT_TEST_SUITE_END();
     private:
     public:
-        void setUp()
-        {
+        void setUp() {
             AbstractExstTest::setUp();
         }
 
-        void tearDown()
-        {
+        void tearDown() {
             AbstractExstTest::tearDown();
         }
 
-        void testaddRule()
-        {
+        void testaddRule() {
 
             std::list<lit_type> body;
             std::list<lit_type> head;
@@ -94,8 +89,7 @@ namespace exst
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Node Count", (size_t) 8, dependencyGraphStats->getDependencyGraph().size());
         }
 
-        void testgetAdditionalStatistics()
-        {
+        void testgetAdditionalStatistics() {
             ProgramParameter::getInstance().dGraphFormat = GraphFormat::DIMACS;
 
             std::list<lit_type> body;
@@ -142,11 +136,11 @@ namespace exst
 
             const std::list<std::string> &stats = dependencyGraphStats->getAdditionalStatistics();
             CPPUNIT_ASSERT_EQUAL_MESSAGE("dependency graph", std::string("\"Dependency Graph\" : \n"
-                                                                             "[\"p edge 8 4\"\n"
-                                                                             ",\"e 1 2\"\n"
-                                                                             ",\"e 2 3\"\n"
-                                                                             ",\"e 4 6\"\n"
-                                                                             ",\"e 5 6\"]"), stats.front());
+                                                                                 "[\"p edge 8 4\"\n"
+                                                                                 ",\"e 1 2\"\n"
+                                                                                 ",\"e 2 3\"\n"
+                                                                                 ",\"e 4 6\"\n"
+                                                                                 ",\"e 5 6\"]"), stats.front());
         };
     };
 

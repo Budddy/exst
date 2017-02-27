@@ -1,9 +1,7 @@
 #include "test.h"
 
-namespace exst
-{
-    class IncidenceTests : public AbstractExstTest
-    {
+namespace exst {
+    class IncidenceTests : public AbstractExstTest {
     CPPUNIT_TEST_SUITE(IncidenceTests);
             CPPUNIT_TEST(testSmallGraph);
             CPPUNIT_TEST(testIncidenceGraph);
@@ -14,18 +12,15 @@ namespace exst
         CPPUNIT_TEST_SUITE_END();
     private:
     public:
-        void setUp()
-        {
+        void setUp() {
             AbstractExstTest::setUp();
         }
 
-        void tearDown()
-        {
+        void tearDown() {
             AbstractExstTest::tearDown();
         }
 
-        void testSmallGraph()
-        {
+        void testSmallGraph() {
             std::list<lit_type> body;
             std::list<lit_type> head;
             body.push_back(*new lit_type(2, NEGATIVE));
@@ -108,8 +103,7 @@ namespace exst
                                          incidenceGraphStats->iGraphStats.iGraphReduct->vertexCount());
         }
 
-        void testIncidenceGraph()
-        {
+        void testIncidenceGraph() {
             std::list<lit_type> body;
             std::list<lit_type> head;
             body.push_back(*new lit_type(2, NEGATIVE));
@@ -221,8 +215,7 @@ namespace exst
                                          incidenceGraphStats->iGraphStats.iGraphReduct->vertexCount());
         }
 
-        void testgetTreewidth()
-        {
+        void testgetTreewidth() {
             std::list<lit_type> body;
             std::list<lit_type> head;
             body.push_back(*new lit_type(2, NEGATIVE));
@@ -290,8 +283,7 @@ namespace exst
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Treewidth", (size_t) 4, width);
         };
 
-        void testupdateAssignment()
-        {
+        void testupdateAssignment() {
             std::list<lit_type> body;
             std::list<lit_type> head;
             body.push_back(*new lit_type(2, NEGATIVE));
@@ -372,8 +364,7 @@ namespace exst
             incidenceGraphStats->iGraphStats.current_assignment.at(0) == l;
         };
 
-        void testgetAdditionalStatistics()
-        {
+        void testgetAdditionalStatistics() {
             ProgramParameter::getInstance().rGraphFormat = GraphFormat::DIMACS;
             ProgramParameter::getInstance().iGraphFormat = GraphFormat::DIMACS;
 
@@ -423,23 +414,23 @@ namespace exst
             std::string rg = stats.front();
             std::string ig = stats.back();
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Reduct Graph", std::string("\n"
-                                                                         " \"Reduct Graph\" : [\n"
-                                                                         "  ]\n"), stats.front());
+                                                                             " \"Reduct Graph\" : [\n"
+                                                                             "  ]\n"), stats.front());
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Incidence Graph", std::string("\n"
-                                                                            " \"Incidence Graph\" : \n"
-                                                                            "[\"p edge 11 12\"\n"
-                                                                            ",\"e 1 2\"\n"
-                                                                            ",\"e 1 3\"\n"
-                                                                            ",\"e 2 11\"\n"
-                                                                            ",\"e 3 11\"\n"
-                                                                            ",\"e 4 5\"\n"
-                                                                            ",\"e 4 6\"\n"
-                                                                            ",\"e 5 11\"\n"
-                                                                            ",\"e 6 7\"\n"
-                                                                            ",\"e 6 10\"\n"
-                                                                            ",\"e 7 8\"\n"
-                                                                            ",\"e 7 9\"\n"
-                                                                            ",\"e 9 10\"]"), stats.back());
+                                                                                " \"Incidence Graph\" : \n"
+                                                                                "[\"p edge 11 12\"\n"
+                                                                                ",\"e 1 2\"\n"
+                                                                                ",\"e 1 3\"\n"
+                                                                                ",\"e 2 11\"\n"
+                                                                                ",\"e 3 11\"\n"
+                                                                                ",\"e 4 5\"\n"
+                                                                                ",\"e 4 6\"\n"
+                                                                                ",\"e 5 11\"\n"
+                                                                                ",\"e 6 7\"\n"
+                                                                                ",\"e 6 10\"\n"
+                                                                                ",\"e 7 8\"\n"
+                                                                                ",\"e 7 9\"\n"
+                                                                                ",\"e 9 10\"]"), stats.back());
         };
     };
 

@@ -1,9 +1,7 @@
 #include "test.h"
 
-namespace exst
-{
-    class ParameterTests : public AbstractExstTest
-    {
+namespace exst {
+    class ParameterTests : public AbstractExstTest {
     CPPUNIT_TEST_SUITE(ParameterTests);
             CPPUNIT_TEST(testParseParameter);
             CPPUNIT_TEST(testParseParameterEmptyName);
@@ -13,18 +11,15 @@ namespace exst
         CPPUNIT_TEST_SUITE_END();
     private:
     public:
-        void setUp()
-        {
+        void setUp() {
             AbstractExstTest::setUp();
         }
 
-        void tearDown()
-        {
+        void tearDown() {
             AbstractExstTest::tearDown();
         }
 
-        void testParseParameter()
-        {
+        void testParseParameter() {
             int i = 0;
             CPPUNIT_ASSERT_MESSAGE("", ProgramParameter::parseParameter(nullptr, std::string("printDgraph"),
                                                                         std::string("0,./dGraph")));
@@ -42,26 +37,22 @@ namespace exst
             CPPUNIT_ASSERT_EQUAL_MESSAGE("", std::string("./rGraph"), ProgramParameter::getInstance().rGraphPath);
         }
 
-        void testParseParameterEmptyName()
-        {
+        void testParseParameterEmptyName() {
             CPPUNIT_ASSERT_MESSAGE("", not ProgramParameter::parseParameter(nullptr, std::string(""),
                                                                             std::string("0,./dGraph")));
         }
 
-        void testParseParameterEmptyValue()
-        {
+        void testParseParameterEmptyValue() {
             CPPUNIT_ASSERT_MESSAGE("", not ProgramParameter::parseParameter(nullptr, std::string("printDgraph"),
                                                                             std::string("")));
         }
 
-        void testParseParameterWrongName()
-        {
+        void testParseParameterWrongName() {
             CPPUNIT_ASSERT_MESSAGE("", not ProgramParameter::parseParameter(nullptr, std::string("wrong"),
                                                                             std::string("0,./dGraph")));
         }
 
-        void testParseParameterWrongValue()
-        {
+        void testParseParameterWrongValue() {
             CPPUNIT_ASSERT_MESSAGE("", not ProgramParameter::parseParameter(nullptr, std::string("printDgraph"),
                                                                             std::string("9h")));
         }

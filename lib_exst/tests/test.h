@@ -14,13 +14,10 @@
 #include <exst/program_stats.h>
 #include <exst/exst_statistics.h>
 
-namespace exst
-{
-    class AbstractExstTest : public CppUnit::TestFixture
-    {
+namespace exst {
+    class AbstractExstTest : public CppUnit::TestFixture {
     public:
-        void setUp()
-        {
+        void setUp() {
             extendedStatistics->clearProgramStatistics();
             dependencyGraphStats = new DependencyGraphStatsCalculator();
             statsCalculator = new ProgramStatsCalculator();
@@ -32,8 +29,7 @@ namespace exst
             ProgramParameter::getInstance() = *new ProgramParameter();
         }
 
-        void tearDown()
-        {
+        void tearDown() {
             delete dependencyGraphStats;
             delete incidenceGraphStats;
             delete statsCalculator;

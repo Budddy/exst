@@ -1,27 +1,22 @@
 #include "test.h"
 
-namespace exst
-{
-    class SystemTests : public AbstractExstTest
-    {
+namespace exst {
+    class SystemTests : public AbstractExstTest {
     CPPUNIT_TEST_SUITE(SystemTests);
             CPPUNIT_TEST(testMultipleConstraintsAndNonConstraintsWithHelpersSystem);
             CPPUNIT_TEST(testUpdateAssignment);
         CPPUNIT_TEST_SUITE_END();
     private:
     public:
-        void setUp()
-        {
+        void setUp() {
             AbstractExstTest::setUp();
         }
 
-        void tearDown()
-        {
+        void tearDown() {
             AbstractExstTest::tearDown();
         }
 
-        void testMultipleConstraintsAndNonConstraintsWithHelpersSystem()
-        {
+        void testMultipleConstraintsAndNonConstraintsWithHelpersSystem() {
 
             std::list<lit_type> body;
             std::list<lit_type> head;
@@ -119,19 +114,19 @@ namespace exst
 
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", std::string(
-                "  ,[\"number of variables that occur as positive literals with helpers\" , 3]"), line);
+                    "  ,[\"number of variables that occur as positive literals with helpers\" , 3]"), line);
 
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", std::string(
-                "  ,[\"number of variables that occur as positive literals without helpers\" , 3]"), line);
+                    "  ,[\"number of variables that occur as positive literals without helpers\" , 3]"), line);
 
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", std::string(
-                "  ,[\"number of variables that occur as negative literals with helpers\" , 3]"), line);
+                    "  ,[\"number of variables that occur as negative literals with helpers\" , 3]"), line);
 
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", std::string(
-                "  ,[\"number of variables that occur as negative literals without helpers\" , 1]"), line);
+                    "  ,[\"number of variables that occur as negative literals without helpers\" , 1]"), line);
 
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses",
@@ -170,7 +165,7 @@ namespace exst
 
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", std::string(
-                "  ,[\"maximum size of the head and negative body of a rule\" , 2]"), line);
+                    "  ,[\"maximum size of the head and negative body of a rule\" , 2]"), line);
 
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses",
@@ -178,7 +173,7 @@ namespace exst
 
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", std::string(
-                "  ,[\"maximum size of the positive body of a non-constraint rule\" , 2]"), line);
+                    "  ,[\"maximum size of the positive body of a non-constraint rule\" , 2]"), line);
 
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses",
@@ -214,17 +209,17 @@ namespace exst
 
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", std::string(
-                "  ,[\"maximum number of occurrences of a variable only head and negative body occurences\" , 1]"),
+                    "  ,[\"maximum number of occurrences of a variable only head and negative body occurences\" , 1]"),
                                          line);
 
             std::getline(res, line, '\n');
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", std::string("  ,[\"maximal size of the model\" , 0]"), line);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses",
+                                         std::string("  ,[\"maximal size of the model\" , 0]"), line);
 
 
         }
 
-        void testUpdateAssignment()
-        {
+        void testUpdateAssignment() {
 
             std::list<lit_type> body;
             std::list<lit_type> head;

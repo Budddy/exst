@@ -8,53 +8,46 @@
 #include <htd/TreeDecompositionAlgorithmFactory.hpp>
 #include <htd/IMutableMultiGraph.hpp>
 
-namespace exst
-{
+namespace exst {
     /**
      * possible types of edges in the exst graph
      */
-    enum EdgeType
-    {
+    enum EdgeType {
         POS = 1, NEG = -1, HEAD = 2, BODY = 3
     };
 
     /**
      * enum to represent the sign of a literal
      */
-    enum Sign
-    {
+    enum Sign {
         POSITIVE = 1, NEGATIVE = -1
     };
 
     /**
      * enum to represent the sign of a literal
      */
-    enum GraphFormat
-    {
+    enum GraphFormat {
         DIMACS = 0, GR = 1, GML = 2, NONE = 3
     };
 
     /**
      * type to represent a literal in exst
      */
-    struct lit_type
-    {
+    struct lit_type {
         /**
          * Constructor for lit_type with id and sign.
          * @param id id of the literal
          * @param s sign of the literal
          * @return a new instance of lit_type
          */
-        lit_type(uint32_t id, Sign s) : id(id), s(s)
-        {
+        lit_type(uint32_t id, Sign s) : id(id), s(s) {
         }
 
         /**
          * Empty construtor for lit_type.
          * @return a new instance of lit_type
          */
-        lit_type()
-        {
+        lit_type() {
         }
 
         /// id of the literal
@@ -65,8 +58,7 @@ namespace exst
         /**
          * overload == operator for lit_type
          */
-        bool operator==(lit_type l)
-        {
+        bool operator==(lit_type l) {
             return (id == l.id) && (s == l.s);
         }
     };
