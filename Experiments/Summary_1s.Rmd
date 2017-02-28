@@ -35,6 +35,7 @@ stat <- stat[, -7]
 stat <- stat[, -6]
 stat <- stat[, -2]
 
+stat <- stat[stat[,"time_CPU"] >= 1,]
 asdf <- Statistics[, -40:-70]
 asdf <- asdf[, -3:-36]
 
@@ -238,7 +239,7 @@ for (i in 3:len) {
       matrix_two_parameters_low[i, b] <- numlow
       matrix_two_parameters_high[b, i] <- numhigh
       matrix_two_parameters_low[b, i] <- numlow
-      if (numhigh >= 13 &&
+      if (numhigh >= 7 &&
           max(matrix_interesting[i, 1],
               matrix_interesting[b, 1],
               na.rm =
@@ -333,7 +334,7 @@ for (i in 3:len) {
           matrix_three_parameters_low[c, i, b] <- numlow
           matrix_three_parameters_low[c, b, i] <- numlow
           
-          if (numhigh >= 14 &&
+          if (numhigh >= 8 &&
               max(
                 matrix_two_parameters_high[i, b],
                 matrix_two_parameters_high[i, c],
@@ -473,7 +474,7 @@ for (i in 3:len) {
                   break
                 }
               }
-              if (numhigh >= 15 &&
+              if (numhigh >= 9 &&
                   max(
                     matrix_three_parameters_high[i, b, c],
                     matrix_three_parameters_high[i, c, d],

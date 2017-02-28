@@ -83,16 +83,16 @@ gen_d_width = True
 
 names_csv = ["problem", "inst", "time_CPU", "choices", "conflicts", "backtracks", "backjumps", "restarts", "jumps",
              "atoms", "rules", "bodies", "equivalences", "variables", "eliminated", "frozen", "constraints",
-             "nHornClauses", "nDualHornClauses", "maxClauseSize", "maxPositiveClauseSize", "maxNegativeClauseSize",
+             "numNonHornClauses", "numNonDualHornClauses", "maxClauseSize", "maxPosClauseSize", "maxNegClauseSize",
              "numVPosLitH", "numVPosLit", "numVNegLitH", "numVNegLit", "maxPosRSizeC", "maxPosRSizeNC", "numAtomOccC",
-             "numAtomOccNC", "maxNumAtomOcc", "maxNumPosOccA", "maxNumNegOccA", "dWidth", "dEdges", "dNodes", "iWidth",
-             "iEdges", "iNodes", "rEdges0", "rNodes0", "rWidths0", "rEdges1", "rNodes1", "rWidths1", "rEdges2",
-             "rNodes2", "rWidths2", "rEdges3", "rNodes3", "rWidths3", "rEdges4", "rNodes4", "rWidths4", "rEdges5",
-             "rNodes5", "rWidths5", "rEdges6", "rNodes6", "rWidths6", "rEdges7", "rNodes7", "rWidths7", "rEdges8",
-             "rNodes8", "rWidths8", "rEdges9", "rNodes9", "rWidths9", "problem_width", "maxSizeNCon",
+             "numAtomOccNC", "maxNumAtomOcc", "maxNumPosOccA", "maxNumNegOccA", "dGraphWidth", "numDGraphEdges", "numDGraphNodes", "iGraphWidth",
+             "numIGraphEdges", "numIGraphNodes", "numRGraphEdges0", "numRGraphNodes0", "rGraphWidth0", "numRGraphEdges1", "numRGraphNodes1", "rGraphWidth1", "numRGraphEdges2",
+             "numRGraphNodes2", "rGraphWidth2", "numRGraphEdges3", "numRGraphNodes3", "rGraphWidth3", "numRGraphEdges4", "numRGraphNodes4", "rGraphWidth4", "numRGraphEdges5",
+             "numRGraphNodes5", "rGraphWidth5", "numRGraphEdges6", "numRGraphNodes6", "rGraphWidth6", "numRGraphEdges7", "numRGraphNodes7", "rGraphWidth7", "numRGraphEdges8",
+             "numRGraphNodes8", "rGraphWidth8", "numRGraphEdges9", "numRGraphNodes9", "rGraphWidth9", "problem_width", "maxSizeNCon",
              "maxSizeHeadNegBodyRule", "maxSizeRuleHead", "maxSizePosBodyNCon", "maxSizeNegBodyRule",
              "maxSizePosBodyCon", "maxSizeNegBodyCon", "numAtomsHead", "numAtomsPosBody", "numAtomsNegBody",
-             "maxNumVarOcc", "maxNumVarOccHeadNegBody", "modelSize"]
+             "maxNumVarOcc", "maxNumVarOccHeadNegBody", "maxSizeAnswerSet"]
 
 
 class Command(object):
@@ -271,11 +271,11 @@ def get_csv(file_name):
                     stats["bodies"] = d['Stats']['Problem']["Constraints"]["Sum"]
                 if 'Extended Stats' in d['Stats']:
                     ex = d['Stats']['Extended Stats']
-                    stats["nHornClauses"] = ex[4][1]
-                    stats["nDualHornClauses"] = ex[5][1]
+                    stats["numNonHornClauses"] = ex[4][1]
+                    stats["numNonDualHornClauses"] = ex[5][1]
                     stats["maxClauseSize"] = ex[6][1]
-                    stats["maxPositiveClauseSize"] = ex[7][1]
-                    stats["maxNegativeClauseSize"] = ex[8][1]
+                    stats["maxPosClauseSize"] = ex[7][1]
+                    stats["maxNegClauseSize"] = ex[8][1]
                     stats["numVPosLitH"] = ex[9][1]
                     stats["numVPosLit"] = ex[10][1]
                     stats["numVNegLitH"] = ex[11][1]
@@ -299,29 +299,29 @@ def get_csv(file_name):
                     stats["numAtomsNegBody"] = ex[29][1]
                     stats["maxNumVarOcc"] = ex[30][1]
                     stats["maxNumVarOccHeadNegBody"] = ex[31][1]
-                    stats["modelSize"] = ex[32][1]
+                    stats["maxSizeAnswerSet"] = ex[32][1]
 
                 # get Dependency Graph Stats
                 printMessage("      dependency Graph")
                 if gen_d_width:
                     ret = gen_graph_stats(d['Stats']['Incidence Graph'])
                     if not ret[3]:
-                        stats["dWidth"] = ret[0]
+                        stats["dGraphWidth"] = ret[0]
                 else:
                     ret = gen_graph_stats(d['Stats']['Dependency Graph'], False)
-                stats["dEdges"] = ret[1]
-                stats["dNodes"] = ret[2]
+                stats["numDGraphEdges"] = ret[1]
+                stats["numDGraphNodes"] = ret[2]
 
                 # get Incidence Graph Stats
                 printMessage("      incidence Graph")
                 if gen_i_width:
                     ret = gen_graph_stats(d['Stats']['Incidence Graph'])
                     if not ret[3]:
-                        stats["iWidth"] = ret[0]
+                        stats["iGraphWidth"] = ret[0]
                 else:
                     ret = gen_graph_stats(d['Stats']['Incidence Graph'], False)
-                stats["iEdges"] = ret[1]
-                stats["iNodes"] = ret[2]
+                stats["numIGraphEdges"] = ret[1]
+                stats["numIGraphNodes"] = ret[2]
 
                 # get ReductGraph Stats
                 printMessage("      reduct Graph")
@@ -331,11 +331,11 @@ def get_csv(file_name):
                         if gen_r_width:
                             ret = gen_graph_stats(d['Stats']['Reduct Graph'][i])
                             if not ret[3]:
-                                stats["rWidths" + str(i)] = ret[0]
+                                stats["rGraphWidth" + str(i)] = ret[0]
                         else:
                             ret = gen_graph_stats(d['Stats']['Reduct Graph'][i], False)
-                        stats["rEdges" + str(i)] = ret[1]
-                        stats["rNodes" + str(i)] = ret[2]
+                        stats["numRGraphEdges" + str(i)] = ret[1]
+                        stats["numRGraphNodes" + str(i)] = ret[2]
     with open(csvFile, "a") as statsFile:
         writer = csv.DictWriter(statsFile, fieldnames=names_csv, delimiter=',', lineterminator='\n')
         writer.writerow(stats)
