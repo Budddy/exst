@@ -22,7 +22,7 @@ setwd("C:/Users/Markus/Dropbox/uni/Semester10/Bachelorarbeit/BachelorThesis")
 
 Statistics <-
   read.csv(
-    file = "Statistics.csv",
+    file = "Parameters.csv",
     header = TRUE,
     sep = ",",
     quote = "\"",

@@ -2,7 +2,7 @@
 
 This folder contains parameters generated for the first through sixth ASPCOMP.
 - `generateStatistics.py` is a script to generate the parameters of ASP programs.
-- `Statistics.csv` contains the generated parameters
+- `Parameters.csv` contains the generated parameters
 - `Results.Rmd` is a R script to generate correlations between parameters
     - `Results.html` contains the output of the `Results.Rmd` script
 - `Summary.Rmd` is a R script to generate correlations between parameters
@@ -19,7 +19,7 @@ This folder contains parameters generated for the first through sixth ASPCOMP.
 2. The script executes clasp to get the time and clasp parameters
 3. The script executes exst to generate the extended parameters
 4. The script generates the tree-width with htd
-5. The script combines the statistics into the Stats.csv file
+5. The script combines the parameters into the Parameters.csv file
 
 ## File structure
 - Folders:
@@ -29,14 +29,14 @@ This folder contains parameters generated for the first through sixth ASPCOMP.
   - Ground                          - directory for the ground programs
   - Graphs                          - directory containing the graphs
   - Times                           - directory for the clasp output
-  - Extended_Statistics             - directory for the exst output
+  - ExParamters                     - directory for the exst output
 - Files:
   - Ground_Oversize.log             - log for files which are too big after grounding
   - Ground_Timeout.log              - log for files which took too long for grounding
   - Ground_Error.log                - log for files where an error occurred during grounding
   - Times_Failed.log                - log for files where the clasp parameter generation failed
   - Extended_Stats_Failed.log       - log for files where the extended parameter calculation failed
-  - Stats.csv                       - final file containing the parameters
+  - Parameters.csv                  - final file containing the parameters
   - tmp.txt                         - temporary file used for width generation
 - Programs:
   - gringo                          - gringo to ground the programs

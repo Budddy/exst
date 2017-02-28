@@ -28,11 +28,11 @@ An extension for clasp to create additional paramters.
 
 ## Options:
 - `--printDgraph=<format>[,<filePath>]`
-  Enables the output of the dependency graph either into a file or if no file path is provided onto standard output. Format has to be one of 0,1 or 2, a description of the formats can be seen in Section \ref{graphFormat}.  
+  Enables the output of the dependency graph either into a file or if no file path is provided onto standard output.
 - `--printIgraph=<format>[,<filePath>]`
-  Enables the output of the incidence graph into the given file or if no file path is provided the graph is written onto standard output. Format has to be one of 0,1 or 2, a description of the formats can be seen in Section \ref{graphFormat}.  
+  Enables the output of the incidence graph into the given file or if no file path is provided the graph is written onto standard output.
 - `--printRgraph=<format>[,<filePath>]`
-  Enables the output of the incidence graph of the GL-reduct into a file or in case no file path is provided the graph is printed onto standard output. If a path is given, each reduct graph is printed into a separated file, therefore the name of each file is extended by the number of the reduct. Format has to be one of 0,1 or 2, a description of the formats can be seen in Section \ref{graphFormat}.  
+  Enables the output of the incidence graph of the GL-reduct into a file or in case no file path is provided the graph is printed onto standard output. If a path is given, each reduct graph is printed into a separated file, therefore the name of each file is extended by the number of the reduct.  
 - `--calcTWidth`
   Enables the treewidth generation of the GL-reduct.  
 - `--width-intervall=<n>`

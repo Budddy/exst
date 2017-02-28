@@ -7,6 +7,7 @@ import subprocess
 import threading
 import time
 import traceback
+import signal
 from os import listdir
 from os.path import isfile, join, isdir
 
@@ -23,8 +24,6 @@ generateCSV = True
 
 # maximal time for grounding
 groundTime = 60
-# maximal time to get number of assignments
-assignmentTime = 1800
 # maximal runtime time for clasp
 timesTime = 600
 # maximal time for statistics calculation
@@ -43,14 +42,12 @@ maxGroundSize = 3
 dirPrograms = "./Programs/"
 # directory where the ground programs are located
 dirGround = "./Ground/"
-# directory for the assignment counts
-dirAssignments = "./Assignments/"
 # directory to save the graphs to
 dirGraphs = "./Graphs/"
-# directory to save the clasp statistics
+# directory to save the clasp parameters
 dirTimes = "./Times/"
-# directory to save the extended statistics
-dirExtendedStats = "./Extended_Statistics"
+# directory to save the extended paramters
+dirExtendedStats = "./ExParamters"
 
 # logfile for oversize ground programs
 logGroundOversize = "./Ground_Oversize.log"
@@ -60,10 +57,10 @@ logGroundTimeout = "./Ground_Timeout.log"
 logGroundError = "./Ground_Error.log"
 # logfile to save the programs that took too long for clasp to solve
 logTimesFailed = "./Times_Failed.log"
-# logfile for the failed statistics generations
+# logfile for the failed parameter generations
 logStatsFailed = "./Extended_Stats_Failed.log"
-# CSV file for the statistics
-csvFile = "./Stats.csv"
+# CSV file for the parameters
+csvFile = "./Parameters.csv"
 # tmp file for width generation
 tmpFile = "./tmp.txt"
 
@@ -73,7 +70,7 @@ groundCommand = "./gringo "
 timesCommand = "./clasp --stats=2 -q 2 --time-limit=" + str(timesTime + 10) + " --outf=2 -V "
 # command used to generate the width
 widthCommand = "./htd_main -s 1234 --output width --opt width < "
-# command used to generate the statistics
+# command used to generate the extended parameters
 statsCommand = "./exst --printDgraph=1 --printIgraph=1 --printRgraph=1 -q 2 --stats=2 --time-limit=" + str(
     statsTime + 10) + " --outf=2 -V "
 
@@ -84,14 +81,18 @@ gen_i_width = True
 # flag to generate the width of the dependency graph
 gen_d_width = True
 
-names_csv = ["problem", "inst", "time_total", "time_CPU", "result", "choices", "conflicts", "backtracks", "backjumps", "restarts", "jumps",
-             "atoms", "rules", "bodies", "equivalences", "variables", "eliminated", "frozen", "nHornClauses", "nDualHornClauses",
-             "maxClauseSize", "maxPositiveClauseSize", "maxNegativeClauseSize", "numVPosLitH", "numVPosLit", "numVNegLitH", "numVNegLit",
-             "maxPosRSizeC", "maxPosRSizeNC", "numAtomOccC", "numAtomOccNC", "maxNumAtomOcc", "maxNumPosOccA", "maxNumNegOccA", "dWidth",
-             "dEdges", "dNodes", "iWidth", "iEdges", "iNodes", "rEdges0", "rNodes0", "rWidths0", "rEdges1", "rNodes1", "rWidths1",
-             "rEdges2", "rNodes2", "rWidths2", "rEdges3", "rNodes3", "rWidths3", "rEdges4", "rNodes4", "rWidths4", "rEdges5", "rNodes5",
-             "rWidths5", "rEdges6", "rNodes6", "rWidths6", "rEdges7", "rNodes7", "rWidths7", "rEdges8", "rNodes8", "rWidths8", "rEdges9",
-             "rNodes9", "rWidths9"]
+names_csv = ["problem", "inst", "time_CPU", "choices", "conflicts", "backtracks", "backjumps", "restarts", "jumps",
+             "atoms", "rules", "bodies", "equivalences", "variables", "eliminated", "frozen", "constraints",
+             "nHornClauses", "nDualHornClauses", "maxClauseSize", "maxPositiveClauseSize", "maxNegativeClauseSize",
+             "numVPosLitH", "numVPosLit", "numVNegLitH", "numVNegLit", "maxPosRSizeC", "maxPosRSizeNC", "numAtomOccC",
+             "numAtomOccNC", "maxNumAtomOcc", "maxNumPosOccA", "maxNumNegOccA", "dWidth", "dEdges", "dNodes", "iWidth",
+             "iEdges", "iNodes", "rEdges0", "rNodes0", "rWidths0", "rEdges1", "rNodes1", "rWidths1", "rEdges2",
+             "rNodes2", "rWidths2", "rEdges3", "rNodes3", "rWidths3", "rEdges4", "rNodes4", "rWidths4", "rEdges5",
+             "rNodes5", "rWidths5", "rEdges6", "rNodes6", "rWidths6", "rEdges7", "rNodes7", "rWidths7", "rEdges8",
+             "rNodes8", "rWidths8", "rEdges9", "rNodes9", "rWidths9", "problem_width", "maxSizeNCon",
+             "maxSizeHeadNegBodyRule", "maxSizeRuleHead", "maxSizePosBodyNCon", "maxSizeNegBodyRule",
+             "maxSizePosBodyCon", "maxSizeNegBodyCon", "numAtomsHead", "numAtomsPosBody", "numAtomsNegBody",
+             "maxNumVarOcc", "maxNumVarOccHeadNegBody", "modelSize"]
 
 
 class Command(object):
@@ -113,7 +114,7 @@ class Command(object):
 
         def target(**kwargs_):
             try:
-                self.process = subprocess.Popen(self.command, shell=True, **kwargs_)
+                self.process = subprocess.Popen(self.command, shell=True, preexec_fn=os.setsid, **kwargs_)
                 self.output, self.error = self.process.communicate()
                 self.status = self.process.returncode
             except:
@@ -134,7 +135,7 @@ class Command(object):
         end = time.time()
         stop = False
         if thread.is_alive():
-            subprocess.call(['taskkill', '/F', '/T', '/PID', str(self.process.pid)])
+            os.killpg(os.getpgid(self.process.pid), signal.SIGTERM)
             thread.join()
             stop = True
         return self.status, self.output, self.error, end - start, stop
@@ -196,7 +197,8 @@ def get_times(file_name):
 
 # print Graphs into Graph dir, calc Stats
 def get_stats(file_name):
-    if isfile(join(dirTimes, file_name)) and not isfile(join(dirExtendedStats, file_name + ".gz")) and isfile(join(dirGround, file_name)):
+    if isfile(join(dirTimes, file_name)) and not isfile(join(dirExtendedStats, file_name + ".gz")) and isfile(
+            join(dirGround, file_name)):
         printMessage("Generate Extended Statistics - instance: " + file_name)
         # only run if file doesn't already exist
         assignments = json.loads(open(join(dirTimes, file_name), 'r').read())['Stats']['Core']['Choices']
@@ -242,9 +244,7 @@ def get_csv(file_name):
         with open(join(dirTimes, file_name[:-3]), "r") as myfile:
             data = myfile.read()
             d = json.loads(data)
-            stats["time_total"] = d['Time']["Total"]
             stats["time_CPU"] = d['Time']["CPU"]
-            stats["result"] = d['Result']
     if isfile(join(dirExtendedStats, file_name)):
         printMessage("    exst")
         with gzip.open(join(dirExtendedStats, file_name), "r") as myfile:
@@ -269,55 +269,73 @@ def get_csv(file_name):
                     stats["eliminated"] = d['Stats']['Problem']["Eliminated"]
                     stats["frozen"] = d['Stats']['Problem']["Frozen"]
                     stats["bodies"] = d['Stats']['Problem']["Constraints"]["Sum"]
-            stats["nHornClauses"] = d['Stats']['Extended Stats'][4][1]
-            stats["nDualHornClauses"] = d['Stats']['Extended Stats'][5][1]
-            stats["maxClauseSize"] = d['Stats']['Extended Stats'][6][1]
-            stats["maxPositiveClauseSize"] = d['Stats']['Extended Stats'][7][1]
-            stats["maxNegativeClauseSize"] = d['Stats']['Extended Stats'][8][1]
-            stats["numVPosLitH"] = d['Stats']['Extended Stats'][9][1]
-            stats["numVPosLit"] = d['Stats']['Extended Stats'][10][1]
-            stats["numVNegLitH"] = d['Stats']['Extended Stats'][11][1]
-            stats["numVNegLit"] = d['Stats']['Extended Stats'][12][1]
-            stats["maxPosRSizeC"] = d['Stats']['Extended Stats'][13][1]
-            stats["maxPosRSizeNC"] = d['Stats']['Extended Stats'][14][1]
-            stats["numAtomOccC"] = d['Stats']['Extended Stats'][15][1]
-            stats["numAtomOccNC"] = d['Stats']['Extended Stats'][16][1]
-            stats["maxNumAtomOcc"] = d['Stats']['Extended Stats'][17][1]
-            stats["maxNumPosOccA"] = d['Stats']['Extended Stats'][18][1]
-            stats["maxNumNegOccA"] = d['Stats']['Extended Stats'][19][1]
-            # get Dependency Graph Stats
-            printMessage("      dependency Graph")
-            if gen_d_width:
-                ret = gen_graph_stats(d['Stats']['Incidence Graph'])
-                if not ret[3]:
-                    stats["dWidth"] = ret[0]
-            else:
-                ret = gen_graph_stats(d['Stats']['Dependency Graph'], False)
-            stats["dEdges"] = ret[1]
-            stats["dNodes"] = ret[2]
-            # get Incidence Graph Stats
-            printMessage("      incidence Graph")
-            if gen_i_width:
-                ret = gen_graph_stats(d['Stats']['Incidence Graph'])
-                if not ret[3]:
-                    stats["iWidth"] = ret[0]
-            else:
-                ret = gen_graph_stats(d['Stats']['Incidence Graph'], False)
-            stats["iEdges"] = ret[1]
-            stats["iNodes"] = ret[2]
-            # get ReductGraph Stats
-            printMessage("      reduct Graph")
-            for i in range(0, 10):
-                printMessage("        " + str(i))
-                if len(d['Stats']['Reduct Graph']) > i:
-                    if gen_r_width:
-                        ret = gen_graph_stats(d['Stats']['Reduct Graph'][i])
-                        if not ret[3]:
-                            stats["rWidths" + str(i)] = ret[0]
-                    else:
-                        ret = gen_graph_stats(d['Stats']['Reduct Graph'][i], False)
-                    stats["rEdges" + str(i)] = ret[1]
-                    stats["rNodes" + str(i)] = ret[2]
+                if 'Extended Stats' in d['Stats']:
+                    ex = d['Stats']['Extended Stats']
+                    stats["nHornClauses"] = ex[4][1]
+                    stats["nDualHornClauses"] = ex[5][1]
+                    stats["maxClauseSize"] = ex[6][1]
+                    stats["maxPositiveClauseSize"] = ex[7][1]
+                    stats["maxNegativeClauseSize"] = ex[8][1]
+                    stats["numVPosLitH"] = ex[9][1]
+                    stats["numVPosLit"] = ex[10][1]
+                    stats["numVNegLitH"] = ex[11][1]
+                    stats["numVNegLit"] = ex[12][1]
+                    stats["maxPosRSizeC"] = ex[13][1]
+                    stats["maxPosRSizeNC"] = ex[14][1]
+                    stats["numAtomOccC"] = ex[15][1]
+                    stats["numAtomOccNC"] = ex[16][1]
+                    stats["maxNumAtomOcc"] = ex[17][1]
+                    stats["maxNumPosOccA"] = ex[18][1]
+                    stats["maxNumNegOccA"] = ex[19][1]
+                    stats["maxSizeNCon"] = ex[20][1]
+                    stats["maxSizeHeadNegBodyRule"] = ex[21][1]
+                    stats["maxSizeRuleHead"] = ex[22][1]
+                    stats["maxSizePosBodyNCon"] = ex[23][1]
+                    stats["maxSizeNegBodyRule"] = ex[24][1]
+                    stats["maxSizePosBodyCon"] = ex[25][1]
+                    stats["maxSizeNegBodyCon"] = ex[26][1]
+                    stats["numAtomsHead"] = ex[27][1]
+                    stats["numAtomsPosBody"] = ex[28][1]
+                    stats["numAtomsNegBody"] = ex[29][1]
+                    stats["maxNumVarOcc"] = ex[30][1]
+                    stats["maxNumVarOccHeadNegBody"] = ex[31][1]
+                    stats["modelSize"] = ex[32][1]
+
+                # get Dependency Graph Stats
+                printMessage("      dependency Graph")
+                if gen_d_width:
+                    ret = gen_graph_stats(d['Stats']['Incidence Graph'])
+                    if not ret[3]:
+                        stats["dWidth"] = ret[0]
+                else:
+                    ret = gen_graph_stats(d['Stats']['Dependency Graph'], False)
+                stats["dEdges"] = ret[1]
+                stats["dNodes"] = ret[2]
+
+                # get Incidence Graph Stats
+                printMessage("      incidence Graph")
+                if gen_i_width:
+                    ret = gen_graph_stats(d['Stats']['Incidence Graph'])
+                    if not ret[3]:
+                        stats["iWidth"] = ret[0]
+                else:
+                    ret = gen_graph_stats(d['Stats']['Incidence Graph'], False)
+                stats["iEdges"] = ret[1]
+                stats["iNodes"] = ret[2]
+
+                # get ReductGraph Stats
+                printMessage("      reduct Graph")
+                for i in range(0, 10):
+                    printMessage("        " + str(i))
+                    if len(d['Stats']['Reduct Graph']) > i:
+                        if gen_r_width:
+                            ret = gen_graph_stats(d['Stats']['Reduct Graph'][i])
+                            if not ret[3]:
+                                stats["rWidths" + str(i)] = ret[0]
+                        else:
+                            ret = gen_graph_stats(d['Stats']['Reduct Graph'][i], False)
+                        stats["rEdges" + str(i)] = ret[1]
+                        stats["rNodes" + str(i)] = ret[2]
     with open(csvFile, "a") as statsFile:
         writer = csv.DictWriter(statsFile, fieldnames=names_csv, delimiter=',', lineterminator='\n')
         writer.writerow(stats)
@@ -329,8 +347,6 @@ def create_missing_dirs():
         os.makedirs(dirPrograms)
     if not isdir(dirGround):
         os.makedirs(dirGround)
-    if not isdir(dirAssignments):
-        os.makedirs(dirAssignments)
     if not isdir(dirGraphs):
         os.makedirs(dirGraphs)
     if not isdir(dirTimes):
@@ -358,7 +374,6 @@ countElements = 0
 create_missing_dirs()
 
 # ground the Programs
-countElements = 0
 if groundPrograms:
     for pr in listdir(dirPrograms):
         for tdir in listdir(join(dirPrograms, pr)):
@@ -369,8 +384,7 @@ if groundPrograms:
             for inst in listdir(p_dir):
                 if inst != "encoding.asp":
                     countElements += 1
-                    printMessage("Ground Instance(" + str(countElements) + "/" + str(
-                        numElements) + "): " + inst)
+                    printMessage("Ground Instance(" + str(countElements) + "/" + str(numElements) + "): " + inst)
                     try:
                         ground_programs(inst, p_dir)
                     except:
@@ -382,8 +396,7 @@ if getClaspStatistics:
     numElements = len(listdir(dirGround))
     for inst in listdir(dirGround):
         countElements += 1
-        printMessage("instance(" + str(countElements) + "/" + str(
-            numElements) + "): " + inst)
+        printMessage("instance(" + str(countElements) + "/" + str(numElements) + "): " + inst)
         if isfile(join(dirGround, inst)):
             try:
                 get_times(inst)
@@ -396,8 +409,7 @@ if getExtendedStatistics:
     numElements = len(listdir(dirTimes))
     for inst in listdir(dirTimes):
         countElements += 1
-        printMessage("instance(" + str(countElements) + "/" + str(
-            numElements) + "): " + inst)
+        printMessage("instance(" + str(countElements) + "/" + str(numElements) + "): " + inst)
         if isfile(join(dirTimes, inst)):
             try:
                 get_stats(inst)
@@ -416,7 +428,6 @@ if generateCSV:
     numElements = len(listdir(dirExtendedStats))
     for inst in listdir(dirExtendedStats):
         countElements += 1
-        printMessage("instance(" + str(countElements) + "/" + str(
-            numElements) + "): " + inst)
+        printMessage("instance(" + str(countElements) + "/" + str(numElements) + "): " + inst)
         if isfile(join(dirExtendedStats, inst)):
             get_csv(inst)

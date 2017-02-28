@@ -17,7 +17,7 @@ setwd("C:/Users/Markus/Dropbox/uni/Semester10/Bachelorarbeit/BachelorThesis")
 ```{r load data, echo=FALSE, message=FALSE, warning=FALSE}
 Statistics <-
   read.csv(
-    file = "Statistics.csv",
+    file = "Parameters.csv",
     header = TRUE,
     sep = ",",
     quote = "\"",
