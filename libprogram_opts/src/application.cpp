@@ -24,7 +24,7 @@
 #include <cctype>
 #include <limits.h>
 #include <cstring>
-#include <exst/exst_statistics.h>
+#include <exst/exst_parameters.h>
 #ifdef _MSC_VER
 #pragma warning (disable : 4996)
 #endif
@@ -32,8 +32,8 @@
 #include <stdlib.h>
 #if !defined(_WIN32)
 #include <unistd.h> // for _exit
-#include <exst/exst_statistics.h>
-#include <exst/program_parameter.h>
+#include <exst/exst_parameters.h>
+#include <exst/program_flags.h>
 
 static long fetch_and_inc(volatile long& x) {
 	return __sync_fetch_and_add(&x, 1);
@@ -214,10 +214,6 @@ bool Application::getOptions(int argc, char** argv) {
             ("width-intervall"   , storeTo(exst::ProgramParameter::getInstance().widthCalcInterval = 0)->arg("<n>"), "number of assignments between interval calculation")
             ("calcTWidth"   , flag(exst::ProgramParameter::getInstance().calculateTreeWidth = false),
              "calculate the Tree Width")
-            ("stopIGraphGen"   , flag(exst::ProgramParameter::getInstance().stopIGraphGen = false),
-             "deactivate the incidence Graph generation")
-            ("stopRGraphGen"   , flag(exst::ProgramParameter::getInstance().genRGraph = false),
-             "deactivate the reduct Graph generation")
 			("printDgraph"   , notify(&exst::ProgramParameter::getInstance(),exst::ProgramParameter::parseParameter)->arg("<format>[,<filePath>]"),
 			 "Print the dependency graph\n"
 					 "    <format> : {0|1|2}\n"

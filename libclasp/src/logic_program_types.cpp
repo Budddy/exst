@@ -28,7 +28,7 @@
 #include <clasp/util/misc_types.h>
 
 #include <deque>
-#include <exst/program_stats.h>
+#include <exst/program_parameters.h>
 
 namespace Clasp { namespace Asp {
 

@@ -27,8 +27,8 @@
 #include <clasp/solver_types.h>
 #include <clasp/solver_strategies.h>
 #include <clasp/shared_context.h>
-#include <exst/program_stats.h>
-#include <exst/exst_statistics.h>
+#include <exst/program_parameters.h>
+#include <exst/exst_parameters.h>
 
 namespace Clasp { 
 

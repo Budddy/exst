@@ -1,4 +1,4 @@
-#include <exst/exst_statistics.h>
+#include <exst/exst_parameters.h>
 
 namespace exst {
 
@@ -52,11 +52,11 @@ namespace exst {
 
     }
 
-    void ExtendedStatistics::setSymbolTable(std::unordered_map<uint32_t, const char *> &table) {
+    void ExtendedStatistics::setSymbolTable(const Clasp::SymbolTable &symbolTable) {
 
         std::list<exst::StatisticsCalculator *>::iterator it;
         for (it = programStatistics.begin(); it != programStatistics.end(); it++) {
-            (*it)->setSymbolTable(table);
+            (*it)->setSymbolTable(symbolTable);
         }
 
     }
@@ -70,7 +70,7 @@ namespace exst {
 
     }
 
-    void ExtendedStatistics::addModel(const Clasp::ValueVec *model) {
+    void ExtendedStatistics::addModel(const Clasp::Model &model) {
 
         std::list<exst::StatisticsCalculator *>::iterator it;
         for (it = programStatistics.begin(); it != programStatistics.end(); it++) {

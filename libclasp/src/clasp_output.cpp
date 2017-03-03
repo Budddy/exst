@@ -28,7 +28,7 @@
 #include <climits>
 #include <string>
 #include <cstdlib>
-#include <exst/program_stats.h>
+#include <exst/program_parameters.h>
 
 #if !defined(_WIN32)
 #include <signal.h>
@@ -192,13 +192,8 @@ void StatsVisitor::visitStats(const SharedContext& ctx, const Asp::LpStats* lp, 
 		if (ctx.hasSolver(1)) { visitThreads(ctx); }
 		if (ctx.sccGraph.get() && ctx.sccGraph->numNonHcfs()) { visitHccs(ctx); }
 	}
-	SymbolTable::const_iterator it;
-	std::unordered_map<uint32_t, const char *> table;
-	for(it = ctx.symbolTable().begin(); it != ctx.symbolTable().end(); it++){
-		table[it->first]=it->second.name.c_str();
-	}
-	exst::ExtendedStatistics::getInstance().setSymbolTable(table);
-	exst::ExtendedStatistics::getInstance().printStatistics();
+    exst::ExtendedStatistics::getInstance().setSymbolTable(ctx.symbolTable());
+    exst::ExtendedStatistics::getInstance().printStatistics();
 }
 void StatsVisitor::visitProblemStats(const Clasp::ProblemStats& stats, const Clasp::Asp::LpStats* lp) {
 	if (lp) { visitLogicProgramStats(*lp); }

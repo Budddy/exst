@@ -28,7 +28,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <stdarg.h>
-#include <exst/program_stats.h>
+#include <exst/program_parameters.h>
 #ifdef _WIN32
 #pragma warning (disable : 4996)
 #endif

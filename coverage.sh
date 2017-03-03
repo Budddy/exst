@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+########################################
+# script to generate the test coverage #
+########################################
+
 mkdir build_coverage
 cd build_coverage
 cmake -Dtests=ON ..

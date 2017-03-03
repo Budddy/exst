@@ -12,13 +12,6 @@ namespace exst {
         CPPUNIT_TEST_SUITE_END();
     private:
     public:
-        void setUp() {
-            AbstractExstTest::setUp();
-        }
-
-        void tearDown() {
-            AbstractExstTest::tearDown();
-        }
 
         void testSmallGraph() {
             std::list<lit_type> body;

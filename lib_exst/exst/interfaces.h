@@ -4,6 +4,7 @@
 #include <exst/exst_types.h>
 #include <list>
 #include <clasp/literal.h>
+#include <clasp/enumerator.h>
 
 namespace exst {
     class StatisticsCalculator {
@@ -20,7 +21,7 @@ namespace exst {
             return std::list<std::pair<std::string, std::string>>();
         }
 
-        virtual void setSymbolTable(std::unordered_map<uint32_t, const char *> &table) {
+        virtual void setSymbolTable(const Clasp::SymbolTable &symbolTable) {
 
         };
 
@@ -32,7 +33,7 @@ namespace exst {
             return std::list<std::string>();
         };
 
-        virtual void addModel(const Clasp::ValueVec *model) {
+        virtual void addModel(const Clasp::Model &model) {
 
         };
     };

@@ -5,9 +5,10 @@
 #include <exst/interfaces.h>
 #include <list>
 #include <clasp/literal.h>
-#include <exst/dependency_graph_stats.h>
-#include <exst/program_stats.h>
-#include <exst/incidence_graph_stats.h>
+#include <exst/dependency_graph_parameters.h>
+#include <exst/program_parameters.h>
+#include <exst/incidence_graph_parameters.h>
+#include <clasp/enumerator.h>
 
 namespace exst {
     class ExtendedStatistics {
@@ -23,9 +24,9 @@ namespace exst {
 
         void updateAssignment(Clasp::LitVec new_assignment);
 
-        void setSymbolTable(std::unordered_map<uint32_t, const char *> &table);
+        void setSymbolTable(const Clasp::SymbolTable &symbolTable);
 
-        void addModel(const Clasp::ValueVec *model);
+        void addModel(const Clasp::Model &model);
 
         void addId(uint32_t before, uint32_t after);
 
@@ -36,17 +37,11 @@ namespace exst {
             programStatistics.push_back(pStats);
         }
 
-        void clearProgramStatistics() {
-            programStatistics.clear();
-        }
-
     private:
         ExtendedStatistics() {
             registerProgramStatistics(new DependencyGraphStatsCalculator());
             registerProgramStatistics(new ProgramStatsCalculator());
-            if (!ProgramParameter::getInstance().stopIGraphGen) {
-                registerProgramStatistics(new IncidenceGraphStatsCalculator());
-            }
+            registerProgramStatistics(new IncidenceGraphStatsCalculator());
         }
 
     };

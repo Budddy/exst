@@ -12,13 +12,6 @@ namespace exst {
         CPPUNIT_TEST_SUITE_END();
     private:
     public:
-        void setUp() {
-            AbstractExstTest::setUp();
-        }
-
-        void tearDown() {
-            AbstractExstTest::tearDown();
-        }
 
         void testOneConstraint() {
             std::list<lit_type> bodies;
@@ -32,11 +25,12 @@ namespace exst {
             statsCalculator->addId(3, 3);
             statsCalculator->addId(4, 4);
 
-            std::unordered_map<uint32_t, const char *> table;
-            table[1] = "";
-            table[2] = "";
-            table[3] = "";
-            table[4] = "";
+            Clasp::SymbolTable table;
+            table.addUnique(1, " ");
+            table.addUnique(2, " ");
+            table.addUnique(3, " ");
+            table.addUnique(4, " ");
+            table.endInit();
 
             statsCalculator->setSymbolTable(table);
 
@@ -93,11 +87,12 @@ namespace exst {
             statsCalculator->addId(2, 2);
             statsCalculator->addId(3, 3);
 
-            std::unordered_map<uint32_t, const char *> table;
-            table[1] = "";
-            table[2] = "";
-            table[3] = "";
-            table[4] = "";
+            Clasp::SymbolTable table;
+            table.addUnique(1, " ");
+            table.addUnique(2, " ");
+            table.addUnique(3, " ");
+            table.addUnique(4, " ");
+            table.endInit();
 
             statsCalculator->setSymbolTable(table);
 
@@ -121,11 +116,11 @@ namespace exst {
                                          statsCalculator->generalStatistics.atomOccurencesNegative.size());
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Negative Variables", (std::size_t) 2,
                                          statsCalculator->generalStatistics.variableNegative.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Positive Variables", (std::size_t) 0,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Positive Variables", (std::size_t) 1,
                                          statsCalculator->generalStatistics.variablePositive.size());
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without Helpers", (std::size_t) 2,
                                          statsCalculator->generalStatistics.variableNegativeWithoutHelper.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without Helpers", (std::size_t) 0,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without Helpers", (std::size_t) 1,
                                          statsCalculator->generalStatistics.variablePositiveWithoutHelper.size());
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Constraint", (uint32_t) 0,
                                          statsCalculator->generalStatistics.maxPositiveSizeConstraint);
@@ -185,14 +180,16 @@ namespace exst {
             statsCalculator->addId(6, 6);
             statsCalculator->addId(7, 7);
 
-            std::unordered_map<uint32_t, const char *> table;
-            table[1] = "";
-            table[2] = "";
-            table[3] = "";
-            table[4] = "";
-            table[5] = "";
-            table[6] = "";
-            table[7] = "";
+
+            Clasp::SymbolTable table;
+            table.addUnique(1, " ");
+            table.addUnique(2, " ");
+            table.addUnique(3, " ");
+            table.addUnique(4, " ");
+            table.addUnique(5, " ");
+            table.addUnique(6, " ");
+            table.addUnique(7, " ");
+            table.endInit();
 
             statsCalculator->setSymbolTable(table);
 
@@ -250,12 +247,14 @@ namespace exst {
             head.push_back(*new lit_type(3, NEGATIVE));
             statsCalculator->addRule(body, head);
 
-            std::unordered_map<uint32_t, const char *> table;
-            table[1] = "";
-            table[2] = "";
-            table[3] = "";
-            table[4] = "";
-            table[5] = "";
+
+            Clasp::SymbolTable table;
+            table.addUnique(1, " ");
+            table.addUnique(2, " " );
+            table.addUnique(3, " ");
+            table.addUnique(4, " ");
+            table.addUnique(5, " ");
+            table.endInit();
 
             statsCalculator->setSymbolTable(table);
 
@@ -277,13 +276,13 @@ namespace exst {
                                          maxValue(statsCalculator->generalStatistics.atomOccurencesPositive));
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Number Atom Occurences Negative", (uint32_t) 2,
                                          maxValue(statsCalculator->generalStatistics.atomOccurencesNegative));
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Negative Variables", (std::size_t) 0,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Negative Variables", (std::size_t) 1,
                                          statsCalculator->generalStatistics.variableNegative.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Positive Variables", (std::size_t) 0,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Positive Variables", (std::size_t) 1,
                                          statsCalculator->generalStatistics.variablePositive.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without Helpers", (std::size_t) 0,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without Helpers", (std::size_t) 1,
                                          statsCalculator->generalStatistics.variableNegativeWithoutHelper.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without Helpers", (std::size_t) 0,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without Helpers", (std::size_t) 1,
                                          statsCalculator->generalStatistics.variablePositiveWithoutHelper.size());
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Constraint", (uint32_t) 0,
                                          statsCalculator->generalStatistics.maxPositiveSizeConstraint);
@@ -335,16 +334,17 @@ namespace exst {
             statsCalculator->addId(6, 6);
             statsCalculator->addId(7, 7);
 
-            std::unordered_map<uint32_t, const char *> table;
-            table[1] = "";
-            table[2] = "";
-            table[3] = "";
-            table[4] = "";
-            table[5] = "";
-            table[6] = "";
-            table[7] = "";
-            table[8] = "";
-            table[9] = "";
+            Clasp::SymbolTable table;
+            table.addUnique(1, " ");
+            table.addUnique(2, " ");
+            table.addUnique(3, " ");
+            table.addUnique(4, " ");
+            table.addUnique(5, " ");
+            table.addUnique(6, " ");
+            table.addUnique(7, " ");
+            table.addUnique(8, " ");
+            table.addUnique(9, " ");
+            table.endInit();
 
             statsCalculator->setSymbolTable(table);
 
@@ -366,13 +366,13 @@ namespace exst {
                                          maxValue(statsCalculator->generalStatistics.atomOccurencesPositive));
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Number Atom Occurences Negative", (uint32_t) 1,
                                          maxValue(statsCalculator->generalStatistics.atomOccurencesNegative));
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Negative Variables", (std::size_t) 3,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Negative Variables", (std::size_t) 4,
                                          statsCalculator->generalStatistics.variableNegative.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Positive Variables", (std::size_t) 3,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Positive Variables", (std::size_t) 4,
                                          statsCalculator->generalStatistics.variablePositive.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without Helpers", (std::size_t) 3,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without Helpers", (std::size_t) 4,
                                          statsCalculator->generalStatistics.variableNegativeWithoutHelper.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without Helpers", (std::size_t) 3,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without Helpers", (std::size_t) 4,
                                          statsCalculator->generalStatistics.variablePositiveWithoutHelper.size());
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Constraint", (uint32_t) 1,
                                          statsCalculator->generalStatistics.maxPositiveSizeConstraint);
@@ -424,13 +424,17 @@ namespace exst {
             statsCalculator->addId(6, 6);
             statsCalculator->addId(7, 7);
 
-            std::unordered_map<uint32_t, const char *> table;
-            table[3] = "";
-            table[5] = "";
-            table[6] = "";
-            table[7] = "";
-            table[8] = "";
-            table[9] = "";
+            Clasp::SymbolTable table;
+            table.addUnique(1, NULL);
+            table.addUnique(2, NULL);
+            table.addUnique(3, " ");
+            table.addUnique(4, NULL);
+            table.addUnique(5, " ");
+            table.addUnique(6, " ");
+            table.addUnique(7, " ");
+            table.addUnique(8, " ");
+            table.addUnique(9, " ");
+            table.endInit();
 
             statsCalculator->setSymbolTable(table);
             statsCalculator->calculateStats();
@@ -451,13 +455,13 @@ namespace exst {
                                          maxValue(statsCalculator->generalStatistics.atomOccurencesPositive));
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Number Atom Occurences Negative", (uint32_t) 1,
                                          maxValue(statsCalculator->generalStatistics.atomOccurencesNegative));
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Negative Variables", (std::size_t) 3,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Negative Variables", (std::size_t) 4,
                                          statsCalculator->generalStatistics.variableNegative.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Positive Variables", (std::size_t) 3,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Positive Variables", (std::size_t) 4,
                                          statsCalculator->generalStatistics.variablePositive.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without Helpers", (std::size_t) 1,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without Helpers", (std::size_t) 2,
                                          statsCalculator->generalStatistics.variableNegativeWithoutHelper.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without Helpers", (std::size_t) 3,
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without Helpers", (std::size_t) 4,
                                          statsCalculator->generalStatistics.variablePositiveWithoutHelper.size());
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Constraint", (uint32_t) 1,
                                          statsCalculator->generalStatistics.maxPositiveSizeConstraint);

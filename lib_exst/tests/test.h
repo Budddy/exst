@@ -10,15 +10,15 @@
 #include <cppunit/CompilerOutputter.h>
 #include <cppunit/XmlOutputter.h>
 #include <cppunit/extensions/HelperMacros.h>
-#include <exst/dependency_graph_stats.h>
-#include <exst/program_stats.h>
-#include <exst/exst_statistics.h>
+#include <exst/dependency_graph_parameters.h>
+#include <exst/program_parameters.h>
+#include <exst/exst_parameters.h>
 
 namespace exst {
     class AbstractExstTest : public CppUnit::TestFixture {
     public:
         void setUp() {
-            extendedStatistics->clearProgramStatistics();
+            extendedStatistics->programStatistics.clear();
             dependencyGraphStats = new DependencyGraphStatsCalculator();
             statsCalculator = new ProgramStatsCalculator();
             incidenceGraphStats = new IncidenceGraphStatsCalculator();
