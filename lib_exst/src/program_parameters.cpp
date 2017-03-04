@@ -279,7 +279,7 @@ namespace exst {
 
     void ProgramStatsCalculator::removeAuxiliaryVariables(std::unordered_map<uint32_t, bool> *variables) const {
         if(generalStatistics.symbolTable==NULL){return;}
-        std::__cxx11::list<unsigned int> rem;
+        std::__cxx11::list<uint32_t > rem;
         std::unordered_map<uint32_t, bool>::iterator it;
         for (it = variables->begin();
              it != variables->end(); it++) {
