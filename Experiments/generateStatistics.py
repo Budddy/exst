@@ -18,7 +18,7 @@ getClaspStatistics = True
 # get extended statistics
 getExtendedStatistics = True
 # get the tree width
-getTreeWidth = True
+getTreeWidth = False
 # generate the Statistic CSV
 generateCSV = True
 
@@ -64,6 +64,15 @@ csvFile = "./Parameters.csv"
 # tmp file for width generation
 tmpFile = "./tmp.txt"
 
+# flag to generate the width of the reduct graphs
+gen_r_width = False
+# flag to generate the width of the incidence graph
+gen_i_width = False
+# flag to generate the width of the dependency graph
+gen_d_width = False
+# flag to generate the reduct
+gen_reduct = False
+
 # command used for grounding
 groundCommand = "./gringo "
 # command used for clasp time generation
@@ -71,25 +80,24 @@ timesCommand = "./clasp --stats=2 -q 2 --time-limit=" + str(timesTime + 10) + " 
 # command used to generate the width
 widthCommand = "./htd_main -s 1234 --output width --opt width < "
 # command used to generate the extended parameters
-statsCommand = "./exst --printDgraph=1 --printIgraph=1 --printRgraph=1 -q 2 --stats=2 --time-limit=" + str(
-    statsTime + 10) + " --outf=2 -V "
-
-# flag to generate the width of the reduct graphs
-gen_r_width = True
-# flag to generate the width of the incidence graph
-gen_i_width = True
-# flag to generate the width of the dependency graph
-gen_d_width = True
+statsCommand = "./exst -q 2 --stats=2 --time-limit=" + str(
+    statsTime + 10) + " --printDgraph=1 " if gen_r_width else "" + " --printIgraph=1 " if gen_d_width else "" \
+    + " --printRgraph=1 " if gen_i_width else "" + " --outf=2 -V "
 
 names_csv = ["problem", "inst", "time_CPU", "choices", "conflicts", "backtracks", "backjumps", "restarts", "jumps",
              "atoms", "rules", "bodies", "equivalences", "variables", "eliminated", "frozen", "constraints",
              "numNonHornClauses", "numNonDualHornClauses", "maxClauseSize", "maxPosClauseSize", "maxNegClauseSize",
              "numVPosLitH", "numVPosLit", "numVNegLitH", "numVNegLit", "maxPosRSizeC", "maxPosRSizeNC", "numAtomOccC",
-             "numAtomOccNC", "maxNumAtomOcc", "maxNumPosOccA", "maxNumNegOccA", "dGraphWidth", "numDGraphEdges", "numDGraphNodes", "iGraphWidth",
-             "numIGraphEdges", "numIGraphNodes", "numRGraphEdges0", "numRGraphNodes0", "rGraphWidth0", "numRGraphEdges1", "numRGraphNodes1", "rGraphWidth1", "numRGraphEdges2",
-             "numRGraphNodes2", "rGraphWidth2", "numRGraphEdges3", "numRGraphNodes3", "rGraphWidth3", "numRGraphEdges4", "numRGraphNodes4", "rGraphWidth4", "numRGraphEdges5",
-             "numRGraphNodes5", "rGraphWidth5", "numRGraphEdges6", "numRGraphNodes6", "rGraphWidth6", "numRGraphEdges7", "numRGraphNodes7", "rGraphWidth7", "numRGraphEdges8",
-             "numRGraphNodes8", "rGraphWidth8", "numRGraphEdges9", "numRGraphNodes9", "rGraphWidth9", "problem_width", "maxSizeNCon",
+             "numAtomOccNC", "maxNumAtomOcc", "maxNumPosOccA", "maxNumNegOccA", "dGraphWidth", "numDGraphEdges",
+             "numDGraphNodes", "iGraphWidth",
+             "numIGraphEdges", "numIGraphNodes", "numRGraphEdges0", "numRGraphNodes0", "rGraphWidth0",
+             "numRGraphEdges1", "numRGraphNodes1", "rGraphWidth1", "numRGraphEdges2",
+             "numRGraphNodes2", "rGraphWidth2", "numRGraphEdges3", "numRGraphNodes3", "rGraphWidth3", "numRGraphEdges4",
+             "numRGraphNodes4", "rGraphWidth4", "numRGraphEdges5",
+             "numRGraphNodes5", "rGraphWidth5", "numRGraphEdges6", "numRGraphNodes6", "rGraphWidth6", "numRGraphEdges7",
+             "numRGraphNodes7", "rGraphWidth7", "numRGraphEdges8",
+             "numRGraphNodes8", "rGraphWidth8", "numRGraphEdges9", "numRGraphNodes9", "rGraphWidth9", "problem_width",
+             "maxSizeNCon",
              "maxSizeHeadNegBodyRule", "maxSizeRuleHead", "maxSizePosBodyNCon", "maxSizeNegBodyRule",
              "maxSizePosBodyCon", "maxSizeNegBodyCon", "numAtomsHead", "numAtomsPosBody", "numAtomsNegBody",
              "maxNumVarOcc", "maxNumVarOccHeadNegBody", "maxSizeAnswerSet"]
@@ -141,13 +149,13 @@ class Command(object):
         return self.status, self.output, self.error, end - start, stop
 
 
-def printMessage(msg):
+def print_message(msg):
     print(msg)
     with open(outputFile, "a") as out:
         out.write(msg + "\n")
 
 
-def printError(msg):
+def print_error(msg):
     print(msg)
     with open(outputFile, "a") as out:
         out.write(msg + "\n")
@@ -160,19 +168,19 @@ def ground_programs(file_name, prog_path):
         c = Command(com)
         ret = c.run(timeout=groundTime)
         if len(str(ret[1])) > maxGroundSize * 1000000:
-            printError("Oversize - instance: " + file_name)
+            print_error("Oversize - instance: " + file_name)
             with open(logGroundOversize, "a") as out:
                 out.write(file_name + "\n")
         elif ret[4]:
-            printError("Timeout - instance: " + file_name)
+            print_error("Timeout - instance: " + file_name)
             with open(logGroundTimeout, "a") as out:
                 out.write(file_name + "\n")
         elif len(str(ret[1])) == 0:
-            printError("Error - instance: " + file_name + " - " + ret[2])
+            print_error("Error - instance: " + file_name + " - " + ret[2])
             with open(logGroundError, "a") as out:
                 out.write(file_name + " " + (str(ret[2])) + "\n")
         elif not ret[4]:
-            printMessage("Ground - instance: " + file_name)
+            print_message("Ground - instance: " + file_name)
             with open(dirGround + file_name, "w") as out:
                 out.write(str(ret[1]))
 
@@ -180,7 +188,7 @@ def ground_programs(file_name, prog_path):
 # calculate Clasp Statistics
 def get_times(file_name):
     if isfile(join(dirGround, file_name)) and not isfile(join(dirTimes, file_name)):
-        printMessage("Generate Clasp Statistics - instance: " + file_name)
+        print_message("Generate Clasp Statistics - instance: " + file_name)
         com = timesCommand + join(dirGround + file_name)
         c = Command(com)
         ret = c.run(timeout=timesTime + 60)
@@ -190,7 +198,7 @@ def get_times(file_name):
             with open(join(dirTimes, file_name), "w") as out:
                 out.write(str(ret[1]))
         else:
-            printError("Timeout")
+            print_error("Timeout")
             with open(logTimesFailed, "a") as out:
                 out.write(file_name + "\n")
 
@@ -199,14 +207,15 @@ def get_times(file_name):
 def get_stats(file_name):
     if isfile(join(dirTimes, file_name)) and not isfile(join(dirExtendedStats, file_name + ".gz")) and isfile(
             join(dirGround, file_name)):
-        printMessage("Generate Extended Statistics - instance: " + file_name)
+        print_message("Generate Extended Statistics - instance: " + file_name)
         # only run if file doesn't already exist
         assignments = json.loads(open(join(dirTimes, file_name), 'r').read())['Stats']['Core']['Choices']
-        com = statsCommand + join(dirGround, file_name) + " --width-intervall=" + str(assignments / 11)
+        com = statsCommand + join(dirGround, file_name) + " --width-intervall=" + (
+            str(assignments / 11) if gen_reduct else "-1")
         c = Command(com)
         ret = c.run(timeout=statsTime + 60)
         if ret[3] > statsTime:
-            printError("Timeout")
+            print_error("Timeout")
             with open(logStatsFailed, "a") as out:
                 out.write(file_name + "\n")
         else:
@@ -232,7 +241,7 @@ def gen_graph_stats(g, calc_width=True):
 
 # generate CSV
 def get_csv(file_name):
-    printMessage("  CSV...")
+    print_message("  CSV...")
     if not isfile(csvFile):
         with open(csvFile, "w") as statsFile:
             writer = csv.DictWriter(statsFile, fieldnames=names_csv, delimiter=',', lineterminator='\n')
@@ -240,13 +249,13 @@ def get_csv(file_name):
     stats = {"inst": file_name[:-3]}
     stats['problem'] = matches[stats['inst']]
     if isfile(join(dirTimes, file_name[:-3])):
-        printMessage("    clasp")
+        print_message("    clasp")
         with open(join(dirTimes, file_name[:-3]), "r") as myfile:
             data = myfile.read()
             d = json.loads(data)
             stats["time_CPU"] = d['Time']["CPU"]
     if isfile(join(dirExtendedStats, file_name)):
-        printMessage("    exst")
+        print_message("    exst")
         with gzip.open(join(dirExtendedStats, file_name), "r") as myfile:
             data = myfile.read()
             d = json.loads(data)
@@ -271,6 +280,10 @@ def get_csv(file_name):
                     stats["bodies"] = d['Stats']['Problem']["Constraints"]["Sum"]
                 if 'Extended Stats' in d['Stats']:
                     ex = d['Stats']['Extended Stats']
+                    stats["numDGraphNodes"] = ex[0][1]
+                    stats["numDGraphEdges"] = ex[1][1]
+                    stats["numIGraphNodes"] = ex[2][1]
+                    stats["numIGraphEdges"] = ex[3][1]
                     stats["numNonHornClauses"] = ex[4][1]
                     stats["numNonDualHornClauses"] = ex[5][1]
                     stats["maxClauseSize"] = ex[6][1]
@@ -301,41 +314,30 @@ def get_csv(file_name):
                     stats["maxNumVarOccHeadNegBody"] = ex[31][1]
                     stats["maxSizeAnswerSet"] = ex[32][1]
 
-                # get Dependency Graph Stats
-                printMessage("      dependency Graph")
-                if gen_d_width:
-                    ret = gen_graph_stats(d['Stats']['Incidence Graph'])
-                    if not ret[3]:
-                        stats["dGraphWidth"] = ret[0]
-                else:
-                    ret = gen_graph_stats(d['Stats']['Dependency Graph'], False)
-                stats["numDGraphEdges"] = ret[1]
-                stats["numDGraphNodes"] = ret[2]
+                    # get Dependency Graph Stats
+                    if gen_d_width:
+                        print_message("      dependency Graph")
+                        ret = gen_graph_stats(d['Stats']['Incidence Graph'])
+                        if not ret[3]:
+                            stats["dGraphWidth"] = ret[0]
 
-                # get Incidence Graph Stats
-                printMessage("      incidence Graph")
-                if gen_i_width:
-                    ret = gen_graph_stats(d['Stats']['Incidence Graph'])
-                    if not ret[3]:
-                        stats["iGraphWidth"] = ret[0]
-                else:
-                    ret = gen_graph_stats(d['Stats']['Incidence Graph'], False)
-                stats["numIGraphEdges"] = ret[1]
-                stats["numIGraphNodes"] = ret[2]
+                    # get Incidence Graph Stats
+                    if gen_i_width:
+                        print_message("      incidence Graph")
+                        ret = gen_graph_stats(d['Stats']['Incidence Graph'])
+                        if not ret[3]:
+                            stats["iGraphWidth"] = ret[0]
 
-                # get ReductGraph Stats
-                printMessage("      reduct Graph")
-                for i in range(0, 10):
-                    printMessage("        " + str(i))
-                    if len(d['Stats']['Reduct Graph']) > i:
-                        if gen_r_width:
-                            ret = gen_graph_stats(d['Stats']['Reduct Graph'][i])
-                            if not ret[3]:
-                                stats["rGraphWidth" + str(i)] = ret[0]
-                        else:
-                            ret = gen_graph_stats(d['Stats']['Reduct Graph'][i], False)
-                        stats["numRGraphEdges" + str(i)] = ret[1]
-                        stats["numRGraphNodes" + str(i)] = ret[2]
+                    # get ReductGraph Stats
+                    if gen_r_width:
+                        print_message("      reduct Graph")
+                        for i in range(0, 10):
+                            print_message("        " + str(i))
+                            if len(d['Stats']['Reduct Graph']) > i:
+                                ret = gen_graph_stats(d['Stats']['Reduct Graph'][i])
+                                if not ret[3]:
+                                    stats["rGraphWidth" + str(i)] = ret[0]
+
     with open(csvFile, "a") as statsFile:
         writer = csv.DictWriter(statsFile, fieldnames=names_csv, delimiter=',', lineterminator='\n')
         writer.writerow(stats)
@@ -382,13 +384,14 @@ if groundPrograms:
         for problem in listdir(join(dirPrograms, year)):
             p_dir = join(dirPrograms, year, problem)
             for inst in listdir(p_dir):
-                if inst != "encoding.asp":
+                if inst != "encoding.asp" and not (inst in open(logGroundOversize).read()) and not (
+                            inst in open(logGroundTimeout).read()):
                     countElements += 1
-                    printMessage("Ground Instance(" + str(countElements) + "/" + str(numElements) + "): " + inst)
+                    print_message("Ground Instance(" + str(countElements) + "/" + str(numElements) + "): " + inst)
                     try:
                         ground_programs(inst, p_dir)
                     except:
-                        printError("Grounding Error: " + inst)
+                        print_error("Grounding Error: " + inst)
 
 # get clasp statistics
 countElements = 0
@@ -396,12 +399,15 @@ if getClaspStatistics:
     numElements = len(listdir(dirGround))
     for inst in listdir(dirGround):
         countElements += 1
-        printMessage("instance(" + str(countElements) + "/" + str(numElements) + "): " + inst)
-        if isfile(join(dirGround, inst)):
+        print_message("clasp instance(" + str(countElements) + "/" + str(numElements) + "): " + inst)
+        if isfile(join(dirGround, inst)) and not (inst in open(logTimesFailed).read()):
+            print_message("get clasp Parameters")
             try:
                 get_times(inst)
             except:
-                printError("__--error--__ " + inst)
+                print_error("__--error--__ " + inst)
+        else:
+            print_message("no clasp Parameters")
 
 # get extended statistics
 countElements = 0
@@ -409,12 +415,15 @@ if getExtendedStatistics:
     numElements = len(listdir(dirTimes))
     for inst in listdir(dirTimes):
         countElements += 1
-        printMessage("instance(" + str(countElements) + "/" + str(numElements) + "): " + inst)
-        if isfile(join(dirTimes, inst)):
+        print_message("exst instance(" + str(countElements) + "/" + str(numElements) + "): " + inst)
+        if isfile(join(dirTimes, inst)) and not (inst in open(logStatsFailed).read()):
+            print_message("get extended Parameters")
             try:
                 get_stats(inst)
             except:
-                printError("__--error--__ " + inst)
+                print_error("__--error--__ " + inst)
+        else:
+            print_message("no extended Parameters")
 
 # generate the CSV
 countElements = 0
@@ -428,6 +437,6 @@ if generateCSV:
     numElements = len(listdir(dirExtendedStats))
     for inst in listdir(dirExtendedStats):
         countElements += 1
-        printMessage("instance(" + str(countElements) + "/" + str(numElements) + "): " + inst)
+        print_message("csv instance(" + str(countElements) + "/" + str(numElements) + "): " + inst)
         if isfile(join(dirExtendedStats, inst)):
             get_csv(inst)
