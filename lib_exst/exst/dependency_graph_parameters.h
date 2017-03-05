@@ -10,7 +10,7 @@
 #include <exst/program_flags.h>
 
 namespace exst {
-    struct DependencyGraphStatistics {
+    struct DependencyGraphParameters {
         ///dependency graph
         MyGraph dependencyGraph;
         ///mapping from graph vertices to literals
@@ -22,7 +22,7 @@ namespace exst {
     /**
      * class used for calculating and saving stats of the dependency graph and the actual dependency graph
      */
-    class DependencyGraphStatsCalculator : public StatisticsCalculator {
+    class DependencyGraphParameterCalculator : public ParametersCalculator {
     public:
 
         /**
@@ -32,9 +32,9 @@ namespace exst {
          */
         virtual void addRule(std::list<lit_type> body, std::list<lit_type> head);
 
-        virtual std::list<std::pair<std::string, std::string>> getStatistics();
+        virtual std::list<std::pair<std::string, std::string>> getParameters();
 
-        virtual std::list<std::string> getAdditionalStatistics();
+        virtual std::list<std::string> getAdditionalParameters();
 
         /**
          * Getter for the Dependency Graph.
@@ -44,7 +44,7 @@ namespace exst {
             return dGraphStatistics.dependencyGraph;
         }
 
-        DependencyGraphStatistics dGraphStatistics;
+        DependencyGraphParameters dGraphStatistics;
     };
 }
 

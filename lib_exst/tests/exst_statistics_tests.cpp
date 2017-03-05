@@ -3,13 +3,13 @@
 namespace exst {
     class SystemTests : public AbstractExstTest {
     CPPUNIT_TEST_SUITE(SystemTests);
-            CPPUNIT_TEST(testMultipleConstraintsAndNonConstraintsWithHelpersSystem);
+            CPPUNIT_TEST(testMultipleConstraintsAndNonConstraintsWithAuxiliaryVariablesSystem);
             CPPUNIT_TEST(testUpdateAssignment);
         CPPUNIT_TEST_SUITE_END();
     private:
     public:
 
-        void testMultipleConstraintsAndNonConstraintsWithHelpersSystem() {
+        void testMultipleConstraintsAndNonConstraintsWithAuxiliaryVariablesSystem() {
 
             std::list<lit_type> body;
             std::list<lit_type> head;
@@ -64,7 +64,7 @@ namespace exst {
             std::streambuf *oldCoutStreamBuf = std::cout.rdbuf();
             std::ostringstream strCout;
             std::cout.rdbuf(strCout.rdbuf());
-            extendedStatistics->printStatistics();
+            extendedStatistics->printParameters();
             std::cout.rdbuf(oldCoutStreamBuf);
 
             std::stringstream res(strCout.str());
@@ -111,19 +111,19 @@ namespace exst {
 
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", std::string(
-                    "  ,[\"number of variables that occur as positive literals with helpers\" , 4]"), line);
+                    "  ,[\"number of variables that occur as positive literals with auxiliary variables\" , 4]"), line);
 
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", std::string(
-                    "  ,[\"number of variables that occur as positive literals without helpers\" , 4]"), line);
+                    "  ,[\"number of variables that occur as positive literals without auxiliary variables\" , 4]"), line);
 
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", std::string(
-                    "  ,[\"number of variables that occur as negative literals with helpers\" , 4]"), line);
+                    "  ,[\"number of variables that occur as negative literals with auxiliary variables\" , 4]"), line);
 
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", std::string(
-                    "  ,[\"number of variables that occur as negative literals without helpers\" , 2]"), line);
+                    "  ,[\"number of variables that occur as negative literals without auxiliary variables\" , 2]"), line);
 
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses",
@@ -211,7 +211,7 @@ namespace exst {
 
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses",
-                                         std::string("  ,[\"maximal size of the model\" , 0]"), line);
+                                         std::string("  ,[\"maximal size of the answer set\" , 0]"), line);
 
 
         }

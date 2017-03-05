@@ -596,7 +596,7 @@ void PrgHead::assignVar(LogicProgram& prg, PrgEdge support) {
 		else {
 			const Literal &x = posLit(prg.ctx()->addVar(Var_t::atom_var));
 			setLiteral(x);
-			exst::ExtendedStatistics::getInstance().addId(id_,x.var());
+			exst::ExtendedParameters::getInstance().addId(id_,x.var());
 		}
 	}
 }

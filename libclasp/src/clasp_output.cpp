@@ -192,8 +192,8 @@ void StatsVisitor::visitStats(const SharedContext& ctx, const Asp::LpStats* lp, 
 		if (ctx.hasSolver(1)) { visitThreads(ctx); }
 		if (ctx.sccGraph.get() && ctx.sccGraph->numNonHcfs()) { visitHccs(ctx); }
 	}
-    exst::ExtendedStatistics::getInstance().setSymbolTable(ctx.symbolTable());
-    exst::ExtendedStatistics::getInstance().printStatistics();
+    exst::ExtendedParameters::getInstance().setSymbolTable(ctx.symbolTable());
+    exst::ExtendedParameters::getInstance().printParameters();
 }
 void StatsVisitor::visitProblemStats(const Clasp::ProblemStats& stats, const Clasp::Asp::LpStats* lp) {
 	if (lp) { visitLogicProgramStats(*lp); }

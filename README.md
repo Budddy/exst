@@ -58,10 +58,10 @@ The format 2 is for the gml graph format.
 - the maximal clause size
 - the maximal positive clause size
 - the maximal negative clause size
-- the number of variables that occur as positive literals with helpers
-- the number of variables that occur as positive literals without helpers
-- the number of variables that occur as negative literals with helpers
-- the number of variables that occur as negative literals without helpers
+- the number of variables that occur as positive literals with auxiliary variables
+- the number of variables that occur as positive literals without auxiliary variables
+- the number of variables that occur as negative literals with auxiliary variables
+- the number of variables that occur as negative literals without auxiliary variables
 - the maximal positive rule size constraint
 - the maximal positive rule size non-constraint
 - the total number of atom occurrences constraint
@@ -81,4 +81,4 @@ The format 2 is for the gml graph format.
 - the number of atoms that occur in the negative body
 - the maximal number of occurences of a variable
 - the maximal number of occurrences of a variable only head and negative body occurences
-- the maximal size of the model
+- the maximal size of the answer set

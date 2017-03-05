@@ -1038,7 +1038,7 @@ public:
 	 */
 	bool select(Solver& s) {
         bool ret = s.numFreeVars() != 0 && s.assume(doSelect(s));
-        exst::ExtendedStatistics::getInstance().updateAssignment(s.assignment().trail);
+        exst::ExtendedParameters::getInstance().updateAssignment(s.assignment().trail);
         return ret; 
     }
 

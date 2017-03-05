@@ -1,7 +1,7 @@
 #include <exst/program_flags.h>
 
 namespace exst {
-    bool exst::ProgramParameter::parseParameter(ProgramParameter *, const std::string &name,
+    bool exst::ExstFlags::parseParameter(ExstFlags *, const std::string &name,
                                                 const std::string &value) {
         exst::GraphFormat format;
         bool file = false;
@@ -33,19 +33,19 @@ namespace exst {
         }
 
         if (name.compare("printDgraph") == 0) {
-            ProgramParameter::getInstance().dGraphFormat = format;
+            ExstFlags::getInstance().dGraphFormat = format;
             if (file) {
-                ProgramParameter::getInstance().dGraphPath = path;
+                ExstFlags::getInstance().dGraphPath = path;
             }
         } else if (name.compare("printIgraph") == 0) {
-            ProgramParameter::getInstance().iGraphFormat = format;
+            ExstFlags::getInstance().iGraphFormat = format;
             if (file) {
-                ProgramParameter::getInstance().iGraphPath = path;
+                ExstFlags::getInstance().iGraphPath = path;
             }
         } else if (name.compare("printRgraph") == 0) {
-            ProgramParameter::getInstance().rGraphFormat = format;
+            ExstFlags::getInstance().rGraphFormat = format;
             if (file) {
-                ProgramParameter::getInstance().rGraphPath = path;
+                ExstFlags::getInstance().rGraphPath = path;
             }
         } else {
             return false;

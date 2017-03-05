@@ -8,7 +8,7 @@ namespace exst {
             CPPUNIT_TEST(testMultipleConstraints);
             CPPUNIT_TEST(testMultipleFacts);
             CPPUNIT_TEST(testMultipleConstraintsAndNonConstraints);
-            CPPUNIT_TEST(testMultipleConstraintsAndNonConstraintsWithHelpers);
+            CPPUNIT_TEST(testMultipleConstraintsAndNonConstraintsWithAuxiliaryVariables);
         CPPUNIT_TEST_SUITE_END();
     private:
     public:
@@ -34,7 +34,7 @@ namespace exst {
 
             statsCalculator->setSymbolTable(table);
 
-            statsCalculator->calculateStats();
+            statsCalculator->calculateParameters();
 
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", (uint32_t) 1,
                                          statsCalculator->generalStatistics.numNonHornClauses);
@@ -56,10 +56,10 @@ namespace exst {
                                          statsCalculator->generalStatistics.variableNegative.size());
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Positive Variables", (std::size_t) 2,
                                          statsCalculator->generalStatistics.variablePositive.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without Helpers", (std::size_t) 1,
-                                         statsCalculator->generalStatistics.variableNegativeWithoutHelper.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without Helpers", (std::size_t) 2,
-                                         statsCalculator->generalStatistics.variablePositiveWithoutHelper.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without auxiliary variables", (std::size_t) 1,
+                                         statsCalculator->generalStatistics.variableNegativeWithoutAuxiliaryVariables.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without auxiliary variables", (std::size_t) 2,
+                                         statsCalculator->generalStatistics.variablePositiveWithoutAuxiliaryVariables.size());
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Constraint", (uint32_t) 0,
                                          statsCalculator->generalStatistics.maxPositiveSizeConstraint);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Non Constraint", (uint32_t) 2,
@@ -96,7 +96,7 @@ namespace exst {
 
             statsCalculator->setSymbolTable(table);
 
-            statsCalculator->calculateStats();
+            statsCalculator->calculateParameters();
 
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", (uint32_t) 1,
                                          statsCalculator->generalStatistics.numNonHornClauses);
@@ -118,10 +118,10 @@ namespace exst {
                                          statsCalculator->generalStatistics.variableNegative.size());
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Positive Variables", (std::size_t) 1,
                                          statsCalculator->generalStatistics.variablePositive.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without Helpers", (std::size_t) 2,
-                                         statsCalculator->generalStatistics.variableNegativeWithoutHelper.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without Helpers", (std::size_t) 1,
-                                         statsCalculator->generalStatistics.variablePositiveWithoutHelper.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without auxiliary variables", (std::size_t) 2,
+                                         statsCalculator->generalStatistics.variableNegativeWithoutAuxiliaryVariables.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without auxiliary variables", (std::size_t) 1,
+                                         statsCalculator->generalStatistics.variablePositiveWithoutAuxiliaryVariables.size());
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Constraint", (uint32_t) 0,
                                          statsCalculator->generalStatistics.maxPositiveSizeConstraint);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Non Constraint", (uint32_t) 1,
@@ -193,7 +193,7 @@ namespace exst {
 
             statsCalculator->setSymbolTable(table);
 
-            statsCalculator->calculateStats();
+            statsCalculator->calculateParameters();
 
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", (uint32_t) 2,
                                          statsCalculator->generalStatistics.numNonHornClauses);
@@ -215,10 +215,10 @@ namespace exst {
                                          statsCalculator->generalStatistics.variableNegative.size());
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Positive Variables", (std::size_t) 5,
                                          statsCalculator->generalStatistics.variablePositive.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without Helpers", (std::size_t) 3,
-                                         statsCalculator->generalStatistics.variableNegativeWithoutHelper.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without Helpers", (std::size_t) 5,
-                                         statsCalculator->generalStatistics.variablePositiveWithoutHelper.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without auxiliary variables", (std::size_t) 3,
+                                         statsCalculator->generalStatistics.variableNegativeWithoutAuxiliaryVariables.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without auxiliary variables", (std::size_t) 5,
+                                         statsCalculator->generalStatistics.variablePositiveWithoutAuxiliaryVariables.size());
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Constraint", (uint32_t) 2,
                                          statsCalculator->generalStatistics.maxPositiveSizeConstraint);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Non Constraint", (uint32_t) 3,
@@ -258,7 +258,7 @@ namespace exst {
 
             statsCalculator->setSymbolTable(table);
 
-            statsCalculator->calculateStats();
+            statsCalculator->calculateParameters();
 
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", (uint32_t) 0,
                                          statsCalculator->generalStatistics.numNonHornClauses);
@@ -280,10 +280,10 @@ namespace exst {
                                          statsCalculator->generalStatistics.variableNegative.size());
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Positive Variables", (std::size_t) 1,
                                          statsCalculator->generalStatistics.variablePositive.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without Helpers", (std::size_t) 1,
-                                         statsCalculator->generalStatistics.variableNegativeWithoutHelper.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without Helpers", (std::size_t) 1,
-                                         statsCalculator->generalStatistics.variablePositiveWithoutHelper.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without auxiliary variables", (std::size_t) 1,
+                                         statsCalculator->generalStatistics.variableNegativeWithoutAuxiliaryVariables.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without auxiliary variables", (std::size_t) 1,
+                                         statsCalculator->generalStatistics.variablePositiveWithoutAuxiliaryVariables.size());
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Constraint", (uint32_t) 0,
                                          statsCalculator->generalStatistics.maxPositiveSizeConstraint);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Non Constraint", (uint32_t) 1,
@@ -348,7 +348,7 @@ namespace exst {
 
             statsCalculator->setSymbolTable(table);
 
-            statsCalculator->calculateStats();
+            statsCalculator->calculateParameters();
 
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", (uint32_t) 1,
                                          statsCalculator->generalStatistics.numNonHornClauses);
@@ -370,10 +370,10 @@ namespace exst {
                                          statsCalculator->generalStatistics.variableNegative.size());
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Positive Variables", (std::size_t) 4,
                                          statsCalculator->generalStatistics.variablePositive.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without Helpers", (std::size_t) 4,
-                                         statsCalculator->generalStatistics.variableNegativeWithoutHelper.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without Helpers", (std::size_t) 4,
-                                         statsCalculator->generalStatistics.variablePositiveWithoutHelper.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without auxiliary variables", (std::size_t) 4,
+                                         statsCalculator->generalStatistics.variableNegativeWithoutAuxiliaryVariables.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without auxiliary variables", (std::size_t) 4,
+                                         statsCalculator->generalStatistics.variablePositiveWithoutAuxiliaryVariables.size());
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Constraint", (uint32_t) 1,
                                          statsCalculator->generalStatistics.maxPositiveSizeConstraint);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Non Constraint", (uint32_t) 3,
@@ -386,7 +386,7 @@ namespace exst {
                                          statsCalculator->generalStatistics.numConstraints);
         }
 
-        void testMultipleConstraintsAndNonConstraintsWithHelpers() {
+        void testMultipleConstraintsAndNonConstraintsWithAuxiliaryVariables() {
 
             std::list<lit_type> body;
             std::list<lit_type> head;
@@ -437,7 +437,7 @@ namespace exst {
             table.endInit();
 
             statsCalculator->setSymbolTable(table);
-            statsCalculator->calculateStats();
+            statsCalculator->calculateParameters();
 
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", (uint32_t) 1,
                                          statsCalculator->generalStatistics.numNonHornClauses);
@@ -459,10 +459,10 @@ namespace exst {
                                          statsCalculator->generalStatistics.variableNegative.size());
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Positive Variables", (std::size_t) 4,
                                          statsCalculator->generalStatistics.variablePositive.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without Helpers", (std::size_t) 2,
-                                         statsCalculator->generalStatistics.variableNegativeWithoutHelper.size());
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without Helpers", (std::size_t) 4,
-                                         statsCalculator->generalStatistics.variablePositiveWithoutHelper.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Negative Variables Without auxiliary variables", (std::size_t) 2,
+                                         statsCalculator->generalStatistics.variableNegativeWithoutAuxiliaryVariables.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Positive Variables Without auxiliary variables", (std::size_t) 4,
+                                         statsCalculator->generalStatistics.variablePositiveWithoutAuxiliaryVariables.size());
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Constraint", (uint32_t) 1,
                                          statsCalculator->generalStatistics.maxPositiveSizeConstraint);
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Max Positive Rule Size Non Constraint", (uint32_t) 3,

@@ -5,10 +5,10 @@
 #include <string>
 
 namespace exst {
-    class ProgramParameter {
+    class ExstFlags {
     public:
-        static ProgramParameter &getInstance() {
-            static ProgramParameter param;
+        static ExstFlags &getInstance() {
+            static ExstFlags param;
             return param;
         }
 
@@ -29,7 +29,7 @@ namespace exst {
         /// output format for the dependency graph
         GraphFormat dGraphFormat = NONE;
 
-        static bool parseParameter(ProgramParameter *, const std::string &name, const std::string &value);
+        static bool parseParameter(ExstFlags *, const std::string &name, const std::string &value);
     };
 }
 

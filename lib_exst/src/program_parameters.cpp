@@ -3,14 +3,14 @@
 
 namespace exst {
 
-    void ProgramStatsCalculator::addRule(std::list<lit_type> body, std::list<lit_type> head) {
+    void ProgramParameterCalculator::addRule(std::list<lit_type> body, std::list<lit_type> head) {
         std::pair<std::list<lit_type>, std::list<lit_type>> rule;
         rule.first = head;
         rule.second = body;
         generalStatistics.rules.push_back(rule);
     }
 
-    void ProgramStatsCalculator::calculateStats() {
+    void ProgramParameterCalculator::calculateParameters() {
         std::list<std::pair<std::list<exst::lit_type>, std::list<exst::lit_type>>>::iterator it;
         for (it = generalStatistics.rules.begin(); it != generalStatistics.rules.end(); it++) {
             std::list<lit_type> &head = it->first;
@@ -127,11 +127,11 @@ namespace exst {
             //number of variables that occur in positive/negative literals
             parseVariableLiteral(body, head);
         }
-        removeAuxiliaryVariables(&generalStatistics.variablePositiveWithoutHelper);
-        removeAuxiliaryVariables(&generalStatistics.variableNegativeWithoutHelper);
+        removeAuxiliaryVariables(&generalStatistics.variablePositiveWithoutAuxiliaryVariables);
+        removeAuxiliaryVariables(&generalStatistics.variableNegativeWithoutAuxiliaryVariables);
     }
 
-    void ProgramStatsCalculator::countAtomOccurences(std::list<lit_type> body, std::list<lit_type> head) {
+    void ProgramParameterCalculator::countAtomOccurences(std::list<lit_type> body, std::list<lit_type> head) {
         std::list<exst::lit_type>::iterator it;
         for (it = body.begin(); it != body.end(); it++) {
             uint32_t id = it->id;
@@ -153,8 +153,8 @@ namespace exst {
         }
     }
 
-    std::list<std::pair<std::string, std::string>> ProgramStatsCalculator::getStatistics() {
-        calculateStats();
+    std::list<std::pair<std::string, std::string>> ProgramParameterCalculator::getParameters() {
+        calculateParameters();
         std::list<std::pair<std::string, std::string>> ret;
         ret.push_back(std::pair<std::string, std::string>("Non Horn Clauses",
                                                           std::to_string(generalStatistics.numNonHornClauses)));
@@ -168,21 +168,21 @@ namespace exst {
         ret.push_back(std::pair<std::string, std::string>("max negative clause size",
                                                           std::to_string(generalStatistics.maxClauseSizeNegative)));
         ret.push_back(
-                std::pair<std::string, std::string>("number of variables that occur as positive literals with helpers",
+                std::pair<std::string, std::string>("number of variables that occur as positive literals with auxiliary variables",
                                                     std::to_string(generalStatistics.variablePositive.size())));
         ret.push_back(
                 std::pair<std::string, std::string>(
-                        "number of variables that occur as positive literals without helpers",
+                        "number of variables that occur as positive literals without auxiliary variables",
                         std::to_string(
-                                generalStatistics.variablePositiveWithoutHelper.size())));
+                                generalStatistics.variablePositiveWithoutAuxiliaryVariables.size())));
         ret.push_back(
-                std::pair<std::string, std::string>("number of variables that occur as negative literals with helpers",
+                std::pair<std::string, std::string>("number of variables that occur as negative literals with auxiliary variables",
                                                     std::to_string(generalStatistics.variableNegative.size())));
         ret.push_back(
                 std::pair<std::string, std::string>(
-                        "number of variables that occur as negative literals without helpers",
+                        "number of variables that occur as negative literals without auxiliary variables",
                         std::to_string(
-                                generalStatistics.variableNegativeWithoutHelper.size())));
+                                generalStatistics.variableNegativeWithoutAuxiliaryVariables.size())));
         ret.push_back(std::pair<std::string, std::string>("maximum positive rule size constraint",
                                                           std::to_string(generalStatistics.maxPositiveSizeConstraint)));
         ret.push_back(std::pair<std::string, std::string>("maximum positive rule size non-constraint", std::to_string(
@@ -228,14 +228,14 @@ namespace exst {
         ret.push_back(std::pair<std::string, std::string>(
                 "maximum number of occurrences of a variable only head and negative body occurences",
                 std::to_string(maxValue(generalStatistics.varOccurrHeadNegBody))));
-        ret.push_back(std::pair<std::string, std::string>("maximal size of the model",
+        ret.push_back(std::pair<std::string, std::string>("maximal size of the answer set",
                                                           std::to_string(generalStatistics.modelSize)));
 
         return ret;
     }
 
-    void ProgramStatsCalculator::addModel(const Clasp::Model &model) {
-        if(generalStatistics.symbolTable==NULL){return;}
+    void ProgramParameterCalculator::addModel(const Clasp::Model &model) {
+        if (generalStatistics.symbolTable == NULL) { return; }
         generalStatistics.modelSize = 0;
         for (Clasp::SymbolTable::const_iterator it = generalStatistics.symbolTable->begin();
              it != generalStatistics.symbolTable->end(); ++it) {
@@ -245,17 +245,17 @@ namespace exst {
         }
     }
 
-    void ProgramStatsCalculator::parseVariableLiteral(std::list<lit_type> body, std::list<lit_type> head) {
+    void ProgramParameterCalculator::parseVariableLiteral(std::list<lit_type> body, std::list<lit_type> head) {
         std::list<exst::lit_type>::iterator it;
         for (it = body.begin(); it != body.end(); it++) {
             uint32_t id = it->id;
             if (it->s == -1) {
                 generalStatistics.variableNegative[id] = true;
-                generalStatistics.variableNegativeWithoutHelper[id] = true;
+                generalStatistics.variableNegativeWithoutAuxiliaryVariables[id] = true;
                 generalStatistics.varOccurrHeadNegBody[id]++;
             } else {
                 generalStatistics.variablePositive[id] = true;
-                generalStatistics.variablePositiveWithoutHelper[id] = true;
+                generalStatistics.variablePositiveWithoutAuxiliaryVariables[id] = true;
             }
             generalStatistics.maxNumVarOcc[id]++;
         }
@@ -263,28 +263,29 @@ namespace exst {
             uint32_t id = it->id;
             if (it->s == -1) {
                 generalStatistics.variableNegative[id] = true;
-                generalStatistics.variableNegativeWithoutHelper[id] = true;
+                generalStatistics.variableNegativeWithoutAuxiliaryVariables[id] = true;
             } else {
                 generalStatistics.variablePositive[id] = true;
-                generalStatistics.variablePositiveWithoutHelper[id] = true;
+                generalStatistics.variablePositiveWithoutAuxiliaryVariables[id] = true;
             }
             generalStatistics.maxNumVarOcc[id]++;
             generalStatistics.varOccurrHeadNegBody[id]++;
         }
     }
 
-    void ProgramStatsCalculator::setSymbolTable(const Clasp::SymbolTable &symbolTable) {
+    void ProgramParameterCalculator::setSymbolTable(const Clasp::SymbolTable &symbolTable) {
         this->generalStatistics.symbolTable = &symbolTable;
     }
 
-    void ProgramStatsCalculator::removeAuxiliaryVariables(std::unordered_map<uint32_t, bool> *variables) const {
-        if(generalStatistics.symbolTable==NULL){return;}
-        std::list<uint32_t > rem;
+    void ProgramParameterCalculator::removeAuxiliaryVariables(std::unordered_map<uint32_t, bool> *variables) const {
+        if (generalStatistics.symbolTable == NULL) { return; }
+        std::list<uint32_t> rem;
         std::unordered_map<uint32_t, bool>::iterator it;
         for (it = variables->begin();
              it != variables->end(); it++) {
-            const Clasp::SymbolTable::symbol_type *elem = generalStatistics.symbolTable->find(it->first);
-            if (elem != 0 && elem->name.empty()) {
+            uint32_t id = it->first;
+            const Clasp::SymbolTable::symbol_type *elem = generalStatistics.symbolTable->find(id);
+            if (elem == 0 || elem->name.empty()) {
                 rem.push_back((*it).first);
             }
         }

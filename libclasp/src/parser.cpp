@@ -263,7 +263,7 @@ bool LparseParser::parseBody(uint32 lits, uint32 neg, bool readWeights) {
 		l.s=exst::POSITIVE;
 		heads.push_back(l);
 	}
-	exst::ExtendedStatistics::getInstance().addRule(bodies,heads);
+	exst::ExtendedParameters::getInstance().addRule(bodies,heads);
 	if (readWeights) {
 		for (uint32 i = 0; i < lits; ++i) {
 			active_->body[i].second = input()->parseInt(0, INT_MAX, "Weight Rule: bad or missing weight!");

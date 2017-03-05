@@ -7,7 +7,7 @@
 #include <clasp/enumerator.h>
 
 namespace exst {
-    class StatisticsCalculator {
+    class ParametersCalculator {
     public:
         virtual void addRule(std::list<lit_type> body, std::list<lit_type> head) {
 
@@ -17,7 +17,7 @@ namespace exst {
 
         };
 
-        virtual std::list<std::pair<std::string, std::string>> getStatistics() {
+        virtual std::list<std::pair<std::string, std::string>> getParameters() {
             return std::list<std::pair<std::string, std::string>>();
         }
 
@@ -29,7 +29,7 @@ namespace exst {
 
         };
 
-        virtual std::list<std::string> getAdditionalStatistics() {
+        virtual std::list<std::string> getAdditionalParameters() {
             return std::list<std::string>();
         };
 

@@ -51,7 +51,7 @@ namespace exst {
         std::list<std::string> rGraphs;
     };
 
-    class IncidenceGraphStatsCalculator : public StatisticsCalculator {
+    class IncidenceGraphParameterCalculator : public ParametersCalculator {
     public:
 
         /**
@@ -67,18 +67,18 @@ namespace exst {
          */
         virtual void updateAssignment(Clasp::LitVec new_assignment);
 
-        virtual std::list<std::pair<std::string, std::string>> getStatistics();
+        virtual std::list<std::pair<std::string, std::string>> getParameters();
 
         virtual void addId(uint32_t before, uint32_t after);
 
-        virtual std::list<std::string> getAdditionalStatistics();
+        virtual std::list<std::string> getAdditionalParameters();
 
         /**
          * Constructor of the IncidenceGraphStats class.
          * @param atomIds used to math atom ids before and after preprocessing
          * @return a new instance of the incidence graph stat calculator
          */
-        IncidenceGraphStatsCalculator() {
+        IncidenceGraphParameterCalculator() {
             iGraphStats.libraryInstance = htd::createManagementInstance(htd::Id::FIRST);
             htd::MultiGraphFactory &factory = iGraphStats.libraryInstance->multiGraphFactory();
             iGraphStats.iGraph = factory.createInstance();

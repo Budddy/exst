@@ -18,15 +18,15 @@ namespace exst {
     class AbstractExstTest : public CppUnit::TestFixture {
     public:
         void setUp() {
-            extendedStatistics->programStatistics.clear();
-            dependencyGraphStats = new DependencyGraphStatsCalculator();
-            statsCalculator = new ProgramStatsCalculator();
-            incidenceGraphStats = new IncidenceGraphStatsCalculator();
+            extendedStatistics->parameterCalc.clear();
+            dependencyGraphStats = new DependencyGraphParameterCalculator();
+            statsCalculator = new ProgramParameterCalculator();
+            incidenceGraphStats = new IncidenceGraphParameterCalculator();
             atomIds = &incidenceGraphStats->iGraphStats.atomIds;
-            extendedStatistics->registerProgramStatistics(dependencyGraphStats);
-            extendedStatistics->registerProgramStatistics(statsCalculator);
-            extendedStatistics->registerProgramStatistics(incidenceGraphStats);
-            ProgramParameter::getInstance() = *new ProgramParameter();
+            extendedStatistics->registerParameterCalculator(dependencyGraphStats);
+            extendedStatistics->registerParameterCalculator(statsCalculator);
+            extendedStatistics->registerParameterCalculator(incidenceGraphStats);
+            ExstFlags::getInstance() = *new ExstFlags();
         }
 
         void tearDown() {
@@ -37,11 +37,11 @@ namespace exst {
         }
 
     protected:
-        DependencyGraphStatsCalculator *dependencyGraphStats;
-        ProgramStatsCalculator *statsCalculator;
-        IncidenceGraphStatsCalculator *incidenceGraphStats;
+        DependencyGraphParameterCalculator *dependencyGraphStats;
+        ProgramParameterCalculator *statsCalculator;
+        IncidenceGraphParameterCalculator *incidenceGraphStats;
         std::unordered_map<uint32_t, uint32_t> *atomIds;
-        ExtendedStatistics *extendedStatistics = &ExtendedStatistics::getInstance();
+        ExtendedParameters *extendedStatistics = &ExtendedParameters::getInstance();
     };
 };
 

@@ -83,7 +83,7 @@ namespace exst {
         }
 
         void testgetAdditionalStatistics() {
-            ProgramParameter::getInstance().dGraphFormat = GraphFormat::DIMACS;
+            ExstFlags::getInstance().dGraphFormat = GraphFormat::DIMACS;
 
             std::list<lit_type> body;
             std::list<lit_type> head;
@@ -127,7 +127,7 @@ namespace exst {
             head.push_back(*new lit_type(3, POSITIVE));
             dependencyGraphStats->addRule(body, head);
 
-            const std::list<std::string> &stats = dependencyGraphStats->getAdditionalStatistics();
+            const std::list<std::string> &stats = dependencyGraphStats->getAdditionalParameters();
             CPPUNIT_ASSERT_EQUAL_MESSAGE("dependency graph", std::string("\"Dependency Graph\" : \n"
                                                                                  "[\"p edge 8 4\"\n"
                                                                                  ",\"e 1 2\"\n"

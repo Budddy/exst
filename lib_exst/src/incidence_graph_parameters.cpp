@@ -2,7 +2,7 @@
 #include <fstream>
 
 namespace exst {
-    void IncidenceGraphStatsCalculator::addRule(std::list<lit_type> body, std::list<lit_type> heads) {
+    void IncidenceGraphParameterCalculator::addRule(std::list<lit_type> body, std::list<lit_type> heads) {
         if (body.size() == 0) {
             return;
         }
@@ -45,7 +45,7 @@ namespace exst {
         }
     }
 
-    void IncidenceGraphStatsCalculator::resetAssignment() {
+    void IncidenceGraphParameterCalculator::resetAssignment() {
         //reset htd reduct graph
         if (iGraphStats.iGraphReduct != nullptr) {
             free(iGraphStats.iGraphReduct);
@@ -58,7 +58,7 @@ namespace exst {
         iGraphStats.incidenceGraphReduct = copyMyGraph(iGraphStats.incidenceGraph);
     }
 
-    void IncidenceGraphStatsCalculator::reduceGraph(lit_type lit) {
+    void IncidenceGraphParameterCalculator::reduceGraph(lit_type lit) {
         uint32_t nodeIdBody = iGraphStats.atomVertexMap[iGraphStats.atomIds[lit.id]];
         //get all bodies the literal is in
         std::unordered_map<uint32_t, EdgeType> edges = iGraphStats.incidenceGraphReduct[nodeIdBody];
@@ -85,34 +85,34 @@ namespace exst {
         }
     }
 
-    void IncidenceGraphStatsCalculator::updateAssignment(const Clasp::LitVec new_assignment) {
+    void IncidenceGraphParameterCalculator::updateAssignment(const Clasp::LitVec new_assignment) {
         iGraphStats.assignmentCount++;
-        if (ProgramParameter::getInstance().widthCalcInterval >= 0 &&
-            iGraphStats.assignmentCount >= ProgramParameter::getInstance().widthCalcInterval) {
+        if (ExstFlags::getInstance().widthCalcInterval >= 0 &&
+            iGraphStats.assignmentCount >= ExstFlags::getInstance().widthCalcInterval) {
             iGraphStats.numReducts++;
-            iGraphStats.assignmentCount -= ProgramParameter::getInstance().widthCalcInterval;
+            iGraphStats.assignmentCount -= ExstFlags::getInstance().widthCalcInterval;
             resetAssignment();
             for (unsigned int i = 0; i < new_assignment.size(); i++) {
                 reduceGraph(exst::lit_type(new_assignment.at(i).var(),
                                            new_assignment.at(i).sign() ? exst::POSITIVE : exst::NEGATIVE));
             }
             //calculate and save the Treewidth of the reduct graph
-            if (ProgramParameter::getInstance().calculateTreeWidth) {
+            if (ExstFlags::getInstance().calculateTreeWidth) {
                 iGraphStats.widths.push_back(getTreewidth(iGraphStats.iGraphReduct, iGraphStats.libraryInstance));
             }
 
-            if (ProgramParameter::getInstance().rGraphFormat != NONE) {
+            if (ExstFlags::getInstance().rGraphFormat != NONE) {
 
-                if (ProgramParameter::getInstance().rGraphPath.length() != 0) {
+                if (ExstFlags::getInstance().rGraphPath.length() != 0) {
                     std::ofstream fileStream;
                     fileStream.open(
-                            (ProgramParameter::getInstance().rGraphPath + "_") + std::to_string(iGraphStats.numReducts),
+                            (ExstFlags::getInstance().rGraphPath + "_") + std::to_string(iGraphStats.numReducts),
                             std::ofstream::out);
-                    fileStream << getFormatedGraph(ProgramParameter::getInstance().rGraphFormat,
+                    fileStream << getFormatedGraph(ExstFlags::getInstance().rGraphFormat,
                                                    iGraphStats.incidenceGraphReduct);
                     fileStream.close();
                 } else {
-                    iGraphStats.rGraphs.push_back(getFormatedGraph(ProgramParameter::getInstance().rGraphFormat,
+                    iGraphStats.rGraphs.push_back(getFormatedGraph(ExstFlags::getInstance().rGraphFormat,
                                                                    iGraphStats.incidenceGraphReduct));
                 }
             }
@@ -135,11 +135,11 @@ namespace exst {
         return size;
     }
 
-    std::list<std::string> IncidenceGraphStatsCalculator::getAdditionalStatistics() {
+    std::list<std::string> IncidenceGraphParameterCalculator::getAdditionalParameters() {
         std::list<std::string> slist;
         std::string str = "";
-        if (ProgramParameter::getInstance().rGraphFormat != NONE) {
-            if (ProgramParameter::getInstance().rGraphPath.length() == 0) {
+        if (ExstFlags::getInstance().rGraphFormat != NONE) {
+            if (ExstFlags::getInstance().rGraphPath.length() == 0) {
                 str = "";
                 str += "\n \"Reduct Graph\" : [\n  ";
                 std::list<std::string>::iterator it_;
@@ -154,18 +154,18 @@ namespace exst {
             }
         }
 
-        if (ProgramParameter::getInstance().iGraphFormat != NONE) {
+        if (ExstFlags::getInstance().iGraphFormat != NONE) {
 
-            if (ProgramParameter::getInstance().iGraphPath.length() != 0) {
+            if (ExstFlags::getInstance().iGraphPath.length() != 0) {
                 std::ofstream fileStream;
-                fileStream.open(ProgramParameter::getInstance().iGraphPath, std::ofstream::out);
+                fileStream.open(ExstFlags::getInstance().iGraphPath, std::ofstream::out);
                 fileStream
-                        << getFormatedGraph(ProgramParameter::getInstance().iGraphFormat, iGraphStats.incidenceGraph);
+                        << getFormatedGraph(ExstFlags::getInstance().iGraphFormat, iGraphStats.incidenceGraph);
                 fileStream.close();
             } else {
                 str = "";
                 str += "\n \"Incidence Graph\" : \n[";
-                str += getFormatedGraph(ProgramParameter::getInstance().iGraphFormat, iGraphStats.incidenceGraph);
+                str += getFormatedGraph(ExstFlags::getInstance().iGraphFormat, iGraphStats.incidenceGraph);
                 str += "]";
                 slist.push_back(str);
             }
@@ -173,7 +173,7 @@ namespace exst {
         return slist;
     }
 
-    std::list<std::pair<std::string, std::string>> IncidenceGraphStatsCalculator::getStatistics() {
+    std::list<std::pair<std::string, std::string>> IncidenceGraphParameterCalculator::getParameters() {
 
         std::list<std::pair<std::string, std::string>> ret;
 
@@ -190,7 +190,7 @@ namespace exst {
         return ret;
     }
 
-    void IncidenceGraphStatsCalculator::addId(uint32_t before, uint32_t after) {
+    void IncidenceGraphParameterCalculator::addId(uint32_t before, uint32_t after) {
         iGraphStats.atomIds[before] = after;
     }
 

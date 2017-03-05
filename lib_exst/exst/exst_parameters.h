@@ -11,16 +11,16 @@
 #include <clasp/enumerator.h>
 
 namespace exst {
-    class ExtendedStatistics {
+    class ExtendedParameters {
     public:
-        static ExtendedStatistics &getInstance() {
-            static ExtendedStatistics stats;
+        static ExtendedParameters &getInstance() {
+            static ExtendedParameters stats;
             return stats;
         }
 
         void addRule(std::list<lit_type> body, std::list<lit_type> head);
 
-        void printStatistics();
+        void printParameters();
 
         void updateAssignment(Clasp::LitVec new_assignment);
 
@@ -31,17 +31,17 @@ namespace exst {
         void addId(uint32_t before, uint32_t after);
 
 
-        std::list<StatisticsCalculator *> programStatistics;
+        std::list<ParametersCalculator *> parameterCalc;
 
-        void registerProgramStatistics(StatisticsCalculator *pStats) {
-            programStatistics.push_back(pStats);
+        void registerParameterCalculator(ParametersCalculator *pStats) {
+            parameterCalc.push_back(pStats);
         }
 
     private:
-        ExtendedStatistics() {
-            registerProgramStatistics(new DependencyGraphStatsCalculator());
-            registerProgramStatistics(new ProgramStatsCalculator());
-            registerProgramStatistics(new IncidenceGraphStatsCalculator());
+        ExtendedParameters() {
+            registerParameterCalculator(new DependencyGraphParameterCalculator());
+            registerParameterCalculator(new ProgramParameterCalculator());
+            registerParameterCalculator(new IncidenceGraphParameterCalculator());
         }
 
     };

@@ -2,7 +2,7 @@
 #include <fstream>
 
 namespace exst {
-    void DependencyGraphStatsCalculator::addRule(std::list<lit_type> body, std::list<lit_type> heads) {
+    void DependencyGraphParameterCalculator::addRule(std::list<lit_type> body, std::list<lit_type> heads) {
         std::unordered_map<uint32_t, uint32_t> &vertexNodeMap = dGraphStatistics.atomVertexMap;
         std::unordered_map<uint32_t, std::unordered_map<uint32_t, EdgeType>> &graph = dGraphStatistics.dependencyGraph;
 
@@ -38,19 +38,19 @@ namespace exst {
         }
     }
 
-    std::list<std::string> DependencyGraphStatsCalculator::getAdditionalStatistics() {
+    std::list<std::string> DependencyGraphParameterCalculator::getAdditionalParameters() {
         std::list<std::string> slist;
         std::string str = "";
-        if (ProgramParameter::getInstance().dGraphFormat != NONE) {
+        if (ExstFlags::getInstance().dGraphFormat != NONE) {
 
-            if (ProgramParameter::getInstance().dGraphPath.length() != 0) {
+            if (ExstFlags::getInstance().dGraphPath.length() != 0) {
                 std::ofstream fileStream;
-                fileStream.open(ProgramParameter::getInstance().dGraphPath, std::ofstream::out);
-                fileStream << getFormatedGraph(ProgramParameter::getInstance().dGraphFormat, getDependencyGraph());
+                fileStream.open(ExstFlags::getInstance().dGraphPath, std::ofstream::out);
+                fileStream << getFormatedGraph(ExstFlags::getInstance().dGraphFormat, getDependencyGraph());
                 fileStream.close();
             } else {
                 str += "\"Dependency Graph\" : \n[";
-                str += getFormatedGraph(ProgramParameter::getInstance().dGraphFormat, getDependencyGraph());
+                str += getFormatedGraph(ExstFlags::getInstance().dGraphFormat, getDependencyGraph());
                 str += "]";
                 slist.push_back(str);
             }
@@ -58,7 +58,7 @@ namespace exst {
         return slist;
     }
 
-    std::list<std::pair<std::string, std::string>> DependencyGraphStatsCalculator::getStatistics() {
+    std::list<std::pair<std::string, std::string>> DependencyGraphParameterCalculator::getParameters() {
         std::list<std::pair<std::string, std::string>> ret;
 
         ret.push_back(std::pair<std::string, std::string>("Dependency Graph Nodes", std::to_string(

@@ -339,7 +339,7 @@ namespace exst {
             body.push_back(*new lit_type(9, POSITIVE));
             incidenceGraphStats->addRule(body, head);
 
-            ProgramParameter::getInstance().widthCalcInterval = 1;
+            ExstFlags::getInstance().widthCalcInterval = 1;
 
             Clasp::Literal l(1, false);
             Clasp::LitVec vec(1, l);
@@ -358,8 +358,8 @@ namespace exst {
         };
 
         void testgetAdditionalStatistics() {
-            ProgramParameter::getInstance().rGraphFormat = GraphFormat::DIMACS;
-            ProgramParameter::getInstance().iGraphFormat = GraphFormat::DIMACS;
+            ExstFlags::getInstance().rGraphFormat = GraphFormat::DIMACS;
+            ExstFlags::getInstance().iGraphFormat = GraphFormat::DIMACS;
 
             std::list<lit_type> body;
             std::list<lit_type> head;
@@ -403,7 +403,7 @@ namespace exst {
             head.push_back(*new lit_type(3, POSITIVE));
             incidenceGraphStats->addRule(body, head);
 
-            const std::list<std::string> &stats = incidenceGraphStats->getAdditionalStatistics();
+            const std::list<std::string> &stats = incidenceGraphStats->getAdditionalParameters();
             std::string rg = stats.front();
             std::string ig = stats.back();
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Reduct Graph", std::string("\n"

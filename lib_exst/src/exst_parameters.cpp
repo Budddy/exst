@@ -2,20 +2,20 @@
 
 namespace exst {
 
-    void ExtendedStatistics::addRule(std::list<lit_type> body, std::list<lit_type> head) {
+    void ExtendedParameters::addRule(std::list<lit_type> body, std::list<lit_type> head) {
 
-        std::list<exst::StatisticsCalculator *>::iterator it;
-        for (it = programStatistics.begin(); it != programStatistics.end(); it++) {
+        std::list<exst::ParametersCalculator *>::iterator it;
+        for (it = parameterCalc.begin(); it != parameterCalc.end(); it++) {
             (*it)->addRule(body, head);
         }
 
     }
 
-    void ExtendedStatistics::printStatistics() {
+    void ExtendedParameters::printParameters() {
         std::list<std::pair<std::string, std::string>> stats;
-        std::list<exst::StatisticsCalculator *>::iterator it;
-        for (it = programStatistics.begin(); it != programStatistics.end(); it++) {
-            stats.merge((*it)->getStatistics());
+        std::list<exst::ParametersCalculator *>::iterator it;
+        for (it = parameterCalc.begin(); it != parameterCalc.end(); it++) {
+            stats.merge((*it)->getParameters());
         }
 
         std::cout << ",\"Extended Stats\" : [\n";
@@ -31,10 +31,10 @@ namespace exst {
         }
         std::cout << "]";
 
-        std::list<exst::StatisticsCalculator *>::iterator it3;
-        for (it3 = programStatistics.begin(); it3 != programStatistics.end(); it3++) {
+        std::list<exst::ParametersCalculator *>::iterator it3;
+        for (it3 = parameterCalc.begin(); it3 != parameterCalc.end(); it3++) {
             std::list<std::string>::iterator it3_;
-            std::list<std::string> addstats = (*it3)->getAdditionalStatistics();
+            std::list<std::string> addstats = (*it3)->getAdditionalParameters();
             for (it3_ = addstats.begin(); it3_ != addstats.end(); it3_++) {
                 std::cout << "," << (*it3_);
             }
@@ -43,37 +43,37 @@ namespace exst {
         std::cout.flush();
     }
 
-    void ExtendedStatistics::updateAssignment(Clasp::LitVec new_assignment) {
+    void ExtendedParameters::updateAssignment(Clasp::LitVec new_assignment) {
 
-        std::list<exst::StatisticsCalculator *>::iterator it;
-        for (it = programStatistics.begin(); it != programStatistics.end(); it++) {
+        std::list<exst::ParametersCalculator *>::iterator it;
+        for (it = parameterCalc.begin(); it != parameterCalc.end(); it++) {
             (*it)->updateAssignment(new_assignment);
         }
 
     }
 
-    void ExtendedStatistics::setSymbolTable(const Clasp::SymbolTable &symbolTable) {
+    void ExtendedParameters::setSymbolTable(const Clasp::SymbolTable &symbolTable) {
 
-        std::list<exst::StatisticsCalculator *>::iterator it;
-        for (it = programStatistics.begin(); it != programStatistics.end(); it++) {
+        std::list<exst::ParametersCalculator *>::iterator it;
+        for (it = parameterCalc.begin(); it != parameterCalc.end(); it++) {
             (*it)->setSymbolTable(symbolTable);
         }
 
     }
 
-    void ExtendedStatistics::addId(uint32_t before, uint32_t after) {
+    void ExtendedParameters::addId(uint32_t before, uint32_t after) {
 
-        std::list<exst::StatisticsCalculator *>::iterator it;
-        for (it = programStatistics.begin(); it != programStatistics.end(); it++) {
+        std::list<exst::ParametersCalculator *>::iterator it;
+        for (it = parameterCalc.begin(); it != parameterCalc.end(); it++) {
             (*it)->addId(before, after);
         }
 
     }
 
-    void ExtendedStatistics::addModel(const Clasp::Model &model) {
+    void ExtendedParameters::addModel(const Clasp::Model &model) {
 
-        std::list<exst::StatisticsCalculator *>::iterator it;
-        for (it = programStatistics.begin(); it != programStatistics.end(); it++) {
+        std::list<exst::ParametersCalculator *>::iterator it;
+        for (it = parameterCalc.begin(); it != parameterCalc.end(); it++) {
             (*it)->addModel(model);
         }
 

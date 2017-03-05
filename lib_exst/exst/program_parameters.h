@@ -48,10 +48,10 @@ namespace exst {
         std::unordered_map<uint32_t, bool> variablePositive;
 
         ///negative variable occurrences without helpers
-        std::unordered_map<uint32_t, bool> variableNegativeWithoutHelper;
+        std::unordered_map<uint32_t, bool> variableNegativeWithoutAuxiliaryVariables;
 
         ///positive variable occurrences without helpers
-        std::unordered_map<uint32_t, bool> variablePositiveWithoutHelper;
+        std::unordered_map<uint32_t, bool> variablePositiveWithoutAuxiliaryVariables;
 
         ///number of constraints in the program
         uint32_t numConstraints = 0;
@@ -87,14 +87,14 @@ namespace exst {
     /**
      * class used to generate the extended stats
      */
-    class ProgramStatsCalculator : public StatisticsCalculator {
+    class ProgramParameterCalculator : public ParametersCalculator {
     public:
 
         virtual void addRule(std::list<lit_type> body, std::list<lit_type> head);
 
         virtual void addModel(const Clasp::Model &model);
 
-        virtual std::list<std::pair<std::string, std::string>> getStatistics();
+        virtual std::list<std::pair<std::string, std::string>> getParameters();
 
         /**
          * Used to set the Symbol Table.
@@ -103,27 +103,16 @@ namespace exst {
         virtual void setSymbolTable(const Clasp::SymbolTable &symbolTable);
 
         /**
-         * Starts the calculation of the stats, implicitly called by printExtendedStats.
+         * Starts the calculation of the parameters, implicitly called by printExtendedStats.
          */
-        void calculateStats();
+        void calculateParameters();
 
         ProgramStatistics generalStatistics;
 
     private:
 
-        /*
-         *
-         */
         void parseVariableLiteral(std::list<lit_type> body, std::list<lit_type> head);
-
-        /*
-         *
-         */
         void countAtomOccurences(std::list<lit_type> body, std::list<lit_type> head);
-
-        /*
-         *
-         */
         void removeAuxiliaryVariables(std::unordered_map<uint32_t, bool> *variables) const;
     };
 
