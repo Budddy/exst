@@ -48,15 +48,15 @@ namespace exst {
             extendedStatistics->addId(7, 7);
 
             Clasp::SymbolTable table;
-            table.addUnique(1,NULL);
-            table.addUnique(2,NULL);
-            table.addUnique(3," ");
-            table.addUnique(4,NULL);
-            table.addUnique(5," ");
-            table.addUnique(6," ");
-            table.addUnique(7," ");
-            table.addUnique(8," ");
-            table.addUnique(9," ");
+            table.addUnique(1, NULL);
+            table.addUnique(2, NULL);
+            table.addUnique(3, " ");
+            table.addUnique(4, NULL);
+            table.addUnique(5, " ");
+            table.addUnique(6, " ");
+            table.addUnique(7, " ");
+            table.addUnique(8, " ");
+            table.addUnique(9, " ");
             table.endInit();
 
             extendedStatistics->setSymbolTable(table);
@@ -115,7 +115,8 @@ namespace exst {
 
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", std::string(
-                    "  ,[\"number of variables that occur as positive literals without auxiliary variables\" , 4]"), line);
+                    "  ,[\"number of variables that occur as positive literals without auxiliary variables\" , 4]"),
+                                         line);
 
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", std::string(
@@ -123,7 +124,8 @@ namespace exst {
 
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses", std::string(
-                    "  ,[\"number of variables that occur as negative literals without auxiliary variables\" , 2]"), line);
+                    "  ,[\"number of variables that occur as negative literals without auxiliary variables\" , 2]"),
+                                         line);
 
             std::getline(res, line, '\n');
             CPPUNIT_ASSERT_EQUAL_MESSAGE("Number of Non Horn Clauses",

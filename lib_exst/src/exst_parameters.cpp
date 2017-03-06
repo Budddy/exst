@@ -70,11 +70,11 @@ namespace exst {
 
     }
 
-    void ExtendedParameters::addModel(const Clasp::Model &model) {
+    void ExtendedParameters::addAnswerSet(const Clasp::Model &answerSet) {
 
         std::list<exst::ParametersCalculator *>::iterator it;
         for (it = parameterCalc.begin(); it != parameterCalc.end(); it++) {
-            (*it)->addModel(model);
+            (*it)->addAnswerSet(answerSet);
         }
 
     }

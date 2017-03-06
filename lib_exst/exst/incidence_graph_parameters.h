@@ -1,5 +1,5 @@
-#ifndef CLASP_INCIDENCE_GRAPH_STATS_H
-#define CLASP_INCIDENCE_GRAPH_STATS_H
+#ifndef CLASP_INCIDENCE_GRAPH_PARAMS_H
+#define CLASP_INCIDENCE_GRAPH_PARAMS_H
 
 #include <unordered_map>
 #include <list>
@@ -13,46 +13,39 @@
  * class used for calculating and saving stats of the incidence graph and the incidence graph
  */
 namespace exst {
-    struct IncidenceGraphStatistics {
-        ///
+    struct IncidenceGraphParameters {
         unsigned long long assignmentCount = 0;
-
-        ///
         htd::LibraryInstance *libraryInstance;
-
         ///complete incidence graph
         MyGraph incidenceGraph;
         htd::IMutableMultiGraph *iGraph;
-
         ///incidence graph of reduct
         MyGraph incidenceGraphReduct;
         htd::IMutableMultiGraph *iGraphReduct = nullptr;
-
         ///mapping from atoms to vertices in the incidence graph
         std::unordered_map<uint32_t, uint32_t> atomVertexMap;
-
         ///maps the rules to the bodies
         MyGraph ruleBodyMapReduct;
-
         ///maps the rules to the bodies
         MyGraph ruleBodyMap;
-
         ///maps atoms and ids
         std::unordered_map<uint32_t, uint32_t> atomIds;
-
         ///list of the treewidth of the incidence graph reductions
         std::list<float> widths;
-
         ///the literals that are currently assigned to the solution
         Clasp::LitVec current_assignment;
-
-        ///the literals that are currently assigned to the solution
         int numReducts = 0;
         std::list<std::string> rGraphs;
     };
 
     class IncidenceGraphParameterCalculator : public ParametersCalculator {
     public:
+
+        ///not used in this calculator
+        virtual void setSymbolTable(const Clasp::SymbolTable &symbolTable) {};
+
+        ///not used in this calculator
+        virtual void addAnswerSet(const Clasp::Model &model) {};
 
         /**
          * Adds a rule to the incidence graph.
@@ -95,7 +88,7 @@ namespace exst {
          */
         void reduceGraph(lit_type lit);
 
-        IncidenceGraphStatistics iGraphStats;
+        IncidenceGraphParameters iGraphStats;
 
     };
 
@@ -137,4 +130,4 @@ namespace exst {
     };
 }
 
-#endif //CLASP_INCIDENCE_GRAPH_STATS_H
+#endif //CLASP_INCIDENCE_GRAPH_PARAMS_H

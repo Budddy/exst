@@ -1,8 +1,8 @@
 #include <exst/program_flags.h>
 
 namespace exst {
-    bool exst::ExstFlags::parseParameter(ExstFlags *, const std::string &name,
-                                                const std::string &value) {
+    bool exst::ExstFlags::parseFlags(ExstFlags *, const std::string &name,
+                                     const std::string &value) {
         exst::GraphFormat format;
         bool file = false;
         std::string path;

@@ -31,7 +31,7 @@ namespace exst {
             std::list<exst::lit_type>::iterator b;
             for (b = body.begin(); b != body.end(); b++) {
                 uint32_t id = b->id;
-                if ((a->id) > 1 && dGraphStatistics.edgeMap[a->id].count(id) == 0) {
+                if ((a->id) > 1) {
                     graph[vertexNodeMap[a->id]][vertexNodeMap[id]] = HEAD;
                 };
             }
@@ -46,11 +46,11 @@ namespace exst {
             if (ExstFlags::getInstance().dGraphPath.length() != 0) {
                 std::ofstream fileStream;
                 fileStream.open(ExstFlags::getInstance().dGraphPath, std::ofstream::out);
-                fileStream << getFormatedGraph(ExstFlags::getInstance().dGraphFormat, getDependencyGraph());
+                fileStream << getFormatedGraph(ExstFlags::getInstance().dGraphFormat, dGraphStatistics.dependencyGraph);
                 fileStream.close();
             } else {
                 str += "\"Dependency Graph\" : \n[";
-                str += getFormatedGraph(ExstFlags::getInstance().dGraphFormat, getDependencyGraph());
+                str += getFormatedGraph(ExstFlags::getInstance().dGraphFormat, dGraphStatistics.dependencyGraph);
                 str += "]";
                 slist.push_back(str);
             }

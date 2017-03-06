@@ -110,6 +110,12 @@ namespace exst {
      */
     std::string getGMLFormat(MyGraph &graph);
 
+    /**
+     * Generates the string representation of the given graph in the given format.
+     * @param f the graph format
+     * @param graph the graph
+     * @return a string containing the graph in the given format
+     */
     std::string getFormatedGraph(GraphFormat f, MyGraph &graph);
 }
 

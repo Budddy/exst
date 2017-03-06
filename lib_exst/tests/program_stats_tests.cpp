@@ -250,7 +250,7 @@ namespace exst {
 
             Clasp::SymbolTable table;
             table.addUnique(1, " ");
-            table.addUnique(2, " " );
+            table.addUnique(2, " ");
             table.addUnique(3, " ");
             table.addUnique(4, " ");
             table.addUnique(5, " ");

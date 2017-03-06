@@ -168,16 +168,18 @@ namespace exst {
         ret.push_back(std::pair<std::string, std::string>("max negative clause size",
                                                           std::to_string(generalStatistics.maxClauseSizeNegative)));
         ret.push_back(
-                std::pair<std::string, std::string>("number of variables that occur as positive literals with auxiliary variables",
-                                                    std::to_string(generalStatistics.variablePositive.size())));
+                std::pair<std::string, std::string>(
+                        "number of variables that occur as positive literals with auxiliary variables",
+                        std::to_string(generalStatistics.variablePositive.size())));
         ret.push_back(
                 std::pair<std::string, std::string>(
                         "number of variables that occur as positive literals without auxiliary variables",
                         std::to_string(
                                 generalStatistics.variablePositiveWithoutAuxiliaryVariables.size())));
         ret.push_back(
-                std::pair<std::string, std::string>("number of variables that occur as negative literals with auxiliary variables",
-                                                    std::to_string(generalStatistics.variableNegative.size())));
+                std::pair<std::string, std::string>(
+                        "number of variables that occur as negative literals with auxiliary variables",
+                        std::to_string(generalStatistics.variableNegative.size())));
         ret.push_back(
                 std::pair<std::string, std::string>(
                         "number of variables that occur as negative literals without auxiliary variables",
@@ -234,7 +236,7 @@ namespace exst {
         return ret;
     }
 
-    void ProgramParameterCalculator::addModel(const Clasp::Model &model) {
+    void ProgramParameterCalculator::addAnswerSet(const Clasp::Model &model) {
         if (generalStatistics.symbolTable == NULL) { return; }
         generalStatistics.modelSize = 0;
         for (Clasp::SymbolTable::const_iterator it = generalStatistics.symbolTable->begin();

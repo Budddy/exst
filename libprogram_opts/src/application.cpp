@@ -214,21 +214,21 @@ bool Application::getOptions(int argc, char** argv) {
             ("width-intervall"   , storeTo(exst::ExstFlags::getInstance().widthCalcInterval = 0)->arg("<n>"), "number of assignments between interval calculation")
             ("calcTWidth"   , flag(exst::ExstFlags::getInstance().calculateTreeWidth = false),
              "calculate the Tree Width")
-			("printDgraph"   , notify(&exst::ExstFlags::getInstance(),exst::ExstFlags::parseParameter)->arg("<format>[,<filePath>]"),
+			("printDgraph"   , notify(&exst::ExstFlags::getInstance(), exst::ExstFlags::parseFlags)->arg("<format>[,<filePath>]"),
 			 "Print the dependency graph\n"
 					 "    <format> : {0|1|2}\n"
 					 "        0    : the dimacs graph format\n"
 					 "        1    : graph format used in the pacechallenge\n"
 					 "        2    : gml graph format\n"
 					 "    <filePath> : path used to write the graph to")
-			("printIgraph"   , notify(&exst::ExstFlags::getInstance(),exst::ExstFlags::parseParameter)->arg("<format>[,<filePath>]"),
+			("printIgraph"   , notify(&exst::ExstFlags::getInstance(), exst::ExstFlags::parseFlags)->arg("<format>[,<filePath>]"),
 			 "Print the incidence graph"
 					 "    <format> : {0|1|2}\n"
 					 "        0    : the dimacs graph format\n"
 					 "        1    : graph format used in the pacechallenge\n"
 					 "        2    : gml graph format\n"
 					 "    <filePath> : path used to write the graph to")
-			("printRgraph"   , notify(&exst::ExstFlags::getInstance(),exst::ExstFlags::parseParameter)->arg("<format>[,<filePath>]"),
+			("printRgraph"   , notify(&exst::ExstFlags::getInstance(), exst::ExstFlags::parseFlags)->arg("<format>[,<filePath>]"),
 			 "Print the reduct graph"
 					 "    <format> : {0|1|2}\n"
 					 "        0    : the dimacs graph format\n"

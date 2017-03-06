@@ -371,7 +371,7 @@ namespace Clasp
         bool ClaspAppBase::onModel(const Solver &s, const Model &m)
         {
             exst::ExtendedParameters::getInstance().setSymbolTable(s.symbolTable());
-            exst::ExtendedParameters::getInstance().addModel(m);
+            exst::ExtendedParameters::getInstance().addAnswerSet(m);
             bool ret = true;
             if (out_.get() && !out_->quiet())
             {
