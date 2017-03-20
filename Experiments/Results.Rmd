@@ -75,66 +75,10 @@ printAll <- function(param, problems, labelx) {
     png(file = File, bg = "white", res = 144)
     plot(
       x = combineParams(param, st),
-      y = st$time_CPU,
+      y = st$CPU_time,
       xlab = labelx,
-      ylab = "time_CPU",
-      pch = "*",
-      main = pro
-    )
-    dev.off()
-    
-    File <- paste("./Plots/", pro, "/", labelx, ".png", sep = "")
-    dir.create(dirname(File), showWarnings = FALSE)
-    
-    png(file = File, bg = "white", res = 144)
-    plot(
-      x = combineParams(param, st),
-      y = st$time_CPU,
-      xlab = labelx,
-      ylab = "time_CPU",
-      pch = "*",
-      main = pro
-    )
-    dev.off()
-    
-    File <- paste("./Plots/_Parameter/", labelx, "/", pro, ".png", sep = "")
-    dir.create(dirname(File), showWarnings = FALSE)
-    
-    png(file = File, bg = "white", res = 144)
-    plot(
-      x = combineParams(param, st),
-      y = st$time_CPU,
-      xlab = labelx,
-      ylab = "time_CPU",
-      pch = "*",
-      main = pro
-    )
-    dev.off()
-    
-    File <- paste("./Plots/_Problems/", pro, "/", labelx, ".png", sep = "")
-    dir.create(dirname(File), showWarnings = FALSE)
-    
-    png(file = File, bg = "white", res = 144)
-    plot(
-      x = combineParams(param, st),
-      y = st$time_CPU,
-      xlab = labelx,
-      ylab = "time_CPU",
-      pch = "*",
-      main = pro
-    )
-    dev.off()
-    
-    File <- paste("./Plots/_All/", labelx, " ", pro, ".png", sep = "")
-    dir.create(dirname(File), showWarnings = FALSE)
-    
-    png(file = File, bg = "white", res = 144)
-    plot(
-      x = combineParams(param, st),
-      y = st$time_CPU,
-      xlab = labelx,
-      ylab = "time_CPU",
-      pch = "*",
+      ylab = "CPU_time",
+      pch = "+",
       main = pro
     )
     dev.off()
@@ -142,10 +86,10 @@ printAll <- function(param, problems, labelx) {
     cat(sprintf("\n\n###Problem: %s\n\n", pro))
     plot(
       x = combineParams(param, st),
-      y = st$time_CPU,
+      y = st$CPU_time,
       xlab = labelx,
-      ylab = "time_CPU",
-      pch = "*",
+      ylab = "CPU_time",
+      pch = "+",
       main = pro
     )
   }
@@ -159,18 +103,18 @@ printTable <- function(mytable, label) {
   tableOrdered <-
     mytable[order(as.numeric(mytable[, 2]), decreasing = TRUE), ]
   lines <- c(
-    "\\begin{table}[]",
+    "\\begin{table}[H]",
     "  \\centering",
     "  \\small",
-    "  \\begin{tabular}{|l|l|l|l|}",
-    "    \\hline",
+    "  \\begin{tabular}{ll}",
+    "    \\toprule",
     paste(
       "    \\textbf{Benchmark set}      & \\textbf{Times ",
       label,
       "}\\\\",
       sep = ""
     ),
-    "    \\hline"
+    "    \\midrule"
   )
   
   for (a in 1:nrow(tableOrdered)) {
@@ -180,17 +124,17 @@ printTable <- function(mytable, label) {
                      " & ",
                      tableOrdered[a, 2],
                      "\\\\",
-                     sep = ""),
-               "    \\hline")
+                     sep = ""))
   }
   
   lines <- c(
     lines,
+    "    \\bottomrule",
     "  \\end{tabular}",
     paste(
       "  \\caption[Table number ",
       label,
-      " correlations]{Table showing the times a Set was in a ",
+      " correlations]{Times a Set was in a ",
       label,
       " correlation}",
       sep = ""
@@ -209,31 +153,31 @@ printTableHighLow <- function() {
   tableOrdered <-
     paramHighLow[order(as.numeric(paramHighLow[, 2]), decreasing = TRUE),]
   lines <- c(
-    "  \\begin{longtable}{|p{95mm}|l|l|}",
-    "    \\hline",
-    paste("    \\textbf{Parameter}      & \\textbf{High}      & \\textbf{Low}\\\\",
-          sep = ""),
-    "    \\hline"
+    "\\small ",
+    "\\begin{longtable}{p{0.8\\textwidth}ll}",
+    "  \\toprule",
+    "  \\textbf{Parameter}      & \\textbf{High}      & \\textbf{Low}\\\\",
+    "  \\midrule"
   )
   
   for (a in 1:nrow(tableOrdered)) {
     lines <- c(lines,
-               paste("    ",
+               paste("  ",
                      tableOrdered[a, 1],
                      " & ",
                      tableOrdered[a, 2],
                      " & ",
                      tableOrdered[a, 3],
                      "\\\\",
-                     sep = ""),
-               "    \\hline")
+                     sep = ""))
   }
   
   lines <- c(
     lines,
-    "  \\caption[Table High Low corr.]{Table showing the number of High and low correlations per parameter}",
+    "  \\bottomrule",
+    "  \\caption[Table High Low corr.]{Number of High and low correlations per parameter. Parameters marked with a * are for k-consistency and parameters marked with \\# are for hardness parameters from \\mbox{Fichte et. al. \\cite{TR/FichteKroneggerWoltran16}}.}",
     "  \\label{table-highlow-correlations}",
-    "  \\end{longtable}"
+    "\\end{longtable}"
   )
   File <- file("./Plots/HighLowTable.tex")
   writeLines(lines, File)
@@ -242,7 +186,7 @@ printTableHighLow <- function() {
 ```
 
 ```{r printLatexTable, echo=FALSE, message=FALSE, warning=FALSE}
-printLatexTable <- function(correlations, param, label) {
+printLatexTable <- function(correlations, param, label, prefix="") {
   highcorrelations <- list()
   lowcorrelations <- list()
   high <- 1
@@ -278,25 +222,24 @@ printLatexTable <- function(correlations, param, label) {
   
   high <- high - 1
   low <- low - 1
-  paramHighLow[numCorrelations,1] <<- label
+  paramHighLow[numCorrelations,1] <<- paste(prefix,label,sep=" ")
   paramHighLow[numCorrelations,2] <<- high
   paramHighLow[numCorrelations,3] <<- low
   
   lines <- c(
     lines,
-    paste("In Table \\ref{table-correlations-",label,"} we can see the Benchmark sets, high correlations are on the left side and the Benchmark sets with low correlations are on the right side.",sep=""),
     "",
-    "\\begin{table}[]",
+    "\\begin{table}[H]",
     "  \\centering",
     "  \\small",
-    "  \\begin{tabular}{|l|l|l|l|}",
-    "    \\hline",
+    "  \\begin{tabular}{ll|ll}",
+    "    \\toprule",
     "    \\textbf{Benchmark set}              & \\textbf{Corr}     & \\textbf{Benchmark set}    & \\textbf{Corr}\\\\",
-    "\\hline"
+    "    \\midrule"
   )
   
-  for (a in 1:max(high, low)) {
-    if (high >= a && low >= a) {
+  for (a in seq(1,(high+low),2)) {
+    if ((a+1) <= high) {
       lines <- c(
         lines,
         paste(
@@ -305,16 +248,49 @@ printLatexTable <- function(correlations, param, label) {
           " & ",
           highcorrelations[[a]][2],
           " & ",
-          lowcorrelations[[a]][1],
+          highcorrelations[[a+1]][1],
           " & ",
-          lowcorrelations[[a]][2],
+          highcorrelations[[a+1]][2],
           "\\\\",
           sep = ""
-        ),
-        "    \\hline"
+        )
       )
       
-    } else if (high >= a) {
+    } else if ((a == high)&((a+1) <= (high+low))) {
+      lines <- c(
+        lines,
+        paste(
+          "    ",
+          highcorrelations[[a]][1],
+          " & ",
+          highcorrelations[[a]][2],
+          " & ",
+          lowcorrelations[[a+1-high]][1],
+          " & ",
+          lowcorrelations[[a+1-high]][2],
+          "\\\\",
+          sep = ""
+        )
+      )
+      
+    } else if ((a+1)<=(high+low)) {
+      lines <- c(
+        lines,
+        paste(
+          "    ",
+          lowcorrelations[[a-high]][1],
+          " & ",
+          lowcorrelations[[a-high]][2],
+          " & ",
+          lowcorrelations[[a+1-high]][1],
+          " & ",
+          lowcorrelations[[a+1-high]][2],
+          "\\\\",
+          sep = ""
+        )
+      )
+      
+    } else if((a)==(high)){
       lines <- c(
         lines,
         paste(
@@ -326,38 +302,37 @@ printLatexTable <- function(correlations, param, label) {
           " & ",
           "\\\\",
           sep = ""
-        ),
-        "    \\hline"
+        )
       )
-      
-    } else if (low >= a) {
+    } else if(((a)==(high+low))&(low>0)){
       lines <- c(
         lines,
         paste(
           "    ",
+          lowcorrelations[[a-high]][1],
+          " & ",
+          lowcorrelations[[a-high]][2],
           " & ",
           " & ",
-          lowcorrelations[[a]][1],
-          " & ",
-          lowcorrelations[[a]][2],
           "\\\\",
           sep = ""
-        ),
-        "    \\hline"
+        )
       )
-      
     }
   }
   
   lines <- c(
     lines,
+    "    \\bottomrule",
     "  \\end{tabular}",
     paste(
       "  \\caption[Table corr. ",
       label,
-      "]{Table showing the Correlation between time and ",
+      "]{Spearman Correlation between time and ",
       label,
-      "}",
+      ". The mean of the correlations is ",round(mean(as.numeric(correlations[,2]),na.rm = TRUE),digits=2),
+      ". The standard deviation of the correlations is ",round(sd(abs(as.numeric(correlations[,2])),na.rm = TRUE),digits=2),
+      ".}",
       sep = ""
     ),
     paste("  \\label{table-correlations-",
@@ -386,7 +361,7 @@ combineParams <- function(params, st) {
 ```
 
 ```{r genCors, echo=FALSE, message=FALSE, warning=FALSE}
-genCors <- function(param, label, algo) {
+genCors <- function(param, label, algo, prefix="") {
   numCorrelations <<- numCorrelations + 1
   num <- 1
   cormatrix_stat <- matrix(ncol = 2, nrow = numinst)
@@ -397,55 +372,55 @@ genCors <- function(param, label, algo) {
     if (lenst >= mininst) {
       cormatrix_stat[num, 1] <- pro
       a <-
-        cor.test(combineParams(param, st), st$time_CPU, method = algo)
+        cor.test(as.numeric(combineParams(param, st)), as.numeric(st$CPU_time), method = algo)
       cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
       num <- num + 1
     }
   }
   asdf <-
-    cor.test(combineParams(param, stat), stat$time_CPU, method = algo)
+    cor.test(combineParams(param, stat), stat$CPU_time, method = algo)
   cat(sprintf("\nOverall Correlation: %f\n\n",round(a$estimate, digits = 2)))
   correlations <-
     cormatrix_stat[order(cormatrix_stat[, 2], decreasing = TRUE), ]
   print(kable(correlations, col.names = c("Problems", "Correlation")))
-  printLatexTable(correlations, param, label)
+  printLatexTable(correlations, param, label, prefix)
 }
 ```
 
 # one parameter combinations
-## choices
-```{r spearman choices, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c("choices"),"choices","spearman")
+## numChoices
+```{r spearman numChoices, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("numChoices"),"numChoices","spearman")
 ```
 
-## conflicts
-```{r spearman conflicts, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c("conflicts"),"conflicts","spearman")
+## numConflicts
+```{r spearman numConflicts, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("numConflicts"),"numConflicts","spearman")
 ```
 
-## restarts
-```{r spearman restarts, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c("restarts"),"restarts","spearman")
+## numRestarts
+```{r spearman numRestarts, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("numRestarts"),"numRestarts","spearman")
 ```
 
-## atoms
-```{r spearman atoms, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c("atoms"),"atoms","spearman")
+## numAtoms
+```{r spearman numAtoms, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("numAtoms"),"numAtoms","spearman")
 ```
 
-## bodies
-```{r spearman bodies, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c("bodies"),"bodies","spearman")
+## numBodies
+```{r spearman numBodies, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("numBodies"),"numBodies","spearman")
 ```
 
-## variables
-```{r spearman variables, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c("variables"),"variables","spearman")
+## numVariables
+```{r spearman numVariables, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("numVariables"),"numVariables","spearman")
 ```
 
-## constraints
-```{r spearman constraints, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c("constraints"),"constraints","spearman")
+## numConstraints
+```{r spearman numConstraints, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("numConstraints"),"numConstraints","spearman")
 ```
 
 ## numNonDualHornClauses
@@ -469,29 +444,29 @@ genCors(c("numAtomsPosBody"),"numAtomsPosBody","spearman")
 ```
 
 # two parameter combinations
-## atoms + choices
-```{r spearman atoms + choices, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c("atoms" , "choices"),"atoms + choices","spearman")
+## numAtoms + numChoices
+```{r spearman numAtoms + numChoices, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("numAtoms" , "numChoices"),"numAtoms + numChoices","spearman")
 ```
 
-## atoms + conflicts
-```{r spearman atoms + conflicts, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c(4,9),"atoms + conflicts","spearman")
+## numAtoms + numConflicts
+```{r spearman numAtoms + numConflicts, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c(4,9),"numAtoms + numConflicts","spearman")
 ```
 
-## numNonHornClauses + variables
-```{r spearman numNonHornClauses + variables, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c(17,13),"numNonHornClauses + variables","spearman")
+## numNonHornClauses + numVariables
+```{r spearman numNonHornClauses + numVariables, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c(17,13),"numNonHornClauses + numVariables","spearman")
 ```
 
-## maxNumAtomOcc + equivalences
-```{r spearman maxNumAtomOcc + equivalences, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c("maxNumAtomOcc" , "equivalences"),"maxNumAtomOcc + equivalences","spearman")
+## maxNumAtomOcc + numEquivalences
+```{r spearman maxNumAtomOcc + numEquivalences, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("maxNumAtomOcc" , "numEquivalences"),"maxNumAtomOcc + numEquivalences","spearman")
 ```
 
-## numAtomsNegBody + variables
-```{r spearman numAtomsNegBody + variables, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c(49,13),"numAtomsNegBody + variables","spearman")
+## numAtomsNegBody + numVariables
+```{r spearman numAtomsNegBody + numVariables, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c(49,13),"numAtomsNegBody + numVariables","spearman")
 ```
 
 ## maxSizeAnswerSet + numNonHornClauses
@@ -505,14 +480,14 @@ genCors(c(52,49),"maxSizeAnswerSet + numAtomsNegBody","spearman")
 ```
 
 # three parameter combinations
-## numVNegLitH + numNonDualHornClauses + atoms
-```{r spearman numVNegLitH + numNonDualHornClauses + atoms, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c("numVNegLitH" , "numNonDualHornClauses" , "atoms"),"numVNegLitH + numNonDualHornClauses + atoms","spearman")
+## numVNegLitH + numNonDualHornClauses + numAtoms
+```{r spearman numVNegLitH + numNonDualHornClauses + numAtoms, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("numVNegLitH" , "numNonDualHornClauses" , "numAtoms"),"numVNegLitH + numNonDualHornClauses + numAtoms","spearman")
 ```
 
-## numVNegLitH + numNonDualHornClauses + variables
-```{r spearman numVNegLitH + numNonDualHornClauses + variables, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c("numVNegLitH" , "numNonDualHornClauses" , "variables"),"numVNegLitH + numNonDualHornClauses + variables","spearman")
+## numVNegLitH + numNonDualHornClauses + numVariables
+```{r spearman numVNegLitH + numNonDualHornClauses + numVariables, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("numVNegLitH" , "numNonDualHornClauses" , "numVariables"),"numVNegLitH + numNonDualHornClauses + numVariables","spearman")
 ```
 
 ## numVNegLitH + numVPosLit + numNonDualHornClauses
@@ -523,98 +498,98 @@ genCors(c("numVNegLitH" , "numVPosLit" , "numNonDualHornClauses"),"numVNegLitH +
 # k Consistency
 ## numAtomsHead
 ```{r spearman numAtomsHead, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c(47),"numAtomsHead","spearman")
+genCors(c(47),"numAtomsHead","spearman","*")
 ```
 
-## maxSizeRuleHead + rules
-```{r spearman maxSizeRuleHead + rules, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c(42,10),"maxSizeRuleHead + rules","spearman")
+## maxSizeRuleHead + numRules
+```{r spearman maxSizeRuleHead + numRules, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c(42,10),"maxSizeRuleHead + numRules","spearman","*")
 ```
 
 ## maxSizeAnswerSet + maxSizeHeadNegBodyRule
 ```{r spearman maxSizeAnswerSet + maxSizeHeadNegBodyRule, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c(52,41),"maxSizeAnswerSet + maxSizeHeadNegBodyRule","spearman")
+genCors(c(52,41),"maxSizeAnswerSet + maxSizeHeadNegBodyRule","spearman","*")
 ```
 
 ## numNonHornClauses + maxSizeHeadNegBodyRule
 ```{r spearman numNonHornClauses + maxSizeHeadNegBodyRule, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c(17,41),"numNonHornClauses + maxSizeHeadNegBodyRule","spearman")
+genCors(c(17,41),"numNonHornClauses + maxSizeHeadNegBodyRule","spearman","*")
 ```
 
 ## maxSizeAnswerSet + numAtomsPosBody + maxNumVarOccHeadNegBody + maxSizeNegBodyCon + numAtomsNegBody
 ```{r spearman maxSizeAnswerSet + numAtomsPosBody + maxNumVarOccHeadNegBody + maxSizeNegBodyCon + numAtomsNegBody, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c(52,48,51,46,49),"maxSizeAnswerSet + numAtomsPosBody + maxNumVarOccHeadNegBody + maxSizeNegBodyCon + numAtomsNegBody","spearman")
+genCors(c(52,48,51,46,49),"maxSizeAnswerSet + numAtomsPosBody + maxNumVarOccHeadNegBody + maxSizeNegBodyCon + numAtomsNegBody","spearman","*")
 ```
 
 ## numAtomsPosBody + numNonHornClauses + maxSizeNegBodyCon + numAtomsNegBody
 ```{r spearman numAtomsPosBody + numNonHornClauses + maxSizeNegBodyCon + numAtomsNegBody, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c(48,17,46,49),"numAtomsPosBody + numNonHornClauses + maxSizeNegBodyCon + numAtomsNegBody","spearman")
+genCors(c(48,17,46,49),"numAtomsPosBody + numNonHornClauses + maxSizeNegBodyCon + numAtomsNegBody","spearman","*")
 ```
 
-## maxSizeAnswerSet + numAtomsPosBody + maxNumVarOccHeadNegBody + rules + numAtomsNegBody
-```{r spearman maxSizeAnswerSet + numAtomsPosBody + maxNumVarOccHeadNegBody + rules + numAtomsNegBody, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c(52,48,51,10,49),"maxSizeAnswerSet + numAtomsPosBody + maxNumVarOccHeadNegBody + rules + numAtomsNegBody","spearman")
+## maxSizeAnswerSet + numAtomsPosBody + maxNumVarOccHeadNegBody + numRules + numAtomsNegBody
+```{r spearman maxSizeAnswerSet + numAtomsPosBody + maxNumVarOccHeadNegBody + numRules + numAtomsNegBody, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c(52,48,51,10,49),"maxSizeAnswerSet + numAtomsPosBody + maxNumVarOccHeadNegBody + numRules + numAtomsNegBody","spearman","*")
 ```
 
-## numAtomsPosBody + numNonHornClauses + rules + numAtomsNegBody
-```{r spearman numAtomsPosBody + numNonHornClauses + rules + numAtomsNegBody, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c(48,17,10,49),"numAtomsPosBody + numNonHornClauses + rules + numAtomsNegBody","spearman")
+## numAtomsPosBody + numNonHornClauses + numRules + numAtomsNegBody
+```{r spearman numAtomsPosBody + numNonHornClauses + numRules + numAtomsNegBody, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c(48,17,10,49),"numAtomsPosBody + numNonHornClauses + numRules + numAtomsNegBody","spearman","*")
 ```
 
-## rules + numAtomsNegBody
-```{r spearman rules + numAtomsNegBody, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c(10,49),"rules + numAtomsNegBody","spearman")
+## numRules + numAtomsNegBody
+```{r spearman numRules + numAtomsNegBody, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c(10,49),"numRules + numAtomsNegBody","spearman","*")
 ```
 
 ## maxSizeHeadNegBodyRule + numNonHornClauses
 ```{r spearman maxSizeHeadNegBodyRule + numNonHornClauses, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c(41,17),"maxSizeHeadNegBodyRule + numNonHornClauses","spearman")
+genCors(c(41,17),"maxSizeHeadNegBodyRule + numNonHornClauses","spearman","*")
 ```
 
-## rules
-```{r spearman rules, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c(10),"rules","spearman")
+## numRules
+```{r spearman numRules, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c(10),"numRules","spearman","*")
 ```
 
 ## maxSizeAnswerSet
 ```{r spearman maxSizeAnswerSet, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c(52),"maxSizeAnswerSet","spearman")
+genCors(c(52),"maxSizeAnswerSet","spearman","*")
 ```
 
 # Hardness
-## maxSizeNCon + maxNumAtomOcc + numAtomsPosBody + constraints + maxSizeNegBodyCon + numAtomOccC
-```{r spearman maxSizeNCon + maxNumAtomOcc + numAtomsPosBody + constraints + maxSizeNegBodyCon + numAtomOccC, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c("maxSizeNCon", "maxNumAtomOcc", "numAtomsPosBody", "constraints", "maxSizeNegBodyCon", "numAtomOccC"),"maxSizeNCon + maxNumAtomOcc + numAtomsPosBody + constraints + maxSizeNegBodyCon + numAtomOccC","spearman")
+## maxSizeNCon + maxNumAtomOcc + numAtomsPosBody + numConstraints + maxSizeNegBodyCon + numAtomOccC
+```{r spearman maxSizeNCon + maxNumAtomOcc + numAtomsPosBody + numConstraints + maxSizeNegBodyCon + numAtomOccC, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("maxSizeNCon", "maxNumAtomOcc", "numAtomsPosBody", "numConstraints", "maxSizeNegBodyCon", "numAtomOccC"),"maxSizeNCon + maxNumAtomOcc + numAtomsPosBody + numConstraints + maxSizeNegBodyCon + numAtomOccC","spearman","\\#")
 ```
 
 ## maxSizeAnswerSet + maxSizeNegBodyRule + maxSizePosBodyCon + maxSizeNegBodyCon
 ```{r spearman maxSizeAnswerSet + maxSizeNegBodyRule + maxSizePosBodyCon + maxSizeNegBodyCon, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c("maxSizeAnswerSet", "maxSizeNegBodyRule", "maxSizePosBodyCon", "maxSizeNegBodyCon"),"maxSizeAnswerSet + maxSizeNegBodyRule + maxSizePosBodyCon + maxSizeNegBodyCon","spearman")
+genCors(c("maxSizeAnswerSet", "maxSizeNegBodyRule", "maxSizePosBodyCon", "maxSizeNegBodyCon"),"maxSizeAnswerSet + maxSizeNegBodyRule + maxSizePosBodyCon + maxSizeNegBodyCon","spearman","\\#")
 ```
 
-## maxSizeAnswerSet + maxSizePosBodyNCon + numAtomsPosBody + constraints + maxSizeNegBodyCon + numAtomOccC
-```{r spearman maxSizeAnswerSet + maxSizePosBodyNCon + numAtomsPosBody + constraints + maxSizeNegBodyCon + numAtomOccC, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c("maxSizeAnswerSet", "maxSizePosBodyNCon", "numAtomsPosBody", "constraints", "maxSizeNegBodyCon", "numAtomOccC"),"maxSizeAnswerSet + maxSizePosBodyNCon + numAtomsPosBody + constraints + maxSizeNegBodyCon + numAtomOccC","spearman")
+## maxSizeAnswerSet + maxSizePosBodyNCon + numAtomsPosBody + numConstraints + maxSizeNegBodyCon + numAtomOccC
+```{r spearman maxSizeAnswerSet + maxSizePosBodyNCon + numAtomsPosBody + numConstraints + maxSizeNegBodyCon + numAtomOccC, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("maxSizeAnswerSet", "maxSizePosBodyNCon", "numAtomsPosBody", "numConstraints", "maxSizeNegBodyCon", "numAtomOccC"),"maxSizeAnswerSet + maxSizePosBodyNCon + numAtomsPosBody + numConstraints + maxSizeNegBodyCon + numAtomOccC","spearman","\\#")
 ```
 
-## maxSizeAnswerSet + maxSizePosBodyNCon + numNonHornClauses + maxNumAtomOcc + numAtomsPosBody + rules
-```{r spearman maxSizeAnswerSet + maxSizePosBodyNCon + numNonHornClauses + maxNumAtomOcc + numAtomsPosBody + rules, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c("maxSizeAnswerSet", "maxSizePosBodyNCon", "numNonHornClauses", "maxNumAtomOcc", "numAtomsPosBody", "rules"),"maxSizeAnswerSet + maxSizePosBodyNCon + numNonHornClauses + maxNumAtomOcc + numAtomsPosBody + rules","spearman")
+## maxSizeAnswerSet + maxSizePosBodyNCon + numNonHornClauses + maxNumAtomOcc + numAtomsPosBody + numRules
+```{r spearman maxSizeAnswerSet + maxSizePosBodyNCon + numNonHornClauses + maxNumAtomOcc + numAtomsPosBody + numRules, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("maxSizeAnswerSet", "maxSizePosBodyNCon", "numNonHornClauses", "maxNumAtomOcc", "numAtomsPosBody", "numRules"),"maxSizeAnswerSet + maxSizePosBodyNCon + numNonHornClauses + maxNumAtomOcc + numAtomsPosBody + numRules","spearman","\\#")
 ```
 
-## maxSizeAnswerSet + maxSizePosBodyNCon + numNonHornClauses + maxNumVarOccHeadNegBody + constraints + maxSizeNegBodyCon + numAtomOccC
-```{r spearman maxSizeAnswerSet + maxSizePosBodyNCon + numNonHornClauses + maxNumVarOccHeadNegBody + constraints + maxSizeNegBodyCon + numAtomOccC, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c("maxSizeAnswerSet", "maxSizePosBodyNCon", "numNonHornClauses", "maxNumVarOccHeadNegBody", "constraints", "maxSizeNegBodyCon", "numAtomOccC"),"maxSizeAnswerSet + maxSizePosBodyNCon + numNonHornClauses + maxNumVarOccHeadNegBody + constraints + maxSizeNegBodyCon + numAtomOccC","spearman")
+## maxSizeAnswerSet + maxSizePosBodyNCon + numNonHornClauses + maxNumVarOccHeadNegBody + numConstraints + maxSizeNegBodyCon + numAtomOccC
+```{r spearman maxSizeAnswerSet + maxSizePosBodyNCon + numNonHornClauses + maxNumVarOccHeadNegBody + numConstraints + maxSizeNegBodyCon + numAtomOccC, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("maxSizeAnswerSet", "maxSizePosBodyNCon", "numNonHornClauses", "maxNumVarOccHeadNegBody", "numConstraints", "maxSizeNegBodyCon", "numAtomOccC"),"maxSizeAnswerSet + maxSizePosBodyNCon + numNonHornClauses + maxNumVarOccHeadNegBody + numConstraints + maxSizeNegBodyCon + numAtomOccC","spearman","\\#")
 ```
 
-## maxSizePosBodyNCon + numNonHornClauses + maxNumAtomOcc + constraints + maxSizeNegBodyCon + numAtomOccC
-```{r spearman maxSizePosBodyNCon + numNonHornClauses + maxNumAtomOcc + constraints + maxSizeNegBodyCon + numAtomOccC, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c("maxSizePosBodyNCon", "numNonHornClauses", "maxNumAtomOcc", "constraints", "maxSizeNegBodyCon", "numAtomOccC"),"maxSizePosBodyNCon + numNonHornClauses + maxNumAtomOcc + constraints + maxSizeNegBodyCon + numAtomOccC","spearman")
+## maxSizePosBodyNCon + numNonHornClauses + maxNumAtomOcc + numConstraints + maxSizeNegBodyCon + numAtomOccC
+```{r spearman maxSizePosBodyNCon + numNonHornClauses + maxNumAtomOcc + numConstraints + maxSizeNegBodyCon + numAtomOccC, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("maxSizePosBodyNCon", "numNonHornClauses", "maxNumAtomOcc", "numConstraints", "maxSizeNegBodyCon", "numAtomOccC"),"maxSizePosBodyNCon + numNonHornClauses + maxNumAtomOcc + numConstraints + maxSizeNegBodyCon + numAtomOccC","spearman","\\#")
 ```
 
-## maxSizeAnswerSet + maxSizePosBodyNCon + numNonHornClauses + maxNumAtomOcc + rules + maxSizeNegBodyCon
-```{r spearman maxSizeAnswerSet + maxSizePosBodyNCon + numNonHornClauses + maxNumAtomOcc + rules + maxSizeNegBodyCon, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
-genCors(c("maxSizeAnswerSet", "maxSizePosBodyNCon", "numNonHornClauses", "maxNumAtomOcc", "rules", "maxSizeNegBodyCon"),"maxSizeAnswerSet + maxSizePosBodyNCon + numNonHornClauses + maxNumAtomOcc + rules + maxSizeNegBodyCon","spearman")
+## maxSizeAnswerSet + maxSizePosBodyNCon + numNonHornClauses + maxNumAtomOcc + numRules + maxSizeNegBodyCon
+```{r spearman maxSizeAnswerSet + maxSizePosBodyNCon + numNonHornClauses + maxNumAtomOcc + numRules + maxSizeNegBodyCon, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+genCors(c("maxSizeAnswerSet", "maxSizePosBodyNCon", "numNonHornClauses", "maxNumAtomOcc", "numRules", "maxSizeNegBodyCon"),"maxSizeAnswerSet + maxSizePosBodyNCon + numNonHornClauses + maxNumAtomOcc + numRules + maxSizeNegBodyCon","spearman","\\#")
 ```
 
 # Number of High and Low Correlations per parameter

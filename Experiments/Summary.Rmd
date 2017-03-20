@@ -86,7 +86,34 @@ for (pro in unique(stat[, 1])) {
       ))
   }
 }
-kable(overview[order(overview[, 2], decreasing = TRUE),], digits=3, col.names = c("Problem","Number of Instances"))
+kable(overview[order(as.numeric(overview[, 2]), decreasing = TRUE),], digits=3, col.names = c("Problem","Number of Instances"))
+# kable(su, digits=3, col.names = c("Problem","Statistic","Min","Max","Mean","Median"))
+
+```
+
+## Number of instances per problem alphabetical
+```{r Summary per problem alphabetical, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+
+su = matrix(nrow = 0, ncol = 6)
+overview = matrix(nrow = 0, ncol = 2)
+
+for (pro in unique(stat[, 1])) {
+  st <- stat[stat$problem == pro, ]
+  overview <-
+    rbind(overview, c(pro, sum(!is.na(st[, 1]))))
+  for (col in 2:length(colnames(stat))) {
+    su <-
+      rbind(su, c(
+        pro,
+        colnames(stat)[col],
+        min(st[, col], na.rm = TRUE),
+        max(st[, col], na.rm = TRUE),
+        mean(st[, col], na.rm = TRUE),
+        median(st[, col], na.rm = TRUE)
+      ))
+  }
+}
+kable(overview[order(overview[, 1], decreasing = FALSE),], digits=3, col.names = c("Problem","Number of Instances"))
 # kable(su, digits=3, col.names = c("Problem","Statistic","Min","Max","Mean","Median"))
 
 ```
@@ -165,7 +192,7 @@ for (i in 3:len) {
     if (numvalues[pro, i] >= mininst) {
       cormatrix_stat[num, 1] <- problemnames[pro]
       a <-
-        cor.test(valmatrix[[pro]][[i]], valmatrix[[pro]]$time_CPU, method = "spearman")
+        cor.test(valmatrix[[pro]][[i]], valmatrix[[pro]]$CPU_time, method = "spearman")
       cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
       num <- num + 1
     }
@@ -189,9 +216,9 @@ for (i in 3:len) {
   }
   matrix_interesting[i, 1] <- numhigh
   matrix_interesting[i, 2] <- numlow
-  if (numhigh >= 12) {
-    cat(sprintf("\n\n### Time vs. %s\n\n", columns[i]))
-    cat(sprintf("\n\nhigh: %i, low: %i \n\n", numhigh, numlow))
+  if (numhigh >= 9) {
+    cat(sprintf("\n\n### Time vs. %s \n\n", columns[i]))
+    cat(sprintf("\n\nhigh: %i, low: %i mean: %.2f \n\n", numhigh, numlow, round(mean(as.numeric(cormatrix_stat[,2]),na.rm = TRUE),digits=2)))
     print(kable(matrix_sorted, col.names = c("Problems", "Correlation")))
   }
 }
@@ -212,7 +239,7 @@ for (i in 3:len) {
             numvalues[pro, b] >= mininst) {
           cormatrix_stat[num, 1] <- problemnames[pro]
           a <-
-            cor.test(valmatrix[[pro]][[i]]+valmatrix[[pro]][[b]], valmatrix[[pro]]$time_CPU, method = "spearman")
+            cor.test(valmatrix[[pro]][[i]]+valmatrix[[pro]][[b]], valmatrix[[pro]]$CPU_time, method = "spearman")
           cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
           num <- num + 1
         }
@@ -238,7 +265,7 @@ for (i in 3:len) {
       matrix_two_parameters_low[i, b] <- numlow
       matrix_two_parameters_high[b, i] <- numhigh
       matrix_two_parameters_low[b, i] <- numlow
-      if (numhigh >= 13 &&
+      if (numhigh >= 10 &&
           max(matrix_interesting[i, 1],
               matrix_interesting[b, 1],
               na.rm =
@@ -254,7 +281,7 @@ for (i in 3:len) {
                             TRUE)
           )
         )
-        cat(sprintf("\n\nhigh: %i, low: %i \n\n", numhigh, numlow))
+    cat(sprintf("\n\nhigh: %i, low: %i mean: %.2f \n\n", numhigh, numlow, round(mean(as.numeric(cormatrix_stat[,2]),na.rm = TRUE),digits=2)))
         cat(
           sprintf(
             "\n\n%s high: %i, low: %i \n\n",
@@ -297,7 +324,7 @@ for (i in 3:len) {
                 numvalues[pro, c] >= mininst) {
               cormatrix_stat[num, 1] <- problemnames[pro]
               a <-
-                cor.test(valmatrix[[pro]][[i]]+valmatrix[[pro]][[b]]+valmatrix[[pro]][[c]], valmatrix[[pro]]$time_CPU, method = "spearman")
+                cor.test(valmatrix[[pro]][[i]]+valmatrix[[pro]][[b]]+valmatrix[[pro]][[c]], valmatrix[[pro]]$CPU_time, method = "spearman")
               cormatrix_stat[num, 2] <-
                 round(a$estimate, digits = 2)
               num <- num + 1
@@ -333,7 +360,7 @@ for (i in 3:len) {
           matrix_three_parameters_low[c, i, b] <- numlow
           matrix_three_parameters_low[c, b, i] <- numlow
           
-          if (numhigh >= 14 &&
+          if (numhigh >= 11 &&
               max(
                 matrix_two_parameters_high[i, b],
                 matrix_two_parameters_high[i, c],
@@ -362,7 +389,7 @@ for (i in 3:len) {
                 )
               )
             )
-            cat(sprintf("\n\nhigh: %i, low: %i \n\n", numhigh, numlow))
+    cat(sprintf("\n\nhigh: %i, low: %i mean: %.2f \n\n", numhigh, numlow, round(mean(as.numeric(cormatrix_stat[,2]),na.rm = TRUE),digits=2)))
             cat(
               sprintf(
                 "\n\n%s + %s high: %i, low: %i\n\n",
@@ -448,7 +475,7 @@ for (i in 3:len) {
                     cor.test(
                       valmatrix[[pro]][[i]] + valmatrix[[pro]][[b]] + valmatrix[[pro]][[c]] +
                         valmatrix[[pro]][[d]],
-                      valmatrix[[pro]]$time_CPU,
+                      valmatrix[[pro]]$CPU_time,
                       method = "spearman"
                     )
                   cormatrix_stat[num, 2] <-
@@ -473,7 +500,7 @@ for (i in 3:len) {
                   break
                 }
               }
-              if (numhigh >= 15 &&
+              if (numhigh >= 12 &&
                   max(
                     matrix_three_parameters_high[i, b, c],
                     matrix_three_parameters_high[i, c, d],
@@ -520,7 +547,7 @@ for (i in 3:len) {
                   )
                 )
                 ################
-                cat(sprintf("\n\nhigh: %i, low: %i \n\n", numhigh, numlow))
+    cat(sprintf("\n\nhigh: %i, low: %i mean: %.2f \n\n", numhigh, numlow, round(mean(as.numeric(cormatrix_stat[,2]),na.rm = TRUE),digits=2)))
                 #################
                 cat(
                   sprintf(
@@ -671,20 +698,35 @@ for (i in 3:len) {
 num <- 1
 cormatrix_stat <- matrix(ncol = 2, nrow = numprobs)
 for (pro in unique(stat[, 1])) {
-  st <- stat[stat$problem == pro, ]
+  st <- stat[stat$problem == pro,]
   lenst <- sum(!is.na(st[, 1]))
   cormatrix_stat[num, 1] <- pro
   if (lenst >= mininst) {
-    a <- cor.test(st$numAtomsHead, st$time_CPU, method="spearman")
+    a <- cor.test(st$numAtomsHead, st$CPU_time, method = "spearman")
     cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
   }
   num <- num + 1
 }
-print(kable(cormatrix_stat[order(cormatrix_stat[,2],decreasing = TRUE),],col.names = c("Problems","Correlation")))
+
+numhigh <- 0
+numlow <- 0
+for (n in 1:nrow(cormatrix_stat)) {
+  if (!is.na(cormatrix_stat[n, 2])) {
+    if (abs(as.numeric(cormatrix_stat[n, 2])) >= 0.7) {
+      numhigh <- numhigh + 1
+    }
+    if (abs(as.numeric(cormatrix_stat[n, 2])) <= 0.2) {
+      numlow <- numlow + 1
+    }
+  }
+}
+cat(sprintf("\n\n### Time vs. %s\n\n", columns[i]))
+    cat(sprintf("\n\nhigh: %i, low: %i mean: %.2f \n\n", numhigh, numlow, round(mean(as.numeric(cormatrix_stat[,2]),na.rm = TRUE),digits=2)))
+print(kable(cormatrix_stat[order(cormatrix_stat[, 2], decreasing = TRUE), ], col.names = c("Problems", "Correlation")))
 
 ```
 
-## maxSizeRuleHead + rules
+## maxSizeRuleHead + numRules
 ```{r Maximum size of the Head of a rule + Number of Rules Spearman, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
 num <- 1
 cormatrix_stat <- matrix(ncol = 2, nrow = numprobs)
@@ -693,11 +735,26 @@ for (pro in unique(stat[, 1])) {
   lenst <- sum(!is.na(st[, 1]))
   cormatrix_stat[num, 1] <- pro
   if (lenst >= mininst) {
-    a <- cor.test(st$maxSizeRuleHead + st$rules, st$time_CPU, method="spearman")
+    a <- cor.test(st$maxSizeRuleHead + st$numRules, st$CPU_time, method="spearman")
     cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
   }
   num <- num + 1
 }
+
+numhigh <- 0
+numlow <- 0
+for (n in 1:nrow(cormatrix_stat)) {
+  if (!is.na(cormatrix_stat[n, 2])) {
+    if (abs(as.numeric(cormatrix_stat[n, 2])) >= 0.7) {
+      numhigh <- numhigh + 1
+    }
+    if (abs(as.numeric(cormatrix_stat[n, 2])) <= 0.2) {
+      numlow <- numlow + 1
+    }
+  }
+}
+cat(sprintf("\n\n### Time vs. %s\n\n", columns[i]))
+    cat(sprintf("\n\nhigh: %i, low: %i mean: %.2f \n\n", numhigh, numlow, round(mean(as.numeric(cormatrix_stat[,2]),na.rm = TRUE),digits=2)))
 print(kable(cormatrix_stat[order(cormatrix_stat[,2],decreasing = TRUE),],col.names = c("Problems","Correlation")))
 
 ```
@@ -711,11 +768,26 @@ for (pro in unique(stat[, 1])) {
   lenst <- sum(!is.na(st[, 1]))
   cormatrix_stat[num, 1] <- pro
   if (lenst >= mininst) {
-    a <- cor.test(st$maxSizeAnswerSet + st$maxSizeHeadNegBodyRule, st$time_CPU, method="spearman")
+    a <- cor.test(st$maxSizeAnswerSet + st$maxSizeHeadNegBodyRule, st$CPU_time, method="spearman")
     cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
   }
   num <- num + 1
 }
+
+numhigh <- 0
+numlow <- 0
+for (n in 1:nrow(cormatrix_stat)) {
+  if (!is.na(cormatrix_stat[n, 2])) {
+    if (abs(as.numeric(cormatrix_stat[n, 2])) >= 0.7) {
+      numhigh <- numhigh + 1
+    }
+    if (abs(as.numeric(cormatrix_stat[n, 2])) <= 0.2) {
+      numlow <- numlow + 1
+    }
+  }
+}
+cat(sprintf("\n\n### Time vs. %s\n\n", columns[i]))
+    cat(sprintf("\n\nhigh: %i, low: %i mean: %.2f \n\n", numhigh, numlow, round(mean(as.numeric(cormatrix_stat[,2]),na.rm = TRUE),digits=2)))
 print(kable(cormatrix_stat[order(cormatrix_stat[,2],decreasing = TRUE),],col.names = c("Problems","Correlation")))
 
 ```
@@ -730,11 +802,26 @@ for (pro in unique(stat[, 1])) {
   cormatrix_stat[num, 1] <- pro
   if (lenst >= mininst) {
     a <-
-      cor.test(st$numNonHornClauses + st$maxSizeHeadNegBodyRule, st$time_CPU, method="spearman")
+      cor.test(st$numNonHornClauses + st$maxSizeHeadNegBodyRule, st$CPU_time, method="spearman")
     cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
   }
   num <- num + 1
 }
+
+numhigh <- 0
+numlow <- 0
+for (n in 1:nrow(cormatrix_stat)) {
+  if (!is.na(cormatrix_stat[n, 2])) {
+    if (abs(as.numeric(cormatrix_stat[n, 2])) >= 0.7) {
+      numhigh <- numhigh + 1
+    }
+    if (abs(as.numeric(cormatrix_stat[n, 2])) <= 0.2) {
+      numlow <- numlow + 1
+    }
+  }
+}
+cat(sprintf("\n\n### Time vs. %s\n\n", columns[i]))
+    cat(sprintf("\n\nhigh: %i, low: %i mean: %.2f \n\n", numhigh, numlow, round(mean(as.numeric(cormatrix_stat[,2]),na.rm = TRUE),digits=2)))
 print(kable(cormatrix_stat[order(cormatrix_stat[,2],decreasing = TRUE),],col.names = c("Problems","Correlation")))
 
 ```
@@ -751,12 +838,27 @@ for (pro in unique(stat[, 1])) {
     a <-
       cor.test(
         st$maxSizeAnswerSet + st$numAtomsPosBody + st$maxNumVarOccHeadNegBody + st$maxSizeNegBodyCon + st$numAtomsNegBody,
-        st$time_CPU, method="spearman"
+        st$CPU_time, method="spearman"
       )
     cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
   }
   num <- num + 1
 }
+
+numhigh <- 0
+numlow <- 0
+for (n in 1:nrow(cormatrix_stat)) {
+  if (!is.na(cormatrix_stat[n, 2])) {
+    if (abs(as.numeric(cormatrix_stat[n, 2])) >= 0.7) {
+      numhigh <- numhigh + 1
+    }
+    if (abs(as.numeric(cormatrix_stat[n, 2])) <= 0.2) {
+      numlow <- numlow + 1
+    }
+  }
+}
+cat(sprintf("\n\n### Time vs. %s\n\n", columns[i]))
+    cat(sprintf("\n\nhigh: %i, low: %i mean: %.2f \n\n", numhigh, numlow, round(mean(as.numeric(cormatrix_stat[,2]),na.rm = TRUE),digits=2)))
 print(kable(cormatrix_stat[order(cormatrix_stat[,2],decreasing = TRUE),],col.names = c("Problems","Correlation")))
 
 ```
@@ -773,17 +875,32 @@ for (pro in unique(stat[, 1])) {
     a <-
       cor.test(
         st$numAtomsPosBody + st$numNonHornClauses + st$maxSizeNegBodyCon + st$numAtomsNegBody,
-        st$time_CPU, method="spearman"
+        st$CPU_time, method="spearman"
       )
     cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
   }
   num <- num + 1
 }
+
+numhigh <- 0
+numlow <- 0
+for (n in 1:nrow(cormatrix_stat)) {
+  if (!is.na(cormatrix_stat[n, 2])) {
+    if (abs(as.numeric(cormatrix_stat[n, 2])) >= 0.7) {
+      numhigh <- numhigh + 1
+    }
+    if (abs(as.numeric(cormatrix_stat[n, 2])) <= 0.2) {
+      numlow <- numlow + 1
+    }
+  }
+}
+cat(sprintf("\n\n### Time vs. %s\n\n", columns[i]))
+    cat(sprintf("\n\nhigh: %i, low: %i mean: %.2f \n\n", numhigh, numlow, round(mean(as.numeric(cormatrix_stat[,2]),na.rm = TRUE),digits=2)))
 print(kable(cormatrix_stat[order(cormatrix_stat[, 2], decreasing = TRUE), ], col.names = c("Problems", "Correlation")))
 
 ```
 
-## maxSizeAnswerSet + numAtomsPosBody + maxNumVarOccHeadNegBody + rules + numAtomsNegBody
+## maxSizeAnswerSet + numAtomsPosBody + maxNumVarOccHeadNegBody + numRules + numAtomsNegBody
 ```{r Maximum size of an answer set + Number of Atoms in the positive body + Maximum Number of Occurences of a variable when only head and negative body + Number of Rules + Number of Atoms in the negative body Spearman, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
 num <- 1
 cormatrix_stat <- matrix(ncol = 2, nrow = numprobs)
@@ -794,19 +911,34 @@ for (pro in unique(stat[, 1])) {
   if (lenst >= mininst) {
     a <-
       cor.test(
-        st$maxSizeAnswerSet + st$numAtomsPosBody + st$maxNumVarOccHeadNegBody + st$rules +
+        st$maxSizeAnswerSet + st$numAtomsPosBody + st$maxNumVarOccHeadNegBody + st$numRules +
           st$numAtomsNegBody,
-        st$time_CPU, method="spearman"
+        st$CPU_time, method="spearman"
       )
     cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
   }
   num <- num + 1
 }
+
+numhigh <- 0
+numlow <- 0
+for (n in 1:nrow(cormatrix_stat)) {
+  if (!is.na(cormatrix_stat[n, 2])) {
+    if (abs(as.numeric(cormatrix_stat[n, 2])) >= 0.7) {
+      numhigh <- numhigh + 1
+    }
+    if (abs(as.numeric(cormatrix_stat[n, 2])) <= 0.2) {
+      numlow <- numlow + 1
+    }
+  }
+}
+cat(sprintf("\n\n### Time vs. %s\n\n", columns[i]))
+    cat(sprintf("\n\nhigh: %i, low: %i mean: %.2f \n\n", numhigh, numlow, round(mean(as.numeric(cormatrix_stat[,2]),na.rm = TRUE),digits=2)))
 print(kable(cormatrix_stat[order(cormatrix_stat[,2],decreasing = TRUE),],col.names = c("Problems","Correlation")))
 
 ```
 
-## numAtomsPosBody + numNonHornClauses + rules + numAtomsNegBody
+## numAtomsPosBody + numNonHornClauses + numRules + numAtomsNegBody
 ```{r Number of Atoms in the positive body + Number non Horn rules + Number of Rules + Number of Atoms in the negative body Spearman, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
 num <- 1
 cormatrix_stat <- matrix(ncol = 2, nrow = numprobs)
@@ -816,17 +948,32 @@ for (pro in unique(stat[, 1])) {
   cormatrix_stat[num, 1] <- pro
   if (lenst >= mininst) {
     a <-
-      cor.test(st$numAtomsPosBody + st$numNonHornClauses + st$rules + st$numAtomsNegBody,
-               st$time_CPU, method="spearman")
+      cor.test(st$numAtomsPosBody + st$numNonHornClauses + st$numRules + st$numAtomsNegBody,
+               st$CPU_time, method="spearman")
     cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
   }
   num <- num + 1
 }
+
+numhigh <- 0
+numlow <- 0
+for (n in 1:nrow(cormatrix_stat)) {
+  if (!is.na(cormatrix_stat[n, 2])) {
+    if (abs(as.numeric(cormatrix_stat[n, 2])) >= 0.7) {
+      numhigh <- numhigh + 1
+    }
+    if (abs(as.numeric(cormatrix_stat[n, 2])) <= 0.2) {
+      numlow <- numlow + 1
+    }
+  }
+}
+cat(sprintf("\n\n### Time vs. %s\n\n", columns[i]))
+    cat(sprintf("\n\nhigh: %i, low: %i mean: %.2f \n\n", numhigh, numlow, round(mean(as.numeric(cormatrix_stat[,2]),na.rm = TRUE),digits=2)))
 print(kable(cormatrix_stat[order(cormatrix_stat[,2],decreasing = TRUE),],col.names = c("Problems","Correlation")))
 
 ```
 
-## rules + numAtomsNegBody
+## numRules + numAtomsNegBody
 ```{r Number of Rules + Number of Atoms in the negative body Spearman, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
 num <- 1
 cormatrix_stat <- matrix(ncol = 2, nrow = numprobs)
@@ -835,11 +982,26 @@ for (pro in unique(stat[, 1])) {
   lenst <- sum(!is.na(st[, 1]))
   cormatrix_stat[num, 1] <- pro
   if (lenst >= mininst) {
-    a <- cor.test(st$rules + st$numAtomsNegBody, st$time_CPU, method="spearman")
+    a <- cor.test(st$numRules + st$numAtomsNegBody, st$CPU_time, method="spearman")
     cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
   }
   num <- num + 1
 }
+
+numhigh <- 0
+numlow <- 0
+for (n in 1:nrow(cormatrix_stat)) {
+  if (!is.na(cormatrix_stat[n, 2])) {
+    if (abs(as.numeric(cormatrix_stat[n, 2])) >= 0.7) {
+      numhigh <- numhigh + 1
+    }
+    if (abs(as.numeric(cormatrix_stat[n, 2])) <= 0.2) {
+      numlow <- numlow + 1
+    }
+  }
+}
+cat(sprintf("\n\n### Time vs. %s\n\n", columns[i]))
+    cat(sprintf("\n\nhigh: %i, low: %i mean: %.2f \n\n", numhigh, numlow, round(mean(as.numeric(cormatrix_stat[,2]),na.rm = TRUE),digits=2)))
 print(kable(cormatrix_stat[order(cormatrix_stat[,2],decreasing = TRUE),],col.names = c("Problems","Correlation")))
 
 ```
@@ -854,16 +1016,31 @@ for (pro in unique(stat[, 1])) {
   cormatrix_stat[num, 1] <- pro
   if (lenst >= mininst) {
     a <-
-      cor.test(st$maxSizeHeadNegBodyRule + st$numNonHornClauses, st$time_CPU, method="spearman")
+      cor.test(st$maxSizeHeadNegBodyRule + st$numNonHornClauses, st$CPU_time, method="spearman")
     cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
   }
   num <- num + 1
 }
+
+numhigh <- 0
+numlow <- 0
+for (n in 1:nrow(cormatrix_stat)) {
+  if (!is.na(cormatrix_stat[n, 2])) {
+    if (abs(as.numeric(cormatrix_stat[n, 2])) >= 0.7) {
+      numhigh <- numhigh + 1
+    }
+    if (abs(as.numeric(cormatrix_stat[n, 2])) <= 0.2) {
+      numlow <- numlow + 1
+    }
+  }
+}
+cat(sprintf("\n\n### Time vs. %s\n\n", columns[i]))
+    cat(sprintf("\n\nhigh: %i, low: %i mean: %.2f \n\n", numhigh, numlow, round(mean(as.numeric(cormatrix_stat[,2]),na.rm = TRUE),digits=2)))
 print(kable(cormatrix_stat[order(cormatrix_stat[,2],decreasing = TRUE),],col.names = c("Problems","Correlation")))
 
 ```
 
-## rules
+## numRules
 ```{r Number of Rules Spearman, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
 num <- 1
 cormatrix_stat <- matrix(ncol = 2, nrow = numprobs)
@@ -872,11 +1049,26 @@ for (pro in unique(stat[, 1])) {
   lenst <- sum(!is.na(st[, 1]))
   cormatrix_stat[num, 1] <- pro
   if (lenst >= mininst) {
-    a <- cor.test(st$rules, st$time_CPU, method="spearman")
+    a <- cor.test(st$numRules, st$CPU_time, method="spearman")
     cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
   }
   num <- num + 1
 }
+
+numhigh <- 0
+numlow <- 0
+for (n in 1:nrow(cormatrix_stat)) {
+  if (!is.na(cormatrix_stat[n, 2])) {
+    if (abs(as.numeric(cormatrix_stat[n, 2])) >= 0.7) {
+      numhigh <- numhigh + 1
+    }
+    if (abs(as.numeric(cormatrix_stat[n, 2])) <= 0.2) {
+      numlow <- numlow + 1
+    }
+  }
+}
+cat(sprintf("\n\n### Time vs. %s\n\n", columns[i]))
+    cat(sprintf("\n\nhigh: %i, low: %i mean: %.2f \n\n", numhigh, numlow, round(mean(as.numeric(cormatrix_stat[,2]),na.rm = TRUE),digits=2)))
 print(kable(cormatrix_stat[order(cormatrix_stat[,2],decreasing = TRUE),],col.names = c("Problems","Correlation")))
 
 ```
@@ -890,18 +1082,33 @@ for (pro in unique(stat[, 1])) {
   lenst <- sum(!is.na(st[, 1]))
   cormatrix_stat[num, 1] <- pro
   if (lenst >= mininst) {
-    a <- cor.test(st$maxSizeAnswerSet, st$time_CPU, method="spearman")
+    a <- cor.test(st$maxSizeAnswerSet, st$CPU_time, method="spearman")
     cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
   }
   num <- num + 1
 }
+
+numhigh <- 0
+numlow <- 0
+for (n in 1:nrow(cormatrix_stat)) {
+  if (!is.na(cormatrix_stat[n, 2])) {
+    if (abs(as.numeric(cormatrix_stat[n, 2])) >= 0.7) {
+      numhigh <- numhigh + 1
+    }
+    if (abs(as.numeric(cormatrix_stat[n, 2])) <= 0.2) {
+      numlow <- numlow + 1
+    }
+  }
+}
+cat(sprintf("\n\n### Time vs. %s\n\n", columns[i]))
+    cat(sprintf("\n\nhigh: %i, low: %i mean: %.2f \n\n", numhigh, numlow, round(mean(as.numeric(cormatrix_stat[,2]),na.rm = TRUE),digits=2)))
 print(kable(cormatrix_stat[order(cormatrix_stat[,2],decreasing = TRUE),],col.names = c("Problems","Correlation")))
 
 ```
 
 # Hardness
-## maxSizeNCon + maxNumAtomOcc + numAtomsPosBody + constraints + maxSizeNegBodyCon + numAtomOccC
-```{r spearman maxSizeNCon + maxNumAtomOcc + numAtomsPosBody + constraints + maxSizeNegBodyCon + numAtomOccC, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+## maxSizeNCon + maxNumAtomOcc + numAtomsPosBody + numConstraints + maxSizeNegBodyCon + numAtomOccC
+```{r spearman maxSizeNCon + maxNumAtomOcc + numAtomsPosBody + numConstraints + maxSizeNegBodyCon + numAtomOccC, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
 num <- 1
 cormatrix_stat <- matrix(ncol = 2, nrow = numprobs)
 for (pro in unique(stat[, 1])) {
@@ -909,11 +1116,26 @@ for (pro in unique(stat[, 1])) {
   lenst <- sum(!is.na(st[, 1]))
   cormatrix_stat[num, 1] <- pro
   if (lenst >= mininst) {
-    a <- cor.test(st$maxSizeNCon + st$maxNumAtomOcc + st$numAtomsPosBody + st$constraints + st$maxSizeNegBodyCon + st$numAtomOccC, st$time_CPU, method="spearman")
+    a <- cor.test(st$maxSizeNCon + st$maxNumAtomOcc + st$numAtomsPosBody + st$numConstraints + st$maxSizeNegBodyCon + st$numAtomOccC, st$CPU_time, method="spearman")
     cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
   }
   num <- num + 1
 }
+
+numhigh <- 0
+numlow <- 0
+for (n in 1:nrow(cormatrix_stat)) {
+  if (!is.na(cormatrix_stat[n, 2])) {
+    if (abs(as.numeric(cormatrix_stat[n, 2])) >= 0.7) {
+      numhigh <- numhigh + 1
+    }
+    if (abs(as.numeric(cormatrix_stat[n, 2])) <= 0.2) {
+      numlow <- numlow + 1
+    }
+  }
+}
+cat(sprintf("\n\n### Time vs. %s\n\n", columns[i]))
+    cat(sprintf("\n\nhigh: %i, low: %i mean: %.2f \n\n", numhigh, numlow, round(mean(as.numeric(cormatrix_stat[,2]),na.rm = TRUE),digits=2)))
 print(kable(cormatrix_stat[order(cormatrix_stat[,2],decreasing = TRUE),],col.names = c("Problems","Correlation")))
 
 ```
@@ -927,16 +1149,31 @@ for (pro in unique(stat[, 1])) {
   lenst <- sum(!is.na(st[, 1]))
   cormatrix_stat[num, 1] <- pro
   if (lenst >= mininst) {
-    a <- cor.test(st$maxSizeAnswerSet + st$maxSizeNegBodyRule + st$maxSizePosBodyCon + st$maxSizeNegBodyCon, st$time_CPU, method="spearman")
+    a <- cor.test(st$maxSizeAnswerSet + st$maxSizeNegBodyRule + st$maxSizePosBodyCon + st$maxSizeNegBodyCon, st$CPU_time, method="spearman")
     cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
   }
   num <- num + 1
 }
+
+numhigh <- 0
+numlow <- 0
+for (n in 1:nrow(cormatrix_stat)) {
+  if (!is.na(cormatrix_stat[n, 2])) {
+    if (abs(as.numeric(cormatrix_stat[n, 2])) >= 0.7) {
+      numhigh <- numhigh + 1
+    }
+    if (abs(as.numeric(cormatrix_stat[n, 2])) <= 0.2) {
+      numlow <- numlow + 1
+    }
+  }
+}
+cat(sprintf("\n\n### Time vs. %s\n\n", columns[i]))
+    cat(sprintf("\n\nhigh: %i, low: %i mean: %.2f \n\n", numhigh, numlow, round(mean(as.numeric(cormatrix_stat[,2]),na.rm = TRUE),digits=2)))
 print(kable(cormatrix_stat[order(cormatrix_stat[,2],decreasing = TRUE),],col.names = c("Problems","Correlation")))
 ```
 
-## maxSizeAnswerSet + maxSizePosBodyNCon + numAtomsPosBody + constraints + maxSizeNegBodyCon + numAtomOccC
-```{r spearman maxSizeAnswerSet + maxSizePosBodyNCon + numAtomsPosBody + constraints + maxSizeNegBodyCon + numAtomOccC, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+## maxSizeAnswerSet + maxSizePosBodyNCon + numAtomsPosBody + numConstraints + maxSizeNegBodyCon + numAtomOccC
+```{r spearman maxSizeAnswerSet + maxSizePosBodyNCon + numAtomsPosBody + numConstraints + maxSizeNegBodyCon + numAtomOccC, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
 num <- 1
 cormatrix_stat <- matrix(ncol = 2, nrow = numprobs)
 for (pro in unique(stat[, 1])) {
@@ -944,15 +1181,30 @@ for (pro in unique(stat[, 1])) {
   lenst <- sum(!is.na(st[, 1]))
   cormatrix_stat[num, 1] <- pro
   if (lenst >= mininst) {
-    a <- cor.test(st$maxSizeAnswerSet + st$maxSizePosBodyNCon + st$numAtomsPosBody + st$constraints + st$maxSizeNegBodyCon + st$numAtomOccC, st$time_CPU, method="spearman")
+    a <- cor.test(st$maxSizeAnswerSet + st$maxSizePosBodyNCon + st$numAtomsPosBody + st$numConstraints + st$maxSizeNegBodyCon + st$numAtomOccC, st$CPU_time, method="spearman")
     cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
   }
   num <- num + 1
 }
+
+numhigh <- 0
+numlow <- 0
+for (n in 1:nrow(cormatrix_stat)) {
+  if (!is.na(cormatrix_stat[n, 2])) {
+    if (abs(as.numeric(cormatrix_stat[n, 2])) >= 0.7) {
+      numhigh <- numhigh + 1
+    }
+    if (abs(as.numeric(cormatrix_stat[n, 2])) <= 0.2) {
+      numlow <- numlow + 1
+    }
+  }
+}
+cat(sprintf("\n\n### Time vs. %s\n\n", columns[i]))
+    cat(sprintf("\n\nhigh: %i, low: %i mean: %.2f \n\n", numhigh, numlow, round(mean(as.numeric(cormatrix_stat[,2]),na.rm = TRUE),digits=2)))
 print(kable(cormatrix_stat[order(cormatrix_stat[,2],decreasing = TRUE),],col.names = c("Problems","Correlation")))
 ```
 
-## maxSizeAnswerSet + maxSizePosBodyNCon + numNonHornClauses + maxNumAtomOcc + numAtomsPosBody + rules
+## maxSizeAnswerSet + maxSizePosBodyNCon + numNonHornClauses + maxNumAtomOcc + numAtomsPosBody + numRules
 ```{r spearman maxSizeAnswerSet + maxSizePosBodyNCon + numNonHornClauses + maxNumAtomOcc + numAtomsPosBody + rules, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
 num <- 1
 cormatrix_stat <- matrix(ncol = 2, nrow = numprobs)
@@ -961,16 +1213,31 @@ for (pro in unique(stat[, 1])) {
   lenst <- sum(!is.na(st[, 1]))
   cormatrix_stat[num, 1] <- pro
   if (lenst >= mininst) {
-    a <- cor.test(st$maxSizeAnswerSet + st$maxSizePosBodyNCon + st$numNonHornClauses + st$maxNumAtomOcc + st$numAtomsPosBody + st$rules, st$time_CPU, method="spearman")
+    a <- cor.test(st$maxSizeAnswerSet + st$maxSizePosBodyNCon + st$numNonHornClauses + st$maxNumAtomOcc + st$numAtomsPosBody + st$numRules, st$CPU_time, method="spearman")
     cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
   }
   num <- num + 1
 }
+
+numhigh <- 0
+numlow <- 0
+for (n in 1:nrow(cormatrix_stat)) {
+  if (!is.na(cormatrix_stat[n, 2])) {
+    if (abs(as.numeric(cormatrix_stat[n, 2])) >= 0.7) {
+      numhigh <- numhigh + 1
+    }
+    if (abs(as.numeric(cormatrix_stat[n, 2])) <= 0.2) {
+      numlow <- numlow + 1
+    }
+  }
+}
+cat(sprintf("\n\n### Time vs. %s\n\n", columns[i]))
+    cat(sprintf("\n\nhigh: %i, low: %i mean: %.2f \n\n", numhigh, numlow, round(mean(as.numeric(cormatrix_stat[,2]),na.rm = TRUE),digits=2)))
 print(kable(cormatrix_stat[order(cormatrix_stat[,2],decreasing = TRUE),],col.names = c("Problems","Correlation")))
 ```
 
-## maxSizeAnswerSet + maxSizePosBodyNCon + numNonHornClauses + maxNumVarOccHeadNegBody + constraints + maxSizeNegBodyCon + numAtomOccC
-```{r spearman maxSizeAnswerSet + maxSizePosBodyNCon + numNonHornClauses + maxNumVarOccHeadNegBody + constraints + maxSizeNegBodyCon + numAtomOccC, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+## maxSizeAnswerSet + maxSizePosBodyNCon + numNonHornClauses + maxNumVarOccHeadNegBody + numConstraints + maxSizeNegBodyCon + numAtomOccC
+```{r spearman maxSizeAnswerSet + maxSizePosBodyNCon + numNonHornClauses + maxNumVarOccHeadNegBody + numConstraints + maxSizeNegBodyCon + numAtomOccC, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
 num <- 1
 cormatrix_stat <- matrix(ncol = 2, nrow = numprobs)
 for (pro in unique(stat[, 1])) {
@@ -978,16 +1245,31 @@ for (pro in unique(stat[, 1])) {
   lenst <- sum(!is.na(st[, 1]))
   cormatrix_stat[num, 1] <- pro
   if (lenst >= mininst) {
-    a <- cor.test(st$maxSizeAnswerSet + st$maxSizePosBodyNCon + st$numNonHornClauses + st$maxNumVarOccHeadNegBody + st$constraints + st$maxSizeNegBodyCon + st$numAtomOccC, st$time_CPU, method="spearman")
+    a <- cor.test(st$maxSizeAnswerSet + st$maxSizePosBodyNCon + st$numNonHornClauses + st$maxNumVarOccHeadNegBody + st$numConstraints + st$maxSizeNegBodyCon + st$numAtomOccC, st$CPU_time, method="spearman")
     cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
   }
   num <- num + 1
 }
+
+numhigh <- 0
+numlow <- 0
+for (n in 1:nrow(cormatrix_stat)) {
+  if (!is.na(cormatrix_stat[n, 2])) {
+    if (abs(as.numeric(cormatrix_stat[n, 2])) >= 0.7) {
+      numhigh <- numhigh + 1
+    }
+    if (abs(as.numeric(cormatrix_stat[n, 2])) <= 0.2) {
+      numlow <- numlow + 1
+    }
+  }
+}
+cat(sprintf("\n\n### Time vs. %s\n\n", columns[i]))
+    cat(sprintf("\n\nhigh: %i, low: %i mean: %.2f \n\n", numhigh, numlow, round(mean(as.numeric(cormatrix_stat[,2]),na.rm = TRUE),digits=2)))
 print(kable(cormatrix_stat[order(cormatrix_stat[,2],decreasing = TRUE),],col.names = c("Problems","Correlation")))
 ```
 
-## maxSizePosBodyNCon + numNonHornClauses + maxNumAtomOcc + constraints + maxSizeNegBodyCon + numAtomOccC
-```{r spearman maxSizePosBodyNCon + numNonHornClauses + maxNumAtomOcc + constraints + maxSizeNegBodyCon + numAtomOccC, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
+## maxSizePosBodyNCon + numNonHornClauses + maxNumAtomOcc + numConstraints + maxSizeNegBodyCon + numAtomOccC
+```{r spearman maxSizePosBodyNCon + numNonHornClauses + maxNumAtomOcc + numConstraints + maxSizeNegBodyCon + numAtomOccC, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
 num <- 1
 cormatrix_stat <- matrix(ncol = 2, nrow = numprobs)
 for (pro in unique(stat[, 1])) {
@@ -995,15 +1277,30 @@ for (pro in unique(stat[, 1])) {
   lenst <- sum(!is.na(st[, 1]))
   cormatrix_stat[num, 1] <- pro
   if (lenst >= mininst) {
-    a <- cor.test(st$maxSizePosBodyNCon + st$numNonHornClauses + st$maxNumAtomOcc + st$constraints + st$maxSizeNegBodyCon + st$numAtomOccC, st$time_CPU, method="spearman")
+    a <- cor.test(st$maxSizePosBodyNCon + st$numNonHornClauses + st$maxNumAtomOcc + st$numConstraints + st$maxSizeNegBodyCon + st$numAtomOccC, st$CPU_time, method="spearman")
     cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
   }
   num <- num + 1
 }
+
+numhigh <- 0
+numlow <- 0
+for (n in 1:nrow(cormatrix_stat)) {
+  if (!is.na(cormatrix_stat[n, 2])) {
+    if (abs(as.numeric(cormatrix_stat[n, 2])) >= 0.7) {
+      numhigh <- numhigh + 1
+    }
+    if (abs(as.numeric(cormatrix_stat[n, 2])) <= 0.2) {
+      numlow <- numlow + 1
+    }
+  }
+}
+cat(sprintf("\n\n### Time vs. %s\n\n", columns[i]))
+    cat(sprintf("\n\nhigh: %i, low: %i mean: %.2f \n\n", numhigh, numlow, round(mean(as.numeric(cormatrix_stat[,2]),na.rm = TRUE),digits=2)))
 print(kable(cormatrix_stat[order(cormatrix_stat[,2],decreasing = TRUE),],col.names = c("Problems","Correlation")))
 ```
 
-## maxSizeAnswerSet + maxSizePosBodyNCon + numNonHornClauses + maxNumAtomOcc + rules + maxSizeNegBodyCon
+## maxSizeAnswerSet + maxSizePosBodyNCon + numNonHornClauses + maxNumAtomOcc + numRules + maxSizeNegBodyCon
 ```{r spearman maxSizeAnswerSet + maxSizePosBodyNCon + numNonHornClauses + maxNumAtomOcc + rules + maxSizeNegBodyCon, echo=FALSE, message=FALSE, warning=FALSE,results='asis'}
 num <- 1
 cormatrix_stat <- matrix(ncol = 2, nrow = numprobs)
@@ -1012,11 +1309,26 @@ for (pro in unique(stat[, 1])) {
   lenst <- sum(!is.na(st[, 1]))
   cormatrix_stat[num, 1] <- pro
   if (lenst >= mininst) {
-    a <- cor.test(st$maxSizeAnswerSet + st$maxSizePosBodyNCon + st$numNonHornClauses + st$maxNumAtomOcc + st$rules + st$maxSizeNegBodyCon, st$time_CPU, method="spearman")
+    a <- cor.test(st$maxSizeAnswerSet + st$maxSizePosBodyNCon + st$numNonHornClauses + st$maxNumAtomOcc + st$numRules + st$maxSizeNegBodyCon, st$CPU_time, method="spearman")
     cormatrix_stat[num, 2] <- round(a$estimate, digits = 2)
   }
   num <- num + 1
 }
+
+numhigh <- 0
+numlow <- 0
+for (n in 1:nrow(cormatrix_stat)) {
+  if (!is.na(cormatrix_stat[n, 2])) {
+    if (abs(as.numeric(cormatrix_stat[n, 2])) >= 0.7) {
+      numhigh <- numhigh + 1
+    }
+    if (abs(as.numeric(cormatrix_stat[n, 2])) <= 0.2) {
+      numlow <- numlow + 1
+    }
+  }
+}
+cat(sprintf("\n\n### Time vs. %s\n\n", columns[i]))
+    cat(sprintf("\n\nhigh: %i, low: %i mean: %.2f \n\n", numhigh, numlow, round(mean(as.numeric(cormatrix_stat[,2]),na.rm = TRUE),digits=2)))
 print(kable(cormatrix_stat[order(cormatrix_stat[,2],decreasing = TRUE),],col.names = c("Problems","Correlation")))
 ```
 

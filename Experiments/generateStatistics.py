@@ -84,8 +84,8 @@ statsCommand = "./exst -q 2 --stats=2 --time-limit=" + str(
     statsTime + 10) + " --printDgraph=1 " if gen_r_width else "" + " --printIgraph=1 " if gen_d_width else "" \
     + " --printRgraph=1 " if gen_i_width else "" + " --outf=2 -V "
 
-names_csv = ["problem", "inst", "time_CPU", "choices", "conflicts", "backtracks", "backjumps", "restarts", "jumps",
-             "atoms", "rules", "bodies", "equivalences", "variables", "eliminated", "frozen", "constraints",
+names_csv = ["problem", "inst", "CPU_time", "numChoices", "numConflicts", "backtracks", "backjumps", "numRestarts", "jumps",
+             "numAtoms", "numRules", "numBodies", "numEquivalences", "numVariables", "eliminated", "frozen", "numConstraints",
              "numNonHornClauses", "numNonDualHornClauses", "maxClauseSize", "maxPosClauseSize", "maxNegClauseSize",
              "numVPosLitH", "numVPosLit", "numVNegLitH", "numVNegLit", "maxPosRSizeC", "maxPosRSizeNC", "numAtomOccC",
              "numAtomOccNC", "maxNumAtomOcc", "maxNumPosOccA", "maxNumNegOccA", "dGraphWidth", "numDGraphEdges",
@@ -253,7 +253,7 @@ def get_csv(file_name):
         with open(join(dirTimes, file_name[:-3]), "r") as myfile:
             data = myfile.read()
             d = json.loads(data)
-            stats["time_CPU"] = d['Time']["CPU"]
+            stats["CPU_time"] = d['Time']["CPU"]
     if isfile(join(dirExtendedStats, file_name)):
         print_message("    exst")
         with gzip.open(join(dirExtendedStats, file_name), "r") as myfile:
@@ -261,23 +261,23 @@ def get_csv(file_name):
             d = json.loads(data)
             if 'Stats' in d:
                 if 'Core' in d['Stats']:
-                    stats["choices"] = d['Stats']['Core']['Choices']
-                    stats["conflicts"] = d['Stats']['Core']['Conflicts']
+                    stats["numChoices"] = d['Stats']['Core']['Choices']
+                    stats["numConflicts"] = d['Stats']['Core']['Conflicts']
                     stats["backtracks"] = d['Stats']['Core']['Backtracks']
                     stats["backjumps"] = d['Stats']['Core']['Backjumps']
-                    stats["restarts"] = d['Stats']['Core']['Restarts']
+                    stats["numRestarts"] = d['Stats']['Core']['Restarts']
                 if 'Jumps' in d['Stats']:
                     stats["jumps"] = d['Stats']['Jumps']['Sum']
                 if 'LP' in d['Stats']:
-                    stats["atoms"] = d['Stats']["LP"]["Atoms"]
-                    stats["rules"] = d['Stats']["LP"]["Rules"]["Sum"]
-                    stats["bodies"] = d['Stats']["LP"]["Bodies"]
-                    stats["equivalences"] = d['Stats']["LP"]["Equivalences"]["Sum"]
+                    stats["numAtoms"] = d['Stats']["LP"]["Atoms"]
+                    stats["numRules"] = d['Stats']["LP"]["Rules"]["Sum"]
+                    stats["numBodies"] = d['Stats']["LP"]["Bodies"]
+                    stats["numEquivalences"] = d['Stats']["LP"]["Equivalences"]["Sum"]
                 if 'Problem' in d['Stats']:
-                    stats["variables"] = d['Stats']['Problem']["Variables"]
+                    stats["numVariables"] = d['Stats']['Problem']["Variables"]
                     stats["eliminated"] = d['Stats']['Problem']["Eliminated"]
                     stats["frozen"] = d['Stats']['Problem']["Frozen"]
-                    stats["bodies"] = d['Stats']['Problem']["Constraints"]["Sum"]
+                    stats["numConstraints"] = d['Stats']['Problem']["Constraints"]["Sum"]
                 if 'Extended Stats' in d['Stats']:
                     ex = d['Stats']['Extended Stats']
                     stats["numDGraphNodes"] = ex[0][1]
